@@ -1,11 +1,12 @@
 import ProjectCard from './ProjectCard';
 import { Project } from '../../types/Project';
+import { GadgetLuxe, RickAndMorty, PokeAPI, BAndQ, Todo } from '../../images';
 
 export const PROJECT_LIST: Project[] = [
   {
     id: 1,
     name: "Gadget Luxe",
-    image: "/images/GadgetLuxe.png",
+    image: GadgetLuxe,
     description: "An online phone store with full-stack capabilities.",
     stack: ["React", "Typescript", "SCSS", "Node.js"],
     codelink: "https://github.com/fe-jul23-CodeDynasty/product_catalog",
@@ -14,7 +15,7 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 2,
     name: "Rick and Morty API app",
-    image: "/images/RickAndMorty.png",
+    image: RickAndMorty,
     description: "Implementation of open source Rick and Morty API.",
     stack: ["React", "Typescript", "Redux", "GraphQL", "MUI"],
     codelink: "https://github.com/edgergard/Rick-and-morty-fe",
@@ -23,7 +24,7 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 3,
     name: "PokeAPI task",
-    image: "/images/pokeAPI.png",
+    image: PokeAPI,
     description: "Implementation of open source PokeAPI.",
     stack: ["React", "Typescript", "Tailwind", "Axios"],
     codelink: "https://github.com/edgergard/pokeAPI",
@@ -32,7 +33,7 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 4,
     name: "Landing page for B&Q",
-    image: "/images/B&Q.png",
+    image: BAndQ,
     description: "Visually appealing and user-friendly landing page.",
     stack: ["HTML5", "SCSS", "BEM",],
     codelink: "https://github.com/edgergard/B-Q-Landing",
@@ -41,7 +42,7 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 5,
     name: "React Todo app",
-    image: "/images/Todo.png",
+    image: Todo,
     description: "Simple task-management app with API.",
     stack: ["React", "Typescript", "SCSS"],
     codelink: "https://github.com/edgergard/react-todo-app",
