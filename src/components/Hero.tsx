@@ -37,7 +37,7 @@ const Hero = () => {
           </div>
 
           <p className="text-text-secondary text-xl mb-8">
-            Always looking for new opportunities and interesting tasks
+            Always looking for new opportunities and interesting tasks.
           </p>
 
           <div className="flex gap-4">
