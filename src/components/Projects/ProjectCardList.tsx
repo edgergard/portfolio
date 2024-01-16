@@ -1,8 +1,6 @@
 import ProjectCard from './ProjectCard';
 import { Project } from '../../types/Project';
 
-import image from ;
-
 export const PROJECT_LIST: Project[] = [
   {
     id: 1,
