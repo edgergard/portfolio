@@ -27,4 +27,3 @@ export const EDUCATION = [
     period: '2021 '
   }
 ];
-

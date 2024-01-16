@@ -1,13 +1,18 @@
 import { useState } from "react";
 import TabButton from "./TabButton";
 import AboutList from "./AboutList";
+import { motion } from 'framer-motion';
 
 const About = () => {
   const [selectedTab, setSelectedTab] = useState('Skills');
 
   return (
     <section id="about" className="pt-12 md:pt-24">
-      <div className="
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="
           flex flex-col lg:items-start
           lg:grid lg:grid-cols-2 gap-x-48 gap-y-12"
       >
@@ -17,17 +22,16 @@ const About = () => {
           </h2>
 
           <p className="text-lg text-white">
-            I am an FS Developer with a technical background and
-            proficiency in English at a B2 level.
-            I possess in-depth knowledge of web development technologies,
-            including Typescript, JavaScript, React.
-            Furthermore, I am open to learning new technologies, such as
-            Angular and Vue, to further contribute to your team. My work
-            experience includes developing a Todo list application using React,
-            creating a landing page for a company selling audio devices, and
-            collaborating on a group project for an online store. In terms of
-            soft skills, I exhibit patience, determination,
-            and effective time management.
+            I am an FE Developer with a technical background and proficiency
+            in English at a B2 level. I possess in-depth knowledge of web
+            development technologies, including JavaScript, TypeScript,
+            React, Redux, Tailwind, SCSS. Furthermore, I am open to learning new
+            technologies, such as Angular and Vue, to further contribute
+            to your team. My work experience includes developing a Todo list
+            application using React, creating a landing page for a company
+            selling audio devices, and collaborating on a group project for
+            an online store. In terms of soft skills, I exhibit patience, 
+            determination, and effective time management.
           </p>
         </div>
 
@@ -50,7 +54,7 @@ const About = () => {
 
           <AboutList selectedTab={selectedTab} />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };
