@@ -3,6 +3,7 @@ import RickAndMorty from './RickAndMorty.png';
 import PokeAPI from './pokeAPI.png';
 import BAndQ from './B&Q.png';
 import Todo from './Todo.png';
+import VueWeatherApp from './VueWeatherApp.png';
 
 export {
   GadgetLuxe,
@@ -10,4 +11,5 @@ export {
   PokeAPI,
   BAndQ,
   Todo,
+  VueWeatherApp,
 };

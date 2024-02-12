@@ -1,6 +1,13 @@
 import ProjectCard from './ProjectCard';
 import { Project } from '../../types/Project';
-import { GadgetLuxe, RickAndMorty, PokeAPI, BAndQ, Todo } from '../../images';
+import { 
+  GadgetLuxe, 
+  RickAndMorty, 
+  PokeAPI, 
+  BAndQ, 
+  Todo, 
+  VueWeatherApp,
+} from '../../images';
 
 export const PROJECT_LIST: Project[] = [
   {
@@ -14,6 +21,15 @@ export const PROJECT_LIST: Project[] = [
   },
   {
     id: 2,
+    name: "Vue Weather App",
+    image: VueWeatherApp,
+    description: "Weather App with search and saving location to favorites.",
+    stack: ["Vue3", "Typescript", "Tailwind", "Vue Router"],
+    codelink: "https://github.com/edgergard/vue-weather-app?tab=readme-ov-file",
+    demolink: "https://edgergard.github.io/vue-weather-app/",
+  },
+  {
+    id: 3,
     name: "Rick and Morty API app",
     image: RickAndMorty,
     description: "Implementation of open source Rick and Morty API.",
@@ -22,7 +38,7 @@ export const PROJECT_LIST: Project[] = [
     demolink: "https://edgergard.github.io/Rick-and-morty-fe/",
   },
   {
-    id: 3,
+    id: 4,
     name: "PokeAPI task",
     image: PokeAPI,
     description: "Implementation of open source PokeAPI.",
@@ -31,7 +47,7 @@ export const PROJECT_LIST: Project[] = [
     demolink: "https://edgergard.github.io/pokeAPI/",
   },
   {
-    id: 4,
+    id: 5,
     name: "Landing page for B&Q",
     image: BAndQ,
     description: "Visually appealing and user-friendly landing page.",
@@ -40,7 +56,7 @@ export const PROJECT_LIST: Project[] = [
     demolink: "https://edgergard.github.io/B-Q-Landing/",
   },
   {
-    id: 5,
+    id: 6,
     name: "React Todo app",
     image: Todo,
     description: "Simple task-management app with API.",
