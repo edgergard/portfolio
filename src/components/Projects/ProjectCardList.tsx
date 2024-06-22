@@ -51,7 +51,7 @@ export const PROJECT_LIST: Project[] = [
     name: "Landing page for B&Q",
     image: BAndQ,
     description: "Visually appealing and user-friendly landing page.",
-    stack: ["HTML5", "SCSS", "BEM",],
+    stack: ["HTML5", "SCSS", "BEM"],
     codelink: "https://github.com/edgergard/B-Q-Landing",
     demolink: "https://edgergard.github.io/B-Q-Landing/",
   },
@@ -70,7 +70,7 @@ export const PROJECT_LIST: Project[] = [
 const ProjectCardList = () => {
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-      {PROJECT_LIST.map((project) => (
+      {PROJECT_LIST.map(project => (
         <ProjectCard key={project.id} project={project} />
       ))}
     </div>

@@ -13,7 +13,7 @@ module.exports = {
       'form-outline': '#33353F',
       'form-placeholder': '#9CA2A9',
       'button-main': '#8644c5',
-      'label-error': '#ef4444',
+      'red': '#ef4444',
     },
   },
 };
