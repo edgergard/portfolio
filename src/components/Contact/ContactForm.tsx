@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import classNames from 'classnames';
 import Loader from '../Loader';
 
 const API = {
@@ -107,13 +106,9 @@ const ContactForm = () => {
           <input
             {...register("email")}
             placeholder="User123@gmail.com"
-            className={
-              classNames(
-                'w-full py-2 px-3 rounded-lg bg-form-bg text-sm text-white ',
-                'outline outline-1 outline-form-outline focus:outline-white', {
-                  'focus:outline-red-1': errors.email
-                }
-              )}
+            className={`w-full py-2 px-3 rounded-lg bg-form-bg text-sm 
+            text-white outline outline-1 outline-form-outline
+            ${errors.email ? 'focus:outline-red-1': 'focus:outline-white'}`}
           />
   
           {errors.email ? (
@@ -133,13 +128,9 @@ const ContactForm = () => {
             type="text"
             placeholder="Hi"
             autoComplete="off"
-            className={
-              classNames(
-                'w-full py-2 px-3 rounded-lg bg-form-bg text-sm text-white ',
-                'outline outline-1 outline-form-outline focus:outline-white', {
-                  'focus:outline-red-1': errors.subject
-                }
-              )}
+            className={`w-full py-2 px-3 rounded-lg bg-form-bg text-sm 
+            text-white outline outline-1 outline-form-outline
+            ${errors.subject ? 'focus:outline-red-1': 'focus:outline-white'}`}
           />
 
           {errors.subject ? (
@@ -158,15 +149,9 @@ const ContactForm = () => {
             {...register("message")}
             placeholder="Let's talk about..."
             autoComplete="off"
-            className={
-              classNames(
-                'w-full py-2 px-3 rounded-lg bg-form-bg text-sm text-white',
-                'outline outline-1 outline-form-outline focus:outline-white',
-                'resize-none',
-                {
-                  'focus:outline-red-1': errors.message
-                }
-              )}
+            className={`w-full py-2 px-3 rounded-lg bg-form-bg text-sm 
+            text-white outline outline-1 outline-form-outline resize-none
+            ${errors.message ? 'focus:outline-red-1': 'focus:outline-white'}`}
           />
 
           {errors.message ? (
