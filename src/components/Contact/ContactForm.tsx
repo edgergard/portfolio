@@ -111,13 +111,13 @@ const ContactForm = () => {
               classNames(
                 'w-full py-2 px-3 rounded-lg bg-form-bg text-sm text-white ',
                 'outline outline-1 outline-form-outline focus:outline-white', {
-                  'focus:outline-red': errors.email
+                  'focus:outline-red-1': errors.email
                 }
               )}
           />
   
           {errors.email ? (
-            <div className="text-red pt-1">{errors.email.message}</div>
+            <div className="text-red-1 pt-1">{errors.email.message}</div>
           ) : (
             <div className="pt-1 h-7" />
           )}
@@ -137,13 +137,13 @@ const ContactForm = () => {
               classNames(
                 'w-full py-2 px-3 rounded-lg bg-form-bg text-sm text-white ',
                 'outline outline-1 outline-form-outline focus:outline-white', {
-                  'focus:outline-red': errors.subject
+                  'focus:outline-red-1': errors.subject
                 }
               )}
           />
 
           {errors.subject ? (
-            <div className="text-red pt-1">{errors.subject.message}</div>
+            <div className="text-red-1 pt-1">{errors.subject.message}</div>
           ) : (
             <div className="pt-1 h-7" />
           )}
@@ -164,13 +164,13 @@ const ContactForm = () => {
                 'outline outline-1 outline-form-outline focus:outline-white',
                 'resize-none',
                 {
-                  'focus:outline-red': errors.message
+                  'focus:outline-red-1': errors.message
                 }
               )}
           />
 
           {errors.message ? (
-            <div className="text-red">{errors.message.message}</div>
+            <div className="text-red-1">{errors.message.message}</div>
           ) : (
             <div className="pt-2 h-6" />
           )}
