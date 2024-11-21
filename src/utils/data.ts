@@ -3,27 +3,32 @@
 export const SKILLS = [
   'Javascript',
   'Typescript',
-  'React', 
+  'React',
+  'React Native',
   'Redux',
+  'Vue',
   'Tailwind',
   'Sass',
-  'HTML5', 
-  'CSS3', 
-  'Bulma',
-  'SQL',
+  'HTML5',
+  'CSS3',
   'Git',
-  'Matlab',
-  'Figma',
-  'NPM',
 ];
 
 export const EDUCATION = [
   {
     place: 'Mate Academy Full Stack course',
-    period: '2023'
+    period: 'Jul 2023 - Oct 2023'
   },
   {
     place: 'National Technical University of Ukraine Kyiv Polytechnic Institute',
-    period: '2021 '
+    period: 'Sep 2019 - Dec 2021'
+  }
+];
+
+export const EXPERIENCE = [
+  {
+    place: 'HYS Enterprise',
+    period: 'Apr 2024 - Present',
+    spec: 'Frontend developer'
   }
 ];

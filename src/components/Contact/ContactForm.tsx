@@ -8,10 +8,16 @@ import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import Loader from '../Loader';
 
+const {
+  VITE_EMAILJS_SERVICE_ID,
+  VITE_EMAILJS_TEMPLATE_ID,
+  VITE_EMAILJS_KEY,
+} = import.meta.env;
+
 const API = {
-  SERVICE_ID: "service_9ypjm36",
-  TEMPLATE_ID: "template_n3pdjbm",
-  USER_PUBLIC_KEY: "bbMwWA3DIZLu3o3xf",
+  SERVICE_ID: VITE_EMAILJS_SERVICE_ID,
+  TEMPLATE_ID: VITE_EMAILJS_TEMPLATE_ID,
+  USER_PUBLIC_KEY: VITE_EMAILJS_KEY,
 };
 
 const FormSchema = z.object({
@@ -40,9 +46,9 @@ const ContactForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const showToast = (
-    sucess: boolean
+    success: boolean
   ) => {
-    sucess ? (toast('Message was successfully sent.', {
+    success ? (toast('Message was successfully sent.', {
       position: "bottom-right",
       autoClose: 3000,
       hideProgressBar: false,

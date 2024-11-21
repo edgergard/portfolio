@@ -2,8 +2,12 @@ import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 import { HashLink } from 'react-router-hash-link';
 import { ProjectsCardList } from '../components/Projects';
+import { useEffect } from 'react';
+import { scrollTop } from '../utils/helpers';
 
 const Archive = () => {
+  useEffect(() => scrollTop());
+
   return (
     <div className="pt-12 md:pt-24">
       <div className="

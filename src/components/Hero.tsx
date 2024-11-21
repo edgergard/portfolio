@@ -1,7 +1,7 @@
-import { CodeBracketIcon } from '@heroicons/react/24/solid';
 import { HashLink } from 'react-router-hash-link';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
+import { ReactLogo } from '../images';
 
 // eslint-disable-next-line max-len
 const CV_LINK = 'https://drive.google.com/file/d/1sNltmCF3pG7nvT_-dacqWYB6t4hv7EAG/view?usp=sharing';
@@ -68,12 +68,10 @@ const Hero = () => {
 
         <div className="
           hidden lg:flex items-center ml-40
-          w-[320px] h-[320px] xl:w-[400px] xl:h-[400px]
+          size-[360px] xl:size-[460px]
           rounded-full justify-center bg-hero-icon-bg"
         >
-          <CodeBracketIcon className="
-            w-[200px] h-[200px] xl:w-[300px] xl:h-[300px] text-white"
-          />
+          <img src={ReactLogo} />
         </div>
       </motion.div>
     </section>
