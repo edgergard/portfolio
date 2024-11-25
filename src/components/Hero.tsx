@@ -2,11 +2,13 @@ import { HashLink } from 'react-router-hash-link';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
 import { ReactLogo } from '../images';
+import { useTranslation } from 'react-i18next';
+import { CV_LINK } from '../utils/constants';
 
-// eslint-disable-next-line max-len
-const CV_LINK = 'https://drive.google.com/file/d/1sNltmCF3pG7nvT_-dacqWYB6t4hv7EAG/view?usp=sharing';
 
 const Hero = () => {
+  const { t, i18n } = useTranslation();
+
   return (
     <section id="hero">
       <motion.div
@@ -17,17 +19,18 @@ const Hero = () => {
       >
         <div>
           <div className="
-            mb-10 text-white text-4xl md:text-7xl lg:text-8xl font-extrabold"
+            mb-10 text-white text-4xl md:text-7xl lg:text-[94px] font-extrabold"
           >
             <h1 className="mb-4 md:mb-10 text-blood">
-              {`Hello, I'm`}
+              {t('hello')}
             </h1>
 
             <TypeAnimation
+              key={i18n.language}
               sequence={[
-                "Oleksandr",
+                t('name'),
                 1000,
-                'FE Developer',
+                t('occupation'),
                 1000
               ]}
               wrapper="span"
@@ -37,7 +40,7 @@ const Hero = () => {
           </div>
 
           <p className="text-text-secondary text-xl mb-8">
-            Always looking for new opportunities and interesting tasks.
+            {t('always_looking_for')}
           </p>
 
           <div className="flex gap-4">
@@ -49,7 +52,7 @@ const Hero = () => {
                 bg-button-main px-8 py-4 font-medium leading-5
                 transition-all text-white hover:bg-blood"
             >
-              Hire me
+              {t('hire_me')}
             </HashLink>
 
             <a
@@ -61,7 +64,7 @@ const Hero = () => {
                 outline outline-button-border px-6 py-3 font-medium leading-5
               hover:outline-blood text-text-secondary hover:text-white"
             >
-              Open CV 
+              {t('open_cv')}
             </a>
           </div>
         </div>

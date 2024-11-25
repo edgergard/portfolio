@@ -16,19 +16,19 @@ export const SKILLS = [
 
 export const EDUCATION = [
   {
-    place: 'Mate Academy Full Stack course',
-    period: 'Jul 2023 - Oct 2023'
+    place: 'desc_edu_mate',
+    period: 'date_edu_mate'
   },
   {
-    place: 'National Technical University of Ukraine Kyiv Polytechnic Institute',
-    period: 'Sep 2019 - Dec 2021'
+    place: 'desc_edu_kpi',
+    period: 'date_edu_kpi'
   }
 ];
 
 export const EXPERIENCE = [
   {
     place: 'HYS Enterprise',
-    period: 'Apr 2024 - Present',
+    period: 'date_exp_hys',
     spec: 'Frontend developer'
   }
 ];

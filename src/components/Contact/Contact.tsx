@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ContactForm from "./ContactForm";
 import { GithubLink, LinkedinLink, TelegramLink } from "./LinkIcons";
 
@@ -5,6 +6,8 @@ const PHONE = '+380635383049';
 const EMAIL = 'oleksandrbryksin@gmail.com';
 
 const Contact = () => {
+  const { t } = useTranslation();
+
   return (
     <section
       id="contact"
@@ -12,11 +15,11 @@ const Contact = () => {
     >
       <div>
         <h1 className="text-xl font-bold text-white mb-2">
-          {`Let's Connect`}
+          {t('contact')}
         </h1>
 
         <p className="text-text-secondary max-w-md mb-4">
-          {`I'm currently looking for new opportunities, my inbox is always open.`}
+          {t('i_am_currently_looking')}
         </p>
       
         <p className="mb-6 text-lg text-white">

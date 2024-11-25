@@ -2,12 +2,14 @@ import React from 'react';
 import { Project } from '../../types/Project';
 import { CodeBracketIcon } from '@heroicons/react/24/solid';
 import { EyeIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   project: Project;
 };
 
 const ProjectCard: React.FC<Props> = ({ project }) => {
+  const { t } = useTranslation();
   const { name, image, description, stack, codelink, demolink } = project;
 
   return (
@@ -20,8 +22,8 @@ const ProjectCard: React.FC<Props> = ({ project }) => {
           backgroundPosition: "center",
         }}
       >
-        <div className=" justify-center items-center
-          absolute top-0 left-0 w-full h-full 
+        <div className="rounded-t-xl justify-center items-center
+          absolute top-0 left-0 w-full h-full
         bg-[#181818] bg-opacity-70 hidden
           group-hover:flex" 
         > 
@@ -60,7 +62,7 @@ const ProjectCard: React.FC<Props> = ({ project }) => {
         </p>
 
         <p className="text-text-secondary text-sm pb-4">
-          {description}
+          {t(description)}
         </p>
       
         <ul className="flex flex-wrap gap-2">

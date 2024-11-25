@@ -3,11 +3,17 @@ import React from "react";
 
 type Props = {
   selectTab: () => void;
-  selectedTab: string;
+  selectedTab: number;
+  id: number;
   children: string;
 };
 
-const TabButton: React.FC<Props> = ({ selectTab, selectedTab, children }) => {
+const TabButton: React.FC<Props> = ({
+  selectTab,
+  selectedTab,
+  children,
+  id,
+}) => {
   return (
     <button onClick={selectTab}>
       <p
@@ -15,7 +21,7 @@ const TabButton: React.FC<Props> = ({ selectTab, selectedTab, children }) => {
           "text-lg md:text-3xl lg:text-[27px] xl:text-4xl font-bold",
           "hover:text-white transition-colors border-blood text-text-secondary",
           {
-            "border-b-4 pb-[1px] md:pb-2 text-white": selectedTab === children,
+            "border-b-4 pb-[1px] md:pb-2 text-white": selectedTab === id,
           }
         )}
       >

@@ -2,14 +2,16 @@ import { useState } from "react";
 import TabButton from "./TabButton";
 import AboutList from "./AboutList";
 import { motion } from 'framer-motion';
+import { useTranslation } from "react-i18next";
 
 export enum TabNames {
-  Skills = 'Skills',
-  Education = 'Education',
-  Experience = 'Experience'
+  Skills = 0,
+  Education = 1,
+  Experience = 2
 }
 
 const About = () => {
+  const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState(TabNames.Skills);
 
   return (
@@ -24,20 +26,11 @@ const About = () => {
       >
         <div className="flex flex-col">
           <h2 className="mb-4 text-2xl md:text-4xl font-bold text-white">
-            About Me
+            {t('about_me')}
           </h2>
 
           <p className="text-lg text-white">
-            I am an FE Developer with a technical background and proficiency
-            in English at a B2 level. I possess in-depth knowledge of web
-            development technologies, including JavaScript, TypeScript,
-            React, Redux, Tailwind, SCSS. Furthermore, I am open to learning new
-            technologies, such as Angular and Vue, to further contribute
-            to your team. My work experience includes developing a Todo list
-            application using React, creating a landing page for a company
-            selling audio devices, and collaborating on a group project for
-            an online store. In terms of soft skills, I exhibit patience, 
-            determination, and effective time management.
+            {t('about_me_description')}
           </p>
         </div>
 
@@ -46,26 +39,29 @@ const About = () => {
             <TabButton 
               selectTab={() => setSelectedTab(TabNames.Skills)}
               selectedTab={selectedTab}
+              id={TabNames.Skills}
             >
-              {TabNames.Skills}
+              {t('skills')}
             </TabButton>
 
             <TabButton 
               selectTab={() => setSelectedTab(TabNames.Experience)}
               selectedTab={selectedTab}
+              id={TabNames.Experience}
             >
-              {TabNames.Experience}
+              {t('experience')}
             </TabButton>
 
             <TabButton 
               selectTab={() => setSelectedTab(TabNames.Education)}
               selectedTab={selectedTab}
+              id={TabNames.Education}
             >
-              {TabNames.Education}
+              {t('education')}
             </TabButton>
           </div>
 
-          <AboutList selectedTab={selectedTab} />
+          <AboutList selectedTabId={selectedTab} />
         </div>
       </motion.div>
     </section>

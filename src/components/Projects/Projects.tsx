@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import ProjectCardList from "./ProjectCardList";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import { useTranslation } from "react-i18next";
 
 const Projects = () => {
+  const { t } = useTranslation();
+
   return (
     <section id="projects" className="pt-12 md:pt-24">
       <div className="
@@ -12,7 +15,7 @@ const Projects = () => {
         <h2 className="
           text-2xl md:text-4xl text-center text-white leading-5 font-bold"
         >
-          My Projects
+          {t('projects')}
         </h2>
 
         <Link to="/archive" className="
@@ -21,7 +24,7 @@ const Projects = () => {
           hover:outline-blood transition-all"
         >
           <p className="text-lg text-text-secondary group-hover:text-white">
-            Archive
+            {t('archive')}
           </p>
 
           <ArrowRightIcon 

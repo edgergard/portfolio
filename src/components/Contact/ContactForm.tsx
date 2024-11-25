@@ -7,6 +7,7 @@ import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import Loader from '../Loader';
+import { useTranslation } from 'react-i18next';
 
 const {
   VITE_EMAILJS_SERVICE_ID,
@@ -22,20 +23,21 @@ const API = {
 
 const FormSchema = z.object({
   email: z
-    .string({ required_error: 'Email is invalid' })
-    .min(1, { message: "Email is required" })
+    .string({ required_error: 'form_error_submit' })
+    .min(1, { message: 'form_error_email' })
     .email(),
   subject: z
     .string()
-    .min(1, { message: "Subject is required" }),
+    .min(1, { message: 'form_error_subject' }),
   message: z
     .string()
-    .min(1, { message: "Message is required" }),
+    .min(1, { message: 'form_error_message' }),
 });
 
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 const ContactForm = () => {
+  const { t } = useTranslation();
   const { 
     handleSubmit, 
     register, 
@@ -48,7 +50,7 @@ const ContactForm = () => {
   const showToast = (
     success: boolean
   ) => {
-    success ? (toast('Message was successfully sent.', {
+    success ? (toast(t('message_success'), {
       position: "bottom-right",
       autoClose: 3000,
       hideProgressBar: false,
@@ -59,7 +61,7 @@ const ContactForm = () => {
       theme: "dark",
       transition: Slide,
     })) : (
-      toast.error('Unexpected error occured.', {
+      toast.error(t('message_error'), {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -106,7 +108,7 @@ const ContactForm = () => {
       >
         <div>
           <label className="text-sm text-white font-medium block mb-2">
-            Email
+            {t('email')}
           </label>
       
           <input
@@ -118,7 +120,9 @@ const ContactForm = () => {
           />
   
           {errors.email ? (
-            <div className="text-red-1 pt-1">{errors.email.message}</div>
+            <div className="text-red-1 pt-1">
+              {t(errors.email.message || '')}
+            </div>
           ) : (
             <div className="pt-1 h-7" />
           )}
@@ -126,13 +130,13 @@ const ContactForm = () => {
 
         <div>
           <label className="text-sm text-white font-medium block mb-2">
-            Subject
+            {t('subject')}
           </label>
     
           <input 
             {...register("subject")}
             type="text"
-            placeholder="Hi"
+            placeholder={t('subject_placeholder')}
             autoComplete="off"
             className={`w-full py-2 px-3 rounded-lg bg-form-bg text-sm 
             text-white outline outline-1 outline-form-outline
@@ -140,7 +144,9 @@ const ContactForm = () => {
           />
 
           {errors.subject ? (
-            <div className="text-red-1 pt-1">{errors.subject.message}</div>
+            <div className="text-red-1 pt-1">
+              {t(errors.subject.message || '')}
+            </div>
           ) : (
             <div className="pt-1 h-7" />
           )}
@@ -148,12 +154,12 @@ const ContactForm = () => {
 
         <div className="pb-2">
           <label className="text-sm text-white font-medium block mb-2">
-            Message
+            {t('message')}
           </label>
     
           <textarea
             {...register("message")}
-            placeholder="Let's talk about..."
+            placeholder={t('message_placeholder')}
             autoComplete="off"
             className={`w-full py-2 px-3 rounded-lg bg-form-bg text-sm 
             text-white outline outline-1 outline-form-outline resize-none
@@ -161,7 +167,7 @@ const ContactForm = () => {
           />
 
           {errors.message ? (
-            <div className="text-red-1">{errors.message.message}</div>
+            <div className="text-red-1">{t(errors.message.message || '')}</div>
           ) : (
             <div className="pt-2 h-6" />
           )}
@@ -174,7 +180,7 @@ const ContactForm = () => {
             py-2.5 px-5 text-white font-medium
             bg-button-main rounded-lg hover:bg-blood transition-all"
         >
-          {isLoading ? <Loader /> : 'Send Message'}
+          {isLoading ? <Loader /> : t('send_message')}
         </button>
       </form>
     </div>

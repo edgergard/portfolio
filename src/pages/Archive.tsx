@@ -4,8 +4,11 @@ import { HashLink } from 'react-router-hash-link';
 import { ProjectsCardList } from '../components/Projects';
 import { useEffect } from 'react';
 import { scrollTop } from '../utils/helpers';
+import { useTranslation } from 'react-i18next';
 
 const Archive = () => {
+  const { t } = useTranslation();
+
   useEffect(() => scrollTop());
 
   return (
@@ -24,12 +27,12 @@ const Archive = () => {
           />
 
           <p className="text-lg text-text-secondary group-hover:text-white">
-            Home
+            {t('home')}
           </p>
         </HashLink>
 
         <h1 className="text-white text-2xl md:text-4xl font-bold">
-          Projects Archive
+          {t('projects_archive')}
         </h1>
       </div>
 
