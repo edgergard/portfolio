@@ -65,8 +65,6 @@ const Header = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-x-8">
-          <LocaleButton />
-
           <ul className="flex gap-8">
             {NAV_LINKS.map(({ title, path }, index) => (
               <li key={index}>
@@ -74,6 +72,8 @@ const Header = () => {
               </li>
             ))}
           </ul>
+
+          <LocaleButton />
         </div>
       </div>
 

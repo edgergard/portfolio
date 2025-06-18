@@ -1,13 +1,13 @@
 import { useState } from "react";
 import TabButton from "./TabButton";
 import AboutList from "./AboutList";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 export enum TabNames {
   Skills = 0,
   Education = 1,
-  Experience = 2
+  Experience = 2,
 }
 
 const About = () => {
@@ -26,38 +26,40 @@ const About = () => {
       >
         <div className="flex flex-col">
           <h2 className="mb-4 text-2xl md:text-4xl font-bold text-white">
-            {t('about_me')}
+            {t("about_me")}
           </h2>
 
-          <p className="text-lg text-white">
-            {t('about_me_description')}
-          </p>
+          <div className="flex flex-col gap-y-4">
+            <p className="text-lg text-white">{t("about_me_description_1")}</p>
+            <p className="text-lg text-white">{t("about_me_description_2")}</p>
+            <p className="text-lg text-white">{t("about_me_description_3")}</p>
+          </div>
         </div>
 
         <div className="flex flex-col gap-x-8 lg:h-[360px]">
           <div className="flex items-start gap-x-4 md:gap-x-8 mb-2">
-            <TabButton 
+            <TabButton
               selectTab={() => setSelectedTab(TabNames.Skills)}
               selectedTab={selectedTab}
               id={TabNames.Skills}
             >
-              {t('skills')}
+              {t("skills")}
             </TabButton>
 
-            <TabButton 
+            <TabButton
               selectTab={() => setSelectedTab(TabNames.Experience)}
               selectedTab={selectedTab}
               id={TabNames.Experience}
             >
-              {t('experience')}
+              {t("experience")}
             </TabButton>
 
-            <TabButton 
+            <TabButton
               selectTab={() => setSelectedTab(TabNames.Education)}
               selectedTab={selectedTab}
               id={TabNames.Education}
             >
-              {t('education')}
+              {t("education")}
             </TabButton>
           </div>
 

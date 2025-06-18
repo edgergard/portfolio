@@ -19,7 +19,7 @@ const LocaleButton = () => {
     >
       <button
         onClick={() => handleClick(Locales.EN)}
-        className={classNames('hover:text-white transition-all', {
+        className={classNames("hover:text-white transition-all", {
           "text-white": i18n.language === Locales.EN,
         })}
       >
@@ -30,7 +30,7 @@ const LocaleButton = () => {
 
       <button
         onClick={() => handleClick(Locales.UA)}
-        className={classNames('hover:text-white transition-all', {
+        className={classNames("hover:text-white transition-all", {
           "text-white": i18n.language === Locales.UA,
         })}
       >

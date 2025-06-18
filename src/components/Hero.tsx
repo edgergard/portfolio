@@ -5,7 +5,6 @@ import { ReactLogo } from '../images';
 import { useTranslation } from 'react-i18next';
 import { CV_LINK } from '../utils/constants';
 
-
 const Hero = () => {
   const { t, i18n } = useTranslation();
 
