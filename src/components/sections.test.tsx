@@ -4,6 +4,8 @@ import '../i18n';
 import About from './About';
 import Experience from './Experience';
 import Certifications from './Certifications';
+import { Projects } from './Projects';
+import { PROJECT_LIST } from '../data/projects';
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
 vi.mock('framer-motion', () => ({
@@ -86,5 +88,38 @@ describe('Certifications', () => {
   it('has no placeholder card', () => {
     render(<Certifications />);
     expect(screen.getAllByTestId('cert-card')).toHaveLength(1);
+  });
+});
+
+describe('Projects', () => {
+  it('renders 6 rows', () => {
+    render(<Projects />);
+    expect(screen.getAllByTestId('project-row')).toHaveLength(6);
+  });
+
+  it('gives each row Live demo and Code links from the data', () => {
+    render(<Projects />);
+    const rows = screen.getAllByTestId('project-row');
+    rows.forEach((row, i) => {
+      const demo = within(row).getByRole('link', { name: /Live demo/ });
+      const code = within(row).getByRole('link', { name: /Code/ });
+      expect(demo).toHaveAttribute('href', PROJECT_LIST[i].demolink);
+      expect(code).toHaveAttribute('href', PROJECT_LIST[i].codelink);
+      expect(demo).toBeVisible();
+      expect(code).toBeVisible();
+    });
+  });
+
+  it('does not link to the archive', () => {
+    render(<Projects />);
+    const hrefs = screen.getAllByRole('link').map((a) => a.getAttribute('href'));
+    expect(hrefs.some((h) => h?.includes('/archive'))).toBe(false);
+  });
+
+  it('reverses every even row', () => {
+    render(<Projects />);
+    const rows = screen.getAllByTestId('project-row');
+    expect(rows[0]).toHaveAttribute('data-reverse', 'false');
+    expect(rows[1]).toHaveAttribute('data-reverse', 'true');
   });
 });

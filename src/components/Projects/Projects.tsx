@@ -1,25 +1,18 @@
-import ProjectCardList from "./ProjectCardList";
-import { useTranslation } from "react-i18next";
+import Section from '../layout/Section';
+import Reveal from '../layout/Reveal';
+import { PROJECT_LIST } from '../../data/projects';
+import ProjectRow from './ProjectRow';
 
-const Projects = () => {
-  const { t } = useTranslation();
-
-  return (
-    <section id="projects" className="pt-12 md:pt-24">
-      <div className="
-        flex flex-col md:flex-row justify-center items-center
-        gap-x-6 gap-y-6 pb-12"
-      >
-        <h2 className="
-          text-2xl md:text-4xl text-center text-white leading-5 font-bold"
-        >
-          {t('projects')}
-        </h2>
-      </div>
-
-      <ProjectCardList />
-    </section>
-  );
-};
+const Projects = () => (
+  <Section id="projects" index={4} labelKey="section_work">
+    <div className="grid gap-24">
+      {PROJECT_LIST.map((project, i) => (
+        <Reveal key={project.id}>
+          <ProjectRow project={project} index={i} reverse={i % 2 === 1} />
+        </Reveal>
+      ))}
+    </div>
+  </Section>
+);
 
 export default Projects;
