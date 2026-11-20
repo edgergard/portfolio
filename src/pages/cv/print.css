@@ -11,8 +11,7 @@
     color: #000 !important;
   }
 
-  header,
-  footer,
+  .site-chrome,
   .Toastify,
   .cv-no-print {
     display: none !important;

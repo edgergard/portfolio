@@ -19,7 +19,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
+    <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
       <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
         <HashLink smooth to="/#hero" className="text-ink">
           Oleksandr Bryksin

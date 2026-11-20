@@ -11,6 +11,16 @@ const Block = ({ title, children }: { title: string; children: ReactNode }) => (
   </section>
 );
 
+const Bullets = ({ items, className }: { items: string[]; className: string }) => (
+  <ul className={`${className} grid max-w-[64ch] list-none gap-2 text-base leading-[1.55] text-ink-2`}>
+    {items.map(b => (
+      <li key={b} className="relative pl-5 before:absolute before:left-0 before:text-[#5A5A60] before:content-['—']">
+        {b}
+      </li>
+    ))}
+  </ul>
+);
+
 const CvWeb = ({ doc }: { doc: CvDoc }) => {
   const { t } = useTranslation();
 
@@ -39,13 +49,16 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
                 <h3 className="text-[26px] font-medium tracking-[-0.025em]">
                   {job.role} <span className="font-normal text-muted-2">· {job.company}</span>
                 </h3>
-                <ul className="mt-4 grid max-w-[64ch] list-none gap-2 text-base leading-[1.55] text-ink-2">
-                  {job.bullets.map(b => (
-                    <li key={b} className="relative pl-5 before:absolute before:left-0 before:text-[#5A5A60] before:content-['—']">
-                      {b}
-                    </li>
-                  ))}
-                </ul>
+                <Bullets items={job.bullets} className="mt-4" />
+                {job.projects?.map(p => (
+                  <div key={p.title} data-testid="cv-project" className="mt-7">
+                    <h4 className="text-lg font-medium tracking-[-0.01em]">
+                      {p.title}
+                      {p.stack && <span className="ml-3 font-mono text-[11px] font-normal tracking-[.04em] text-muted">{p.stack}</span>}
+                    </h4>
+                    <Bullets items={p.bullets} className="mt-3" />
+                  </div>
+                ))}
               </div>
             </div>
           ))}
@@ -77,7 +90,7 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
           {doc.education.map(e => (
             <div key={e.title} className="rounded-2xl border border-line p-6">
               <div className={`${label} text-muted`}>{e.period}</div>
-              <h4 className="mt-2.5 text-lg font-medium leading-[1.35] tracking-[-0.01em]">{e.title}</h4>
+              <h3 className="mt-2.5 text-lg font-medium leading-[1.35] tracking-[-0.01em]">{e.title}</h3>
             </div>
           ))}
         </div>

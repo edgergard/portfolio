@@ -76,6 +76,7 @@ const CvPage = () => {
       <header className="mb-12">
         <h1 className="text-[clamp(44px,6vw,96px)] font-medium leading-none tracking-[-0.05em]">Oleksandr Bryksin</h1>
         <p className="mt-4 text-[clamp(20px,2vw,28px)] text-ink-2">{doc.title}</p>
+        <p className="mt-2 font-mono text-xs uppercase tracking-[.06em] text-muted-2">{doc.location}</p>
       </header>
 
       {view === 'pdf' ? <CvPdf doc={doc} /> : <CvWeb doc={doc} />}

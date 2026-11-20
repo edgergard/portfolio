@@ -3,6 +3,8 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import '../../i18n';
 import { CVS } from '../../data/cv';
+import Footer from '../../components/layout/Footer';
+import Header from '../../components/Header';
 import CvPage from '../CvPage';
 
 const Probe = () => <span data-testid="loc">{useLocation().search}</span>;
@@ -86,6 +88,30 @@ describe('CvPage', () => {
     expect(container.querySelector('object')).toBeNull();
     expect(screen.getByRole('link', { name: 'Open PDF' })).toHaveAttribute('target', '_blank');
     expect(screen.getByRole('link', { name: 'Download' })).toHaveAttribute('download');
+  });
+
+  it('shows the location and the grouped Pecode projects with titles', () => {
+    renderAt();
+    expect(screen.getByText(CVS['react-native'].location)).toBeInTheDocument();
+    const titles = CVS['react-native'].experience[0].projects!.map(p => p.title);
+    expect(titles.length).toBeGreaterThanOrEqual(3);
+    for (const title of titles) expect(screen.getByRole('heading', { level: 4, name: new RegExp(title) })).toBeInTheDocument();
+    expect(screen.getAllByTestId('cv-project')).toHaveLength(titles.length);
+  });
+
+  it('keeps the CV name outside elements the print rule hides', () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={['/cv']}>
+        <Header />
+        <CvPage />
+        <Footer />
+      </MemoryRouter>,
+    );
+    const hidden = Array.from(container.querySelectorAll('.site-chrome, .cv-no-print'));
+    expect(container.querySelector('header.site-chrome')).not.toBeNull();
+    expect(container.querySelector('footer.site-chrome')).not.toBeNull();
+    const h1 = screen.getByRole('heading', { level: 1, name: 'Oleksandr Bryksin' });
+    expect(hidden.some(el => el.contains(h1))).toBe(false);
   });
 
   it('scrolls to top on mount', () => {
