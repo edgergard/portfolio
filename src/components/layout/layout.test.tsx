@@ -1,10 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import i18n from '../../i18n';
 import Header from '../Header';
 import Section from './Section';
 import Footer from './Footer';
+
+afterEach(async () => {
+  await i18n.changeLanguage('en');
+  localStorage.clear();
+});
 
 const renderHeader = () =>
   render(
@@ -19,6 +24,7 @@ describe('Header', () => {
     for (const name of ['Work', 'Experience', 'About', 'Contact', 'CV']) {
       expect(screen.getByRole('link', { name })).toBeInTheDocument();
     }
+
     expect(screen.getByRole('link', { name: 'CV' }).getAttribute('href')).toMatch(/\/cv$/);
   });
 
@@ -26,7 +32,6 @@ describe('Header', () => {
     renderHeader();
     fireEvent.click(screen.getByRole('button', { name: 'UA' }));
     expect(i18n.language).toBe('ua');
-    i18n.changeLanguage('en');
   });
 });
 

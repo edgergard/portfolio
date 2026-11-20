@@ -12,8 +12,8 @@ const CVS = [
   { key: 'contact_cv_fe', file: 'oleksandr-bryksin-frontend-cv.pdf' },
 ];
 
-const rowClass =
-  'flex justify-between border-b border-line py-5 text-lg transition-[padding,color] duration-300 hover:pl-3 hover:text-wine-3';
+const rowClass
+  = 'flex justify-between border-b border-line py-5 text-lg transition-[padding,color] duration-300 hover:pl-3 hover:text-wine-3';
 const arrowClass = 'font-mono text-xs uppercase tracking-[.06em] text-muted';
 
 const Contact = () => {

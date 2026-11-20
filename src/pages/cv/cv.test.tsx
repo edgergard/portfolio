@@ -33,6 +33,7 @@ const mockNarrow = (matches: boolean) =>
   );
 
 const scrollTo = vi.fn();
+
 beforeEach(() => {
   window.scrollTo = scrollTo as unknown as typeof window.scrollTo;
   scrollTo.mockClear();
@@ -70,6 +71,7 @@ describe('CvPage', () => {
   it('Download PDF links to the selected PDF with the download attribute', () => {
     renderAt('?v=frontend');
     const link = screen.getByRole('link', { name: /Download PDF/ });
+
     expect(link.getAttribute('href')).toMatch(/oleksandr-bryksin-frontend-cv\.pdf$/);
     expect(link).toHaveAttribute('download');
   });
@@ -78,6 +80,7 @@ describe('CvPage', () => {
     mockNarrow(false);
     const { container } = renderAt('?view=pdf');
     const obj = container.querySelector('object[type="application/pdf"]');
+
     expect(obj).not.toBeNull();
     expect(obj?.getAttribute('data')).toMatch(/oleksandr-bryksin-react-native-cv\.pdf/);
   });
@@ -85,6 +88,7 @@ describe('CvPage', () => {
   it('PDF view on mobile shows Open PDF and Download links, no <object>', () => {
     mockNarrow(true);
     const { container } = renderAt('?view=pdf');
+
     expect(container.querySelector('object')).toBeNull();
     expect(screen.getByRole('link', { name: 'Open PDF' })).toHaveAttribute('target', '_blank');
     expect(screen.getByRole('link', { name: 'Download' })).toHaveAttribute('download');
@@ -94,8 +98,12 @@ describe('CvPage', () => {
     renderAt();
     expect(screen.getByText(CVS['react-native'].location)).toBeInTheDocument();
     const titles = CVS['react-native'].experience[0].projects!.map(p => p.title);
+
     expect(titles.length).toBeGreaterThanOrEqual(3);
-    for (const title of titles) expect(screen.getByRole('heading', { level: 4, name: new RegExp(title) })).toBeInTheDocument();
+    for (const title of titles) {
+      expect(screen.getByRole('heading', { level: 4, name: new RegExp(title) })).toBeInTheDocument();
+    }
+
     expect(screen.getAllByTestId('cv-project')).toHaveLength(titles.length);
   });
 
@@ -108,9 +116,11 @@ describe('CvPage', () => {
       </MemoryRouter>,
     );
     const hidden = Array.from(container.querySelectorAll('.site-chrome, .cv-no-print'));
+
     expect(container.querySelector('header.site-chrome')).not.toBeNull();
     expect(container.querySelector('footer.site-chrome')).not.toBeNull();
     const h1 = screen.getByRole('heading', { level: 1, name: 'Oleksandr Bryksin' });
+
     expect(hidden.some(el => el.contains(h1))).toBe(false);
   });
 

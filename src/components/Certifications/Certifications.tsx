@@ -20,7 +20,7 @@ const Certifications = () => {
               <div className="font-mono text-xs uppercase tracking-[.08em] text-muted">
                 {cert.issuer} · {t('cert_title')}
               </div>
-              <div className="text-right">
+              <div className="text-right leading-[normal]">
                 <div className="font-mono text-xs uppercase tracking-[.08em] text-muted">{t('cert_score')}</div>
                 <b className="text-[34px] font-medium tracking-[-0.03em]">
                   {cert.score}
@@ -38,7 +38,7 @@ const Certifications = () => {
               {cert.parts.map(part => (
                 <div
                   key={part.labelKey}
-                  className="grid grid-cols-[90px_1fr_36px] items-center gap-3.5 text-sm text-ink-2"
+                  className="grid grid-cols-[90px_1fr_36px] items-center gap-3.5 text-sm leading-[normal] text-ink-2"
                 >
                   <span>{t(part.labelKey)}</span>
                   <i
@@ -50,13 +50,13 @@ const Certifications = () => {
                 </div>
               ))}
             </div>
-            <div className="flex items-center justify-between border-t border-line pt-5">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-line pt-5">
               <span className="font-mono text-xs uppercase tracking-[.08em] text-muted">{t(cert.awardedKey)}</span>
               <a
                 href={cert.url}
                 target="_blank"
                 rel="noreferrer"
-                className="border-b border-wine pb-[3px] text-sm font-medium"
+                className="whitespace-nowrap border-b border-wine pb-[3px] text-sm font-medium"
               >
                 {t('cert_view')} <span aria-hidden>↗</span>
               </a>

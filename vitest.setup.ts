@@ -4,9 +4,9 @@ import { afterEach } from 'vitest';
 
 afterEach(() => cleanup());
 
-window.matchMedia =
-  window.matchMedia ||
-  ((query: string) =>
+window.matchMedia
+  = window.matchMedia
+  || ((query: string) =>
     ({
       matches: false,
       media: query,
@@ -26,5 +26,5 @@ class IntersectionObserverStub {
     return [];
   }
 }
-(globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
-  IntersectionObserverStub;
+(globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver
+  = IntersectionObserverStub;

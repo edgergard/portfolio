@@ -8,7 +8,9 @@ const scene = vi.hoisted(() => ({ fail: false }));
 
 vi.mock('@react-three/fiber', () => ({
   Canvas: ({ frameloop }: { frameloop?: string }) => {
-    if (scene.fail) throw new Error('Error creating WebGL context.');
+    if (scene.fail) {
+      throw new Error('Error creating WebGL context.');
+    }
 
     return <div data-testid="canvas" data-frameloop={frameloop} />;
   },
@@ -82,6 +84,12 @@ describe('Hero', () => {
   it('renders a live scene by default', async () => {
     renderHero();
     expect(await screen.findByTestId('canvas')).not.toHaveAttribute('data-frameloop', 'never');
+  });
+
+  it('mounts the scene only after the page is idle', async () => {
+    renderHero();
+    expect(screen.queryByTestId('canvas')).not.toBeInTheDocument();
+    expect(await screen.findByTestId('canvas')).toBeInTheDocument();
   });
 
   it('renders a single static frame when reduced motion is preferred', async () => {

@@ -10,16 +10,18 @@ const useNarrow = () => {
   useEffect(() => {
     const mq = window.matchMedia(NARROW_QUERY);
     const onChange = () => setNarrow(mq.matches);
+
     onChange();
     mq.addEventListener('change', onChange);
+
     return () => mq.removeEventListener('change', onChange);
   }, []);
 
   return narrow;
 };
 
-const btn =
-  'inline-flex rounded-full border border-chip px-6 py-3.5 text-sm font-medium transition-colors hover:border-wine-2';
+const btn
+  = 'inline-flex rounded-full border border-chip px-6 py-3.5 text-sm font-medium transition-colors hover:border-wine-2';
 
 export const pdfHref = (doc: CvDoc) => `${import.meta.env.BASE_URL}cv/${doc.pdf}`;
 

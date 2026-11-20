@@ -14,6 +14,7 @@ export const useCvParams = () => {
 
   const update = (key: 'v' | 'view', value: string) => {
     const next = new URLSearchParams(params);
+
     next.set(key, value);
     setParams(next, { replace: true });
   };

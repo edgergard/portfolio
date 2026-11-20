@@ -42,7 +42,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
           {stack.map((tech) => (
             <li
               key={tech}
-              className="rounded-full border border-chip px-2.5 py-[5px] font-mono text-[11px] uppercase tracking-[.04em] text-[#C9C9CE]"
+              className="rounded-full border border-chip px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-[#C9C9CE]"
             >
               {tech}
             </li>

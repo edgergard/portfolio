@@ -55,6 +55,7 @@ describe('content data', () => {
       ]),
     ];
     const missing = keys.filter(k => !(k in en));
+
     expect(missing).toEqual([]);
   });
 
@@ -65,6 +66,7 @@ describe('content data', () => {
         (typeof mod === 'string' ? mod : mod.default).includes(phone),
       )
       .map(([path]) => path);
+
     expect(offenders).toEqual([]);
   });
 });

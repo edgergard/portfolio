@@ -21,7 +21,7 @@ const Experience = () => {
             />
             <div className="pt-2 font-mono text-xs uppercase tracking-[.06em] text-muted-2">{t(job.periodKey)}</div>
             <div>
-              <h3 className="text-[26px] font-medium tracking-[-0.025em]">
+              <h3 className="text-[26px] font-medium leading-[normal] tracking-[-0.025em]">
                 {t(job.roleKey)}{' '}
                 <span className="font-normal text-muted-2">· {job.companyKey ? t(job.companyKey) : job.company}</span>
               </h3>
@@ -36,7 +36,7 @@ const Experience = () => {
                 {job.stack.map(tag => (
                   <span
                     key={tag}
-                    className="rounded-full border border-chip px-2.5 py-[5px] font-mono text-[11px] uppercase tracking-[.04em] text-[#C9C9CE]"
+                    className="rounded-full border border-chip px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-[#C9C9CE]"
                   >
                     {tag}
                   </span>

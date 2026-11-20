@@ -27,9 +27,50 @@ const usePrefersReducedMotion = () => {
   return reduced;
 };
 
+/**
+ * Flips to true once the page has loaded and the main thread is idle, so the 3D chunk
+ * (parse + shader compile) runs after the text has painted. Safari has no
+ * requestIdleCallback, hence the timeout fallback.
+ */
+const useIdleMount = () => {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let idleId: number | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => {
+      if (typeof window.requestIdleCallback === 'function') {
+        idleId = window.requestIdleCallback(() => setReady(true), { timeout: 2000 });
+      } else {
+        timer = setTimeout(() => setReady(true), 200);
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      schedule();
+    } else {
+      window.addEventListener('load', schedule, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener('load', schedule);
+
+      if (idleId !== undefined) {
+        window.cancelIdleCallback(idleId);
+      }
+
+      clearTimeout(timer);
+    };
+  }, []);
+
+  return ready;
+};
+
 /** True only if a WebGL context can actually be created (not just when the API exists). */
 const hasWebGL = () => {
-  if (typeof window.WebGLRenderingContext === 'undefined') return false;
+  if (typeof window.WebGLRenderingContext === 'undefined') {
+    return false;
+  }
 
   try {
     const canvas = document.createElement('canvas');
@@ -80,6 +121,7 @@ const Hero = () => {
   const [fps, setFps] = useState<number | null>(null);
   // Probe once: Hero re-renders with every fps update.
   const [webGL] = useState(hasWebGL);
+  const sceneReady = useIdleMount();
 
   return (
     <section
@@ -116,14 +158,16 @@ const Hero = () => {
         </div>
 
         <div className="relative h-[45vh] border-t border-line min-[900px]:h-auto min-[900px]:border-l min-[900px]:border-t-0">
-          {webGL ? (
+          {!webGL ? (
+            <WineFallback data-testid="hero-fallback" />
+          ) : sceneReady ? (
             <SceneBoundary>
               <Suspense fallback={<WineFallback />}>
                 <HeroScene reducedMotion={reducedMotion} onFps={setFps} />
               </Suspense>
             </SceneBoundary>
           ) : (
-            <WineFallback data-testid="hero-fallback" />
+            <WineFallback />
           )}
 
           <Cross className="-left-1.5 -top-1.5" />

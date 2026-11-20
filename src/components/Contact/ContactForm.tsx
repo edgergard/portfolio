@@ -72,7 +72,7 @@ const ContactForm = () => {
         draggable: true,
         progress: undefined,
         theme: "dark",
-      className: TOAST_CLASS,
+        className: TOAST_CLASS,
         transition: Slide,
       })
     );

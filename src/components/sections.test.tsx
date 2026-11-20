@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import '../i18n';
 import About from './About';
 import Experience from './Experience';
@@ -44,6 +44,7 @@ describe('Experience', () => {
   it('renders the jobs in order', () => {
     render(<Experience />);
     const rows = screen.getAllByTestId('xp-row');
+
     expect(rows).toHaveLength(3);
     expect(within(rows[0]).getByText(/Pecode/)).toBeInTheDocument();
     expect(within(rows[1]).getByText(/HYS Enterprise/)).toBeInTheDocument();
@@ -53,6 +54,7 @@ describe('Experience', () => {
   it('shows the Pecode period and five bullets, without a Current marker', () => {
     render(<Experience />);
     const pecode = screen.getAllByTestId('xp-row')[0];
+
     expect(within(pecode).getAllByRole('listitem')).toHaveLength(5);
     expect(screen.getByText('Oct 2025 — Oct 2026')).toBeVisible();
     expect(screen.queryByText('Current')).not.toBeInTheDocument();
@@ -80,6 +82,7 @@ describe('Certifications', () => {
   it('sizes bars by value over max', () => {
     render(<Certifications />);
     const bars = screen.getAllByTestId('cert-bar');
+
     expect(bars[0]).toHaveStyle('--w: 72%');
     expect(bars[1]).toHaveStyle('--w: 76%');
   });
@@ -87,6 +90,7 @@ describe('Certifications', () => {
   it('links to the certificate in a new tab', () => {
     render(<Certifications />);
     const link = screen.getByRole('link', { name: /View certificate/ });
+
     expect(link).toHaveAttribute('href', 'https://cert.efset.org/en/oWhPgz');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link.getAttribute('rel')).toContain('noreferrer');
@@ -107,9 +111,11 @@ describe('Projects', () => {
   it('gives each row Live demo and Code links from the data', () => {
     render(<Projects />);
     const rows = screen.getAllByTestId('project-row');
+
     rows.forEach((row, i) => {
       const demo = within(row).getByRole('link', { name: /Live demo/ });
       const code = within(row).getByRole('link', { name: /Code/ });
+
       expect(demo).toHaveAttribute('href', PROJECT_LIST[i].demolink);
       expect(code).toHaveAttribute('href', PROJECT_LIST[i].codelink);
       expect(demo).toBeVisible();
@@ -120,18 +126,25 @@ describe('Projects', () => {
   it('does not link to the archive', () => {
     render(<Projects />);
     const hrefs = screen.getAllByRole('link').map((a) => a.getAttribute('href'));
+
     expect(hrefs.some((h) => h?.includes('/archive'))).toBe(false);
   });
 
   it('reverses every even row', () => {
     render(<Projects />);
     const rows = screen.getAllByTestId('project-row');
+
     expect(rows[0]).toHaveAttribute('data-reverse', 'false');
     expect(rows[1]).toHaveAttribute('data-reverse', 'true');
   });
 });
 
 describe('Contact', () => {
+  beforeEach(() => {
+    vi.mocked(emailjs.sendForm).mockReset();
+    vi.mocked(emailjs.sendForm).mockResolvedValue({ status: 200, text: 'OK' });
+  });
+
   const renderContact = () =>
     render(
       <HashRouter>
@@ -153,10 +166,13 @@ describe('Contact', () => {
     for (const name of [/LinkedIn/, /GitHub/, /Telegram/]) {
       expect(screen.getByRole('link', { name })).toBeInTheDocument();
     }
+
     const rn = screen.getByRole('link', { name: /CV · React Native/ });
+
     expect(rn).toHaveAttribute('href', '/cv/oleksandr-bryksin-react-native-cv.pdf');
     expect(rn).toHaveAttribute('download');
     const fe = screen.getByRole('link', { name: /CV · Frontend/ });
+
     expect(fe).toHaveAttribute('href', '/cv/oleksandr-bryksin-frontend-cv.pdf');
     expect(fe).toHaveAttribute('download');
   });
@@ -177,13 +193,17 @@ describe('Contact', () => {
 
   it('disables the button and sets aria-busy while sending', async () => {
     let resolve!: () => void;
-    vi.mocked(emailjs.sendForm).mockReturnValueOnce(new Promise<never>((r) => { resolve = () => r(undefined as never); }));
+
+    vi.mocked(emailjs.sendForm).mockReturnValueOnce(new Promise<never>((r) => {
+      resolve = () => r(undefined as never);
+    }));
     renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     const busy = await screen.findByRole('button', { name: 'Sending…' });
+
     expect(busy).toBeDisabled();
     expect(busy).toHaveAttribute('aria-busy', 'true');
     resolve();

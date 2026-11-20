@@ -22,7 +22,7 @@ const About = () => {
               className="pt-6 min-[900px]:border-l min-[900px]:border-line min-[900px]:px-6 min-[900px]:first:border-l-0 min-[900px]:first:pl-0"
             >
               <div className="font-mono text-xs uppercase tracking-[.06em] text-muted">{t(fact.labelKey)}</div>
-              <div className="mt-2.5 text-[32px] font-medium tracking-[-0.03em]">
+              <div className="mt-2.5 text-[32px] font-medium leading-[normal] tracking-[-0.03em]">
                 {fact.value}
                 <small className="ml-1 text-[15px] font-normal text-muted-2">{t(fact.unitKey)}</small>
               </div>
@@ -34,7 +34,7 @@ const About = () => {
           {SKILLS.map(group => (
             <div key={group.titleKey}>
               <div className="font-mono text-xs uppercase tracking-[.06em] text-muted">{t(group.titleKey)}</div>
-              <ul className="mt-3.5 grid list-none gap-2 text-base">
+              <ul className="mt-3.5 grid list-none gap-2 text-base leading-[normal]">
                 {group.items.map(item => (
                   <li key={item} className="flex items-center gap-2.5 before:size-1 before:shrink-0 before:rounded-full before:bg-[#5A5A60] before:content-['']">
                     {item}
