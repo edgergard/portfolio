@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { EMAIL, SOCIALS, type Social } from '../../data/content';
+import { EMAIL, PHONE, SOCIALS, type Social } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
 import ContactForm from './ContactForm';
 import CopyButton from './CopyButton';
-import { ArrowDownIcon, ArrowUpRightIcon, BrandIcon, DocumentIcon, type Brand } from './icons';
+import { ArrowDownIcon, ArrowUpRightIcon, BrandIcon, DocumentIcon, PhoneIcon, type Brand } from './icons';
 
 const CV_BASE = `${import.meta.env.BASE_URL}cv/`;
 
@@ -75,7 +75,6 @@ const Group = ({ id, title, children }: { id: string; title: string; children: R
 
 const Contact = () => {
   const { t } = useTranslation();
-  const whatsapp = social('whatsapp');
 
   return (
     <Section id="contact" index={5} labelKey="section_contact">
@@ -95,14 +94,15 @@ const Contact = () => {
                 </a>
                 <CopyButton value={EMAIL} labelKey="contact_copy_email" />
               </li>
-              <ProfileRow id="telegram" />
               <li className={ROW}>
-                <Tile><BrandIcon brand="whatsapp" /></Tile>
-                <span className="flex min-w-0 flex-1">
-                  <Text name={whatsapp.label} handle={whatsapp.handle} />
-                </span>
-                <CopyButton value={whatsapp.handle} labelKey="contact_copy_whatsapp" />
+                <a href={PHONE.href} className={MAIN}>
+                  <Tile><PhoneIcon /></Tile>
+                  <Text name={t('contact_phone_name')} handle={PHONE.display} />
+                </a>
+                <CopyButton value={PHONE.e164} labelKey="contact_copy_phone" />
               </li>
+              <ProfileRow id="telegram" />
+              <ProfileRow id="whatsapp" />
             </Group>
 
             <Group id="contact-profiles" title={t('contact_group_profiles')}>

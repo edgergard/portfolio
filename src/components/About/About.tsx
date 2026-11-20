@@ -2,18 +2,23 @@ import { useTranslation } from 'react-i18next';
 import { FACTS, SKILLS } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section, { COLUMN } from '../layout/Section';
+import WineSurface from '../Wine/WineSurface';
 
 const Skills = () => {
   const { t } = useTranslation();
 
   return (
     <Reveal className="mt-14">
-      {/* Full-bleed wine band; the inner column keeps labels and pills on the section's grid. */}
+      {/*
+        Full-bleed band with the hero's live Wine shader; the CSS wine-flow fill shows underneath
+        while it loads or without WebGL. The inner column keeps labels and pills on the section's grid.
+      */}
       <div
         data-testid="skills-panel"
         className="bg-wine-flow border-y border-white/10 py-10 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none min-[900px]:py-14"
       >
-        <div data-testid="skills-column" className={COLUMN}>
+        <WineSurface />
+        <div data-testid="skills-column" className={`relative ${COLUMN}`}>
           <h3 className="font-mono text-[13px] font-normal uppercase tracking-[.08em] text-white/85">
             {t('about_skills_heading')}
           </h3>

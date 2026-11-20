@@ -51,6 +51,19 @@ describe('About', () => {
     expect(within(panel).getByText('TanStack Query')).toBeInTheDocument();
   });
 
+  it('layers the hero Wine shader over the CSS fill, under the pills', () => {
+    render(<About />);
+    const panel = screen.getByTestId('skills-panel');
+    const layer = within(panel).getByTestId('wine-surface');
+
+    expect(panel).toHaveClass('bg-wine-flow');
+    expect(layer).toHaveClass('absolute', 'inset-0');
+    // The column comes after the layer and is positioned, so it paints on top.
+    expect(layer.compareDocumentPosition(within(panel).getByTestId('skills-column')))
+      .toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(within(panel).getByTestId('skills-column')).toHaveClass('relative');
+  });
+
   it('runs the skills panel full-bleed with its content on the centred column', () => {
     render(<About />);
     const panel = screen.getByTestId('skills-panel');
@@ -230,8 +243,9 @@ describe('Contact', () => {
     const direct = screen.getByRole('list', { name: 'Direct' });
     const profiles = screen.getByRole('list', { name: 'Profiles & documents' });
 
-    expect(within(direct).getAllByRole('listitem')).toHaveLength(3);
+    expect(within(direct).getAllByRole('listitem')).toHaveLength(4);
     expect(within(direct).getByText('Email')).toBeInTheDocument();
+    expect(within(direct).getByText('Phone')).toBeInTheDocument();
     expect(within(direct).getByText('Telegram')).toBeInTheDocument();
     expect(within(direct).getByText('WhatsApp')).toBeInTheDocument();
     expect(within(profiles).getByText('LinkedIn')).toBeInTheDocument();
@@ -239,10 +253,11 @@ describe('Contact', () => {
     expect(within(profiles).getByText('CV')).toBeInTheDocument();
   });
 
-  it('links Telegram, LinkedIn and both GitHub profiles in a new tab', () => {
+  it('links Telegram, WhatsApp, LinkedIn and both GitHub profiles in a new tab', () => {
     renderContact();
     const expected: [RegExp, string][] = [
       [/Telegram @oleksandrbryksin/, 'https://t.me/oleksandrbryksin'],
+      [/WhatsApp @oleksandrbryksin/, 'https://wa.me/380635383049'],
       [/LinkedIn/, 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/'],
       [/GitHub edgergard/, 'https://github.com/edgergard'],
       [/GitHub edgelordxd/, 'https://github.com/edgelordxd?tab=repositories'],
@@ -257,14 +272,24 @@ describe('Contact', () => {
     }
   });
 
-  it('shows the WhatsApp handle with a copy action and no link', () => {
+  it('shows the phone number as a tel: link with a copy action', () => {
+    renderContact();
+    const direct = screen.getByRole('list', { name: 'Direct' });
+    const row = within(direct).getByText('Phone').closest('li')!;
+    const link = within(row).getByRole('link', { name: /Phone \+380 63 538 3049/ });
+
+    expect(link).toHaveAttribute('href', 'tel:+380635383049');
+    expect(link).not.toHaveAttribute('target');
+    expect(within(row).getByRole('button', { name: 'Copy phone number' })).toBeInTheDocument();
+  });
+
+  it('opens the WhatsApp chat on wa.me in a new tab, with no copy action', () => {
     renderContact();
     const direct = screen.getByRole('list', { name: 'Direct' });
     const row = within(direct).getByText('WhatsApp').closest('li')!;
 
-    expect(within(row).getByText('@oleksandrbryksin')).toBeInTheDocument();
-    expect(within(row).queryByRole('link')).not.toBeInTheDocument();
-    expect(within(row).getByRole('button', { name: /Copy/ })).toBeInTheDocument();
+    expect(within(row).getByRole('link')).toHaveAttribute('href', 'https://wa.me/380635383049');
+    expect(within(row).queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('copies the email address and briefly shows Copied', async () => {
@@ -282,17 +307,17 @@ describe('Contact', () => {
     expect(screen.getAllByRole('status').map(s => s.textContent)).toContain('Copied to clipboard');
   });
 
-  it('copies the WhatsApp handle', async () => {
+  it('copies the phone number', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
 
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
     renderContact();
-    fireEvent.click(screen.getByRole('button', { name: 'Copy WhatsApp handle' }));
-    expect(writeText).toHaveBeenCalledWith('@oleksandrbryksin');
+    fireEvent.click(screen.getByRole('button', { name: 'Copy phone number' }));
+    expect(writeText).toHaveBeenCalledWith('+380635383049');
     expect(await screen.findByText('Copied')).toBeInTheDocument();
   });
 
-  it('offers both CV downloads and links View CV to the cv page, with no phone', () => {
+  it('offers both CV downloads and links View CV to the cv page', () => {
     renderContact();
     const rn = screen.getByRole('link', { name: /CV · React Native/ });
 
@@ -303,7 +328,6 @@ describe('Contact', () => {
     expect(fe).toHaveAttribute('href', '/cv/oleksandr-bryksin-frontend-cv.pdf');
     expect(fe).toHaveAttribute('download');
     expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
-    expect(screen.queryByText(/\+380/)).not.toBeInTheDocument();
   });
 
   it('titles the form, shows the status line and the Telegram hint', () => {

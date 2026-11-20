@@ -1,9 +1,10 @@
-import { memo, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ACESFilmicToneMapping, type Texture } from 'three';
 import Knot from './Knot';
 import WineBackdrop from './WineBackdrop';
 import { motionSpeed } from './motion';
+import { useOnScreen } from './sceneSupport';
 import { useHeroPointer } from './useHeroPointer';
 import { buildStudioEnvironment, whenProgramsReady } from './warmup';
 
@@ -91,36 +92,6 @@ const FpsMeter = ({ onFps }: { onFps: (fps: number) => void }) => {
   });
 
   return null;
-};
-
-/** True while the element intersects the viewport and the tab is visible. */
-const useOnScreen = (ref: RefObject<HTMLElement>) => {
-  const [intersecting, setIntersecting] = useState(true);
-  const [pageVisible, setPageVisible] = useState(() => !document.hidden);
-
-  useEffect(() => {
-    const el = ref.current;
-
-    if (!el) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(([entry]) => setIntersecting(entry.isIntersecting));
-
-    observer.observe(el);
-
-    return () => observer.disconnect();
-  }, [ref]);
-
-  useEffect(() => {
-    const onChange = () => setPageVisible(!document.hidden);
-
-    document.addEventListener('visibilitychange', onChange);
-
-    return () => document.removeEventListener('visibilitychange', onChange);
-  }, []);
-
-  return intersecting && pageVisible;
 };
 
 const HeroScene = ({ reducedMotion, onFps }: Props) => {

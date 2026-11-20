@@ -6,14 +6,10 @@ import {
   EDUCATION,
   FACTS,
   JOBS,
+  PHONE,
   SKILLS,
   SOCIALS,
 } from './content';
-
-const sources = import.meta.glob('/src/**/*.{ts,tsx,json}', {
-  query: '?raw',
-  eager: true,
-}) as Record<string, { default: string } | string>;
 
 describe('content data', () => {
   it('lists the jobs in order', () => {
@@ -33,7 +29,7 @@ describe('content data', () => {
   it('lists the contact profiles, including WhatsApp and both GitHub accounts', () => {
     expect(SOCIALS.map(s => [s.id, s.handle, s.href])).toEqual([
       ['telegram', '@oleksandrbryksin', 'https://t.me/oleksandrbryksin'],
-      ['whatsapp', '@oleksandrbryksin', undefined],
+      ['whatsapp', '@oleksandrbryksin', 'https://wa.me/380635383049'],
       ['linkedin', 'oleksandr-bryksin', 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/'],
       ['github', 'edgergard', 'https://github.com/edgergard'],
       ['github-alt', 'edgelordxd', 'https://github.com/edgelordxd?tab=repositories'],
@@ -93,14 +89,17 @@ describe('content data', () => {
     expect(missing).toEqual([]);
   });
 
-  it('does not contain the phone number anywhere in src', () => {
-    const phone = ['38063', '5383049'].join('');
-    const offenders = Object.entries(sources)
-      .filter(([, mod]) =>
-        (typeof mod === 'string' ? mod : mod.default).includes(phone),
-      )
-      .map(([path]) => path);
+  it('publishes the phone number (the owner asked for it) as a tel: link', () => {
+    expect(PHONE).toEqual({
+      display: '+380 63 538 3049',
+      e164: '+380635383049',
+      href: 'tel:+380635383049',
+    });
+  });
 
-    expect(offenders).toEqual([]);
+  it('opens WhatsApp on the same number', () => {
+    const whatsapp = SOCIALS.find(s => s.id === 'whatsapp')!;
+
+    expect(whatsapp.href).toBe(`https://wa.me/${PHONE.e164.slice(1)}`);
   });
 });

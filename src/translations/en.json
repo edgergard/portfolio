@@ -118,6 +118,7 @@
   "contact_group_direct": "Direct",
   "contact_group_profiles": "Profiles & documents",
   "contact_email_name": "Email",
+  "contact_phone_name": "Phone",
   "contact_cv_name": "CV",
   "contact_cv_rn_short": "React Native",
   "contact_cv_fe_short": "Frontend",
@@ -126,7 +127,7 @@
   "contact_copied": "Copied",
   "contact_copied_announce": "Copied to clipboard",
   "contact_copy_email": "Copy email address",
-  "contact_copy_whatsapp": "Copy WhatsApp handle",
+  "contact_copy_phone": "Copy phone number",
   "contact_form_title": "Write a message",
   "contact_form_status": "Open to work · replies within 24h",
   "contact_form_telegram": "Or write on Telegram"

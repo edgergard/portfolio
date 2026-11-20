@@ -125,17 +125,29 @@ export const CERTIFICATES: Certificate[] = [
 
 export const EMAIL = 'oleksandrbryksin@gmail.com';
 
+/** Published at the owner's request; WhatsApp is registered on the same number. */
+export const PHONE = {
+  display: '+380 63 538 3049',
+  e164: '+380635383049',
+  href: 'tel:+380635383049',
+} as const;
+
 export type Social = {
   id: 'telegram' | 'whatsapp' | 'linkedin' | 'github' | 'github-alt';
   label: string;
   handle: string;
-  /** Profile URL; WhatsApp has none (wa.me needs a phone number), so its row offers Copy instead. */
-  href?: string;
+  /** Profile URL, opened in a new tab (WhatsApp's opens a chat on PHONE). */
+  href: string;
 };
 
 export const SOCIALS: Social[] = [
   { id: 'telegram', label: 'Telegram', handle: '@oleksandrbryksin', href: 'https://t.me/oleksandrbryksin' },
-  { id: 'whatsapp', label: 'WhatsApp', handle: '@oleksandrbryksin' },
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    handle: '@oleksandrbryksin',
+    href: `https://wa.me/${PHONE.e164.slice(1)}`,
+  },
   {
     id: 'linkedin',
     label: 'LinkedIn',

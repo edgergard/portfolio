@@ -118,6 +118,7 @@
   "contact_group_direct": "Напряму",
   "contact_group_profiles": "Профілі та документи",
   "contact_email_name": "Пошта",
+  "contact_phone_name": "Телефон",
   "contact_cv_name": "CV",
   "contact_cv_rn_short": "React Native",
   "contact_cv_fe_short": "Frontend",
@@ -126,7 +127,7 @@
   "contact_copied": "Скопійовано",
   "contact_copied_announce": "Скопійовано в буфер обміну",
   "contact_copy_email": "Копіювати адресу пошти",
-  "contact_copy_whatsapp": "Копіювати нікнейм WhatsApp",
+  "contact_copy_phone": "Копіювати номер телефону",
   "contact_form_title": "Напишіть повідомлення",
   "contact_form_status": "Відкритий до роботи · відповідаю протягом 24 год",
   "contact_form_telegram": "Або напишіть у Telegram"

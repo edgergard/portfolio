@@ -24,7 +24,7 @@ the projects section must make room for it.
 - Experience is a first-class, visible section (no longer hidden in a tab).
 - New Certifications section.
 - Project links visible without hover (touch devices).
-- Remove the phone number from the page.
+- ~~Remove the phone number from the page.~~ Reversed by the owner in round 1c: the phone is now published (see Constraints).
 - Two CVs (React Native first, Frontend second): download them, view the PDF on the site, and view an HTML version.
 
 ### Non-goals
@@ -45,6 +45,8 @@ the projects section must make room for it.
 - Two languages stay: EN (default) and UA via i18next. All new copy needs both. The UA copy is
   translated from the EN copy below; the owner reviews it.
 - Must work on mobile.
+- Phone number: allowed by the owner (round 1c, reverses the earlier "no phone" rule). Contact shows
+  +380 63 538 3049 as a tel: link with Copy, and the WhatsApp row opens https://wa.me/380635383049.
 
 ## Approaches considered
 
@@ -120,7 +122,7 @@ Sticky. Mobile: a burger menu, as today, restyled.
    The Archive page goes away, so all projects sit on the home page.
 5. **05 Contact:** big headline "Let's build something precise.", the email as a large link, a socials list
    (LinkedIn, GitHub, Telegram, CV), and the EmailJS form restyled (dark inputs, burgundy focus and button).
-   No phone number. Footer: "© year Oleksandr Bryksin · Built with React & Three.js · Back to top ↑".
+   Phone number shown (owner's round 1c decision, see Constraints). Footer: "© year Oleksandr Bryksin · Built with React & Three.js · Back to top ↑".
 
 ### CV (two versions)
 

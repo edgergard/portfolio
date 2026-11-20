@@ -1,88 +1,14 @@
-import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
+import { Component, lazy, Suspense, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import { useIdleWebGL, usePrefersReducedMotion } from './sceneSupport';
 
 // Lazy so three.js stays out of the main bundle and the text paints first.
 const HeroScene = lazy(() => import('./HeroScene'));
 
-const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
-
 /** CSS stand-in for the Wine shader (same palette), shown while loading or without WebGL. */
 const WINE_GRADIENT
   = 'radial-gradient(circle at 50% 50%, #B8233F 0%, #8B1426 28%, #3E0712 58%, #0A0A0B 88%)';
-
-const usePrefersReducedMotion = () => {
-  const [reduced, setReduced] = useState(() => window.matchMedia(REDUCED_MOTION).matches);
-
-  useEffect(() => {
-    const query = window.matchMedia(REDUCED_MOTION);
-    const onChange = () => setReduced(query.matches);
-
-    query.addEventListener('change', onChange);
-
-    return () => query.removeEventListener('change', onChange);
-  }, []);
-
-  return reduced;
-};
-
-/**
- * Flips to true once the page has loaded and the main thread is idle, so the 3D chunk
- * (parse + shader compile) runs after the text has painted. Safari has no
- * requestIdleCallback, hence the timeout fallback.
- */
-const useIdleMount = () => {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    let idleId: number | undefined;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const schedule = () => {
-      if (typeof window.requestIdleCallback === 'function') {
-        idleId = window.requestIdleCallback(() => setReady(true), { timeout: 2000 });
-      } else {
-        timer = setTimeout(() => setReady(true), 200);
-      }
-    };
-
-    if (document.readyState === 'complete') {
-      schedule();
-    } else {
-      window.addEventListener('load', schedule, { once: true });
-    }
-
-    return () => {
-      window.removeEventListener('load', schedule);
-
-      if (idleId !== undefined) {
-        window.cancelIdleCallback(idleId);
-      }
-
-      clearTimeout(timer);
-    };
-  }, []);
-
-  return ready;
-};
-
-/** True only if a WebGL context can actually be created (not just when the API exists). */
-const hasWebGL = () => {
-  if (typeof window.WebGLRenderingContext === 'undefined') {
-    return false;
-  }
-
-  try {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
-
-    // Release the probe context right away; browsers cap live contexts.
-    gl?.getExtension('WEBGL_lose_context')?.loseContext();
-
-    return gl !== null;
-  } catch {
-    return false;
-  }
-};
 
 const WineFallback = (props: { 'data-testid'?: string }) => (
   <div aria-hidden className="absolute inset-0" style={{ background: WINE_GRADIENT }} {...props} />
@@ -152,16 +78,8 @@ const Hero = () => {
   const { t } = useTranslation();
   const reducedMotion = usePrefersReducedMotion();
   const [fps, setFps] = useState<number | null>(null);
-  const idle = useIdleMount();
-  // Probed once, when idle: creating a context is a blocking GPU-process round trip.
-  // null = not probed yet (the gradient shows meanwhile).
-  const [webGL, setWebGL] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (idle) {
-      setWebGL(hasWebGL());
-    }
-  }, [idle]);
+  // Probed once, when idle (the gradient shows meanwhile).
+  const webGL = useIdleWebGL();
 
   return (
     <section
