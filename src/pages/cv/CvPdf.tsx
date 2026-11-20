@@ -44,7 +44,7 @@ const CvPdf = ({ doc }: { doc: CvDoc }) => {
   }
 
   return (
-    <object data={href} type="application/pdf" className="h-[85vh] w-full rounded-2xl border border-line">
+    <object data={href} type="application/pdf" aria-label={doc.title} title={doc.title} className="h-[85vh] w-full rounded-2xl border border-line">
       <a href={href} target="_blank" rel="noopener noreferrer" className={btn}>
         {t('cv_open_pdf')}
       </a>

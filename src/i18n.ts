@@ -19,11 +19,18 @@ const resources = {
 
 const locale = localStorage.getItem(LOCALE_STORAGES.LOCALE) || Locales.EN;
 
+const syncHtmlLang = (lng: string) => {
+  document.documentElement.lang = lng === Locales.UA ? 'uk' : 'en';
+};
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
     lng: locale,
   });
+
+syncHtmlLang(i18n.language);
+i18n.on('languageChanged', syncHtmlLang);
 
 export default i18n;

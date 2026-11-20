@@ -52,6 +52,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
         <div className="mt-6 flex gap-5 text-sm font-medium text-ink">
           <a
             href={demolink}
+            aria-label={`${t('btn_live_demo')} — ${name}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 border-b border-wine pb-[3px] transition-colors hover:border-ink"
@@ -60,6 +61,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
           </a>
           <a
             href={codelink}
+            aria-label={`${t('btn_code')} — ${name}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 border-b border-[#3A3A40] pb-[3px] transition-colors hover:border-ink"

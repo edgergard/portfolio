@@ -17,9 +17,9 @@ const Certifications = () => {
             className="grid gap-7 rounded-[20px] border border-line bg-[linear-gradient(160deg,#121214_0%,#0A0A0B_60%)] p-8 transition-colors duration-300 hover:border-[#5E0C1C]"
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="font-mono text-xs uppercase tracking-[.08em] text-muted">
+              <h3 className="font-mono text-xs font-normal uppercase tracking-[.08em] text-muted">
                 {cert.issuer} · {t('cert_title')}
-              </div>
+              </h3>
               <div className="text-right leading-[normal]">
                 <div className="font-mono text-xs uppercase tracking-[.08em] text-muted">{t('cert_score')}</div>
                 <b className="text-[34px] font-medium tracking-[-0.03em]">

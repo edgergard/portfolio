@@ -9,9 +9,9 @@ const About = () => {
   return (
     <Section id="about" index={1} labelKey="section_about">
       <Reveal>
-        <h2 className="max-w-[20ch] text-[clamp(32px,3.6vw,52px)] font-medium leading-[1.08] tracking-[-0.035em]">
+        <p className="max-w-[20ch] text-[clamp(32px,3.6vw,52px)] font-medium leading-[1.08] tracking-[-0.035em]">
           {t('about_headline_main')} <em className="not-italic text-muted-2">{t('about_headline_accent')}</em>
-        </h2>
+        </p>
         <p className="mt-10 max-w-[62ch] text-[17px] leading-[1.65] text-ink-2">{t('about_paragraph')}</p>
 
         <div className="mt-16 grid grid-cols-1 border-t border-line min-[900px]:grid-cols-4">

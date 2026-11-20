@@ -26,7 +26,7 @@ const FormSchema = z.object({
   email: z
     .string({ required_error: 'form_error_submit' })
     .min(1, { message: 'form_error_email' })
-    .email(),
+    .email({ message: 'form_error_submit' }),
   subject: z
     .string()
     .min(1, { message: 'form_error_subject' }),
@@ -48,34 +48,25 @@ const ContactForm = () => {
   const form = useRef<HTMLFormElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const showToast = (
-    success: boolean
-  ) => {
-    success ? (toast(t('message_success'), {
-      position: "bottom-right",
+  const showToast = (success: boolean) => {
+    const options = {
+      position: 'bottom-right',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "dark",
+      theme: 'dark',
       className: TOAST_CLASS,
       transition: Slide,
-    })) : (
-      toast.error(t('message_error'), {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        className: TOAST_CLASS,
-        transition: Slide,
-      })
-    );
+    } as const;
+
+    if (success) {
+      toast(t('message_success'), options);
+    } else {
+      toast.error(t('message_error'), options);
+    }
   };
 
   const sendEmail = async () => {
@@ -103,7 +94,7 @@ const ContactForm = () => {
   };
 
   const fieldClass = (invalid: boolean) =>
-    `w-full rounded-xl border bg-[#111113] px-4 py-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-muted ${
+    `w-full rounded-xl border bg-[#111113] px-4 py-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-muted focus-visible:ring-2 focus-visible:ring-wine-3 focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
       invalid ? 'border-wine-3' : 'border-[#232327] focus:border-wine'
     }`;
   const labelClass = 'grid gap-2';

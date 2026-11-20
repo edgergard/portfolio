@@ -13,7 +13,7 @@
   "project_desc_pokeapi": "Імплементація PokeAPI.",
   "project_desc_bandq": "HTML лендінг інтернет магазину.",
   "project_desc_todo": "Простий застосунок для управління завданнями з API.",
-  "form_error_submit": "Email is invalid",
+  "form_error_submit": "Некоректна адреса пошти.",
   "form_error_email": "Електронна пошта обов’язкова.",
   "form_error_subject": "Тема обов’язкова.",
   "form_error_message": "Повідомлення обов’язкове.",

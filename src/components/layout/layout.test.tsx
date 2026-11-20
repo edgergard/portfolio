@@ -43,12 +43,27 @@ describe('Section', () => {
       </Section>,
     );
     expect(screen.getByText('02')).toBeInTheDocument();
-    expect(screen.getByText('Experience')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Experience/ })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /Experience/ })).toBe(document.getElementById('experience'));
     expect(document.getElementById('experience')).toBeInTheDocument();
   });
 });
 
+describe('document language', () => {
+  it('follows the active locale', async () => {
+    await i18n.changeLanguage('ua');
+    expect(document.documentElement.lang).toBe('uk');
+    await i18n.changeLanguage('en');
+    expect(document.documentElement.lang).toBe('en');
+  });
+});
+
 describe('Footer', () => {
+  it('shows the current year', () => {
+    render(<Footer />);
+    expect(screen.getByText(new RegExp(String(new Date().getFullYear())))).toBeInTheDocument();
+  });
+
   it('contains Back to top', () => {
     render(<Footer />);
     expect(screen.getByText(/Back to top/)).toBeInTheDocument();

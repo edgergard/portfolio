@@ -69,7 +69,7 @@ const CvPage = () => {
           download
           className="inline-flex rounded-full border border-chip px-5 py-2.5 text-sm font-medium transition-colors hover:border-wine-2"
         >
-          {t('cv_download_pdf')} <span className="ml-2 font-mono text-xs text-muted">↓</span>
+          {t('cv_download_pdf')} <span aria-hidden="true" className="ml-2 font-mono text-xs text-muted">↓</span>
         </a>
       </div>
 

@@ -113,7 +113,7 @@ describe('Projects', () => {
     const rows = screen.getAllByTestId('project-row');
 
     rows.forEach((row, i) => {
-      const demo = within(row).getByRole('link', { name: /Live demo/ });
+      const demo = within(row).getByRole('link', { name: /Live demo — / });
       const code = within(row).getByRole('link', { name: /Code/ });
 
       expect(demo).toHaveAttribute('href', PROJECT_LIST[i].demolink);
@@ -154,7 +154,8 @@ describe('Contact', () => {
 
   it('renders the headline and the email link', () => {
     renderContact();
-    expect(screen.getByRole('heading', { name: /Let.s build something precise\./ })).toBeInTheDocument();
+    expect(screen.getByText(/Let.s build something precise\./)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Contact/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'oleksandrbryksin@gmail.com' })).toHaveAttribute(
       'href',
       'mailto:oleksandrbryksin@gmail.com',
@@ -189,6 +190,13 @@ describe('Contact', () => {
     expect(await screen.findByText('Subject is required.')).toBeInTheDocument();
     expect(screen.getByText('Message is required.')).toBeInTheDocument();
     expect(emailjs.sendForm).not.toHaveBeenCalled();
+  });
+
+  it('shows the translated message for an invalid email format', async () => {
+    renderContact();
+    fireEvent.change(screen.getByPlaceholderText('you@company.com'), { target: { value: 'not-an-email' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    expect(await screen.findByText('Email is invalid')).toBeInTheDocument();
   });
 
   it('disables the button and sets aria-busy while sending', async () => {

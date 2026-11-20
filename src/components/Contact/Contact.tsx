@@ -22,9 +22,9 @@ const Contact = () => {
   return (
     <Section id="contact" index={5} labelKey="section_contact">
       <Reveal>
-        <h2 className="max-w-[14ch] text-[clamp(44px,6vw,96px)] font-medium leading-none tracking-[-0.05em]">
+        <p className="max-w-[14ch] text-[clamp(44px,6vw,96px)] font-medium leading-none tracking-[-0.05em]">
           {t('contact_headline')}
-        </h2>
+        </p>
         <a
           href={`mailto:${EMAIL}`}
           className="mt-12 inline-block border-b-2 border-wine pb-1.5 text-[clamp(22px,2.4vw,34px)] font-medium tracking-[-0.02em] transition-colors hover:border-ink"
@@ -36,12 +36,12 @@ const Contact = () => {
             <div className="grid border-t border-line">
               {SOCIALS.map(s => (
                 <a key={s.id} href={s.href} target="_blank" rel="noopener noreferrer" className={rowClass}>
-                  {s.label} <span className={arrowClass}>↗</span>
+                  {s.label} <span aria-hidden="true" className={arrowClass}>↗</span>
                 </a>
               ))}
               {CVS.map(cv => (
                 <a key={cv.key} href={CV_BASE + cv.file} download className={rowClass}>
-                  {t(cv.key)} <span className={arrowClass}>↓</span>
+                  {t(cv.key)} <span aria-hidden="true" className={arrowClass}>↓</span>
                 </a>
               ))}
             </div>
