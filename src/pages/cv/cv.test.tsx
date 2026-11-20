@@ -6,6 +6,7 @@ import { act } from '@testing-library/react';
 import i18n from '../../i18n';
 import { CVS } from '../../data/cv';
 import { CVS_UA } from '../../data/cv.ua';
+import { getCv } from '../../data/cvs';
 import Footer from '../../components/layout/Footer';
 import Header from '../../components/Header';
 import CvPage from '../CvPage';
@@ -188,7 +189,14 @@ describe('CvPage localisation', () => {
       expect(ua.education).toHaveLength(en.education.length);
       expect(ua.summary).not.toBe(en.summary);
       expect(ua.pdf).toBe(en.pdf);
+      expect(ua.experience.map(j => j.company)).toEqual(en.experience.map(j => j.company));
     }
+  });
+
+  it('getCv picks UA for ua/uk codes and EN otherwise', () => {
+    expect(getCv('frontend', 'ua')).toBe(CVS_UA.frontend);
+    expect(getCv('frontend', 'uk-UA')).toBe(CVS_UA.frontend);
+    expect(getCv('frontend', 'en')).toBe(CVS.frontend);
   });
 
   it('shows the HYS role in Ukrainian UA', async () => {
@@ -196,6 +204,10 @@ describe('CvPage localisation', () => {
       await i18n.changeLanguage('ua');
     });
     renderAt();
-    expect(screen.getAllByText(/React Native \/ Frontend-розробник/).length).toBeGreaterThan(0);
+    const hys = CVS_UA['react-native'].experience.find(j => j.company === 'HYS Enterprise');
+
+    expect(hys?.role).toBe('Frontend-розробник');
+    expect(CVS_UA.frontend.experience.find(j => j.company === 'HYS Enterprise')?.role).toBe(hys?.role);
+    expect(screen.getAllByText(hys!.role).length).toBeGreaterThan(0);
   });
 });

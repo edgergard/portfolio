@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CvVariant } from '../data/cv';
-import { getCv } from '../data/cv.ua';
+import { getCv } from '../data/cvs';
 import Button from '../components/ui/Button';
 import CvPdf, { pdfHref } from './cv/CvPdf';
 import CvWeb from './cv/CvWeb';
@@ -56,7 +56,7 @@ const CvPage = () => {
   ];
   const views: Option<CvView>[] = [
     { value: 'web', label: t('cv_view_web') },
-    { value: 'pdf', label: t('cv_view_pdf') },
+    { value: 'pdf', label: `${t('cv_view_pdf')}${t('cv_pdf_note')}` },
   ];
 
   return (
@@ -67,7 +67,7 @@ const CvPage = () => {
           <Switch options={views} value={view} onChange={setView} ariaLabel={t('cv_aria_view')} />
         </div>
         <Button href={pdfHref(doc)} download>
-          {t('cv_download_pdf')} <span aria-hidden="true">↓</span>
+          {t('cv_download_pdf')}{t('cv_pdf_note')} <span aria-hidden="true">↓</span>
         </Button>
       </div>
 

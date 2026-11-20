@@ -107,6 +107,7 @@
   "cv_switch_fe": "Frontend",
   "cv_view_web": "Web",
   "cv_view_pdf": "PDF",
+  "cv_pdf_note": "",
   "cv_download_pdf": "Download PDF",
   "cv_open_pdf": "Open PDF",
   "cv_download": "Download",

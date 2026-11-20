@@ -74,7 +74,7 @@ export const CVS_UA: Record<CvVariant, CvDoc> = {
       },
       {
         company: 'HYS Enterprise',
-        role: 'React Native / Frontend-розробник',
+        role: 'Frontend-розробник',
         period: PERIOD_HYS,
         bullets: [
           'Команди з 6–9 осіб; пряме спілкування з міжнародними клієнтами англійською',
@@ -207,7 +207,7 @@ export const CVS_UA: Record<CvVariant, CvDoc> = {
         items: ['Tailwind CSS', 'SCSS', 'shadcn/ui', 'Redux Toolkit', 'Zustand', 'Pinia', 'TanStack Query', 'React Hook Form', 'VeeValidate', 'REST API', 'i18n'],
       },
       {
-        group: 'Якість веб',
+        group: 'Якість вебу',
         items: ['адаптивний дизайн', 'доступність', 'технічне SEO', 'Lighthouse', 'оптимізація зображень'],
       },
       {
@@ -229,5 +229,3 @@ export const CVS_UA: Record<CvVariant, CvDoc> = {
     languages: LANGUAGES,
   },
 };
-
-export const getCv = (variant: CvVariant, lang: string): CvDoc => (lang === 'ua' ? CVS_UA : CVS)[variant];
