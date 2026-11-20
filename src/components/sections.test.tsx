@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import '../i18n';
 import About from './About';
 import Experience from './Experience';
+import Certifications from './Certifications';
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
 vi.mock('framer-motion', () => ({
@@ -51,5 +52,39 @@ describe('Experience', () => {
   it('renders two education cards', () => {
     render(<Experience />);
     expect(screen.getAllByTestId('edu-card')).toHaveLength(2);
+  });
+});
+
+describe('Certifications', () => {
+  it('renders the EF SET level, score, bars and award date', () => {
+    render(<Certifications />);
+    expect(screen.getByText('C2')).toBeInTheDocument();
+    expect(screen.getByText('74')).toBeInTheDocument();
+    expect(screen.getByText('/100')).toBeInTheDocument();
+    expect(screen.getByText('Reading')).toBeInTheDocument();
+    expect(screen.getByText('72')).toBeInTheDocument();
+    expect(screen.getByText('Listening')).toBeInTheDocument();
+    expect(screen.getByText('76')).toBeInTheDocument();
+    expect(screen.getByText('Awarded 18 Nov 2026')).toBeInTheDocument();
+  });
+
+  it('sizes bars by value over max', () => {
+    render(<Certifications />);
+    const bars = screen.getAllByTestId('cert-bar');
+    expect(bars[0]).toHaveStyle('--w: 72%');
+    expect(bars[1]).toHaveStyle('--w: 76%');
+  });
+
+  it('links to the certificate in a new tab', () => {
+    render(<Certifications />);
+    const link = screen.getByRole('link', { name: /View certificate/ });
+    expect(link).toHaveAttribute('href', 'https://cert.efset.org/en/oWhPgz');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link.getAttribute('rel')).toContain('noreferrer');
+  });
+
+  it('has no placeholder card', () => {
+    render(<Certifications />);
+    expect(screen.getAllByTestId('cert-card')).toHaveLength(1);
   });
 });
