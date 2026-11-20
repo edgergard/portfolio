@@ -49,7 +49,7 @@ const CopyButton = ({ value, labelKey }: Props) => {
         onClick={copy}
         data-copied={copied}
         className={
-          'inline-flex h-9 shrink-0 items-center rounded-full border px-3.5 font-mono text-[13px] tracking-[.02em] '
+          'inline-flex h-9 shrink-0 items-center rounded-full border px-3 sm:px-3.5 font-mono text-[13px] tracking-[.02em] '
           + 'transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 '
           + `focus-visible:outline-ink ${state}`
         }

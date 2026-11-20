@@ -26,8 +26,8 @@ const BRAND: Record<Social['id'], Brand> = {
 const social = (id: Social['id']) => SOCIALS.find(s => s.id === id)!;
 
 const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink';
-const ROW = 'group flex items-center gap-3.5 border-b border-line py-3';
-const MAIN = `flex min-w-0 flex-1 items-center gap-3.5 rounded-lg ${FOCUS}`;
+const ROW = 'group flex items-center gap-3 sm:gap-3.5 border-b border-line py-3';
+const MAIN = `flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5 rounded-lg ${FOCUS}`;
 
 /** Round action on the right of a row; brightens with a wine border when the row is hovered. */
 const CIRCLE
@@ -43,7 +43,7 @@ const Tile = ({ children }: { children: ReactNode }) => (
 const Text = ({ name, handle }: { name: string; handle: string }) => (
   <span className="grid min-w-0">
     <span className="text-[17px] leading-snug">{name}</span>
-    <span className="font-mono text-[13px] text-muted-2 [overflow-wrap:anywhere]">{handle}</span>
+    <span className="font-mono text-[11px] text-muted-2 [overflow-wrap:anywhere] min-[420px]:text-[13px]">{handle}</span>
   </span>
 );
 
