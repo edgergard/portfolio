@@ -108,7 +108,7 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
 const Cross = ({ className }: { className: string }) => (
   <span
     aria-hidden
-    className={`pointer-events-none absolute z-[51] hidden h-[11px] w-[11px] min-[900px]:block
+    className={`pointer-events-none absolute hidden h-[11px] w-[11px] min-[900px]:block
       before:absolute before:left-[5px] before:top-0 before:h-[11px] before:w-px before:bg-ink before:content-['']
       after:absolute after:left-0 after:top-[5px] after:h-px after:w-[11px] after:bg-ink after:content-[''] ${className}`}
   />
@@ -210,8 +210,8 @@ const Hero = () => {
             <WineFallback />
           )}
 
-          <Cross className="-left-1.5 -top-1.5" />
-          <Cross className="-bottom-1.5 -left-1.5" />
+          <Cross className="-left-1.5 -top-1.5 z-[51]" />
+          <Cross className="-bottom-1.5 -left-1.5 z-[2]" />
 
           <p className="pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-muted min-[900px]:flex">
             <span>{t('hero_caption_figure')}</span>
