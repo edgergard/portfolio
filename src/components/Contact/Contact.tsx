@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import ContactForm from "./ContactForm";
 import { GithubLink, LinkedinLink, TelegramLink } from "./LinkIcons";
 
-const PHONE = '+380635383049';
 const EMAIL = 'oleksandrbryksin@gmail.com';
 
 const Contact = () => {
@@ -23,7 +22,7 @@ const Contact = () => {
         </p>
       
         <p className="mb-6 text-lg text-white">
-          {`${PHONE} / ${EMAIL}`}
+          {EMAIL}
         </p>
 
         <ul className="flex gap-x-8">
