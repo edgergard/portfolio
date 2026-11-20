@@ -1,5 +1,4 @@
 {
-  "about": "Опис",
   "projects": "Проєкти",
   "contact": "Контакти",
   "always_looking_for": "Завжди шукаю нові можливості та цікаві завдання.",
@@ -93,5 +92,10 @@
   "cert_awarded": "Видано 18 лист. 2026",
   "cert_view": "Переглянути сертифікат",
   "contact_headline": "Створімо щось точне.",
-  "contact_cv": "CV · PDF"
+  "contact_cv": "CV · PDF",
+  "nav_cv": "CV",
+  "nav_menu_open": "Відкрити меню",
+  "nav_menu_close": "Закрити меню",
+  "footer_built": "Створено на React і Three.js",
+  "footer_top": "Нагору ↑"
 }

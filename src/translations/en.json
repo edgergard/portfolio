@@ -1,5 +1,4 @@
 {
-  "about": "About",
   "projects": "Projects",
   "contact": "Contact",
   "always_looking_for": "Always looking for new opportunities and interesting tasks.",
@@ -93,5 +92,10 @@
   "cert_awarded": "Awarded 18 Nov 2026",
   "cert_view": "View certificate",
   "contact_headline": "Let’s build something precise.",
-  "contact_cv": "CV · PDF"
+  "contact_cv": "CV · PDF",
+  "nav_cv": "CV",
+  "nav_menu_open": "Open menu",
+  "nav_menu_close": "Close menu",
+  "footer_built": "Built with React & Three.js",
+  "footer_top": "Back to top ↑"
 }
