@@ -94,10 +94,31 @@ describe('Hero', () => {
     expect(await screen.findByTestId('canvas')).toBeInTheDocument();
   });
 
-  it('renders a single static frame when reduced motion is preferred', async () => {
+  it('keeps the scene animating (calmly) when reduced motion is preferred', async () => {
     stubReducedMotion(true);
     renderHero();
-    expect(await screen.findByTestId('canvas')).toHaveAttribute('data-frameloop', 'never');
+    expect(await screen.findByTestId('canvas')).toHaveAttribute('data-frameloop', 'always');
+  });
+
+  it('gives View experience the wine-flow fill and View CV an outlined button', () => {
+    renderHero();
+    expect(screen.getByRole('link', { name: /View experience/ })).toHaveClass('bg-wine-flow');
+    const cv = screen.getByRole('link', { name: 'View CV' });
+
+    expect(cv).not.toHaveClass('bg-wine-flow');
+    expect(cv).toHaveClass('border', 'rounded-full');
+  });
+
+  it('shows a green Open to work dot', () => {
+    renderHero();
+    expect(screen.getAllByTestId('open-dot')[0]).toHaveClass('bg-[#22C55E]');
+  });
+
+  it('does not mention Three.js in the lede', () => {
+    renderHero();
+    expect(screen.getByText(/I build precise mobile apps/).textContent).toBe(
+      'I build precise mobile apps with React Native & Expo and fast web products with React and Next.js.',
+    );
   });
 
   it('falls back to a gradient without WebGL', async () => {

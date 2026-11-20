@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '../../components/ui/Button';
 import type { CvDoc } from '../../data/cv';
 
 const NARROW_QUERY = '(max-width: 899px)';
@@ -20,9 +21,6 @@ const useNarrow = () => {
   return narrow;
 };
 
-const btn
-  = 'inline-flex rounded-full border border-chip px-6 py-3.5 text-sm font-medium transition-colors hover:border-wine-2';
-
 export const pdfHref = (doc: CvDoc) => `${import.meta.env.BASE_URL}cv/${doc.pdf}`;
 
 const CvPdf = ({ doc }: { doc: CvDoc }) => {
@@ -33,21 +31,21 @@ const CvPdf = ({ doc }: { doc: CvDoc }) => {
   if (narrow) {
     return (
       <div className="flex flex-wrap gap-3">
-        <a href={href} target="_blank" rel="noopener noreferrer" className={btn}>
+        <Button href={href} target="_blank" rel="noopener noreferrer" variant="outline">
           {t('cv_open_pdf')}
-        </a>
-        <a href={href} download className={btn}>
+        </Button>
+        <Button href={href} download>
           {t('cv_download')}
-        </a>
+        </Button>
       </div>
     );
   }
 
   return (
     <object data={href} type="application/pdf" aria-label={doc.title} title={doc.title} className="h-[85vh] w-full rounded-2xl border border-line">
-      <a href={href} target="_blank" rel="noopener noreferrer" className={btn}>
+      <Button href={href} target="_blank" rel="noopener noreferrer" variant="outline">
         {t('cv_open_pdf')}
-      </a>
+      </Button>
     </object>
   );
 };

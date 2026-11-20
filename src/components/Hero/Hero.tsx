@@ -1,7 +1,6 @@
 import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { HashLink } from 'react-router-hash-link';
 import { useTranslation } from 'react-i18next';
+import Button from '../ui/Button';
 
 // Lazy so three.js stays out of the main bundle and the text paints first.
 const HeroScene = lazy(() => import('./HeroScene'));
@@ -115,6 +114,40 @@ const Cross = ({ className }: { className: string }) => (
   />
 );
 
+/** Green "available" dot with a soft ring. */
+export const OpenDot = () => (
+  <i
+    aria-hidden
+    data-testid="open-dot"
+    className="inline-block h-2 w-2 shrink-0 rounded-full bg-[#22C55E] shadow-[0_0_0_4px_rgba(34,197,94,.22)]"
+  />
+);
+
+/** Splits "2.5+ yrs commercial" into a bold figure and the rest. */
+const Metric = ({ text }: { text: string }) => {
+  const [figure, ...rest] = text.split(' ');
+
+  return (
+    <span className="inline-flex items-baseline gap-1.5 rounded-full border border-[#2E2E33] bg-white/[.03] px-4 py-2 text-[15px] leading-none text-[#D4D4D8] min-[900px]:text-base">
+      <b className="font-semibold text-ink">{figure}</b>
+      {rest.join(' ')}
+    </span>
+  );
+};
+
+const OpenToWork = ({ className = '' }: { className?: string }) => {
+  const { t } = useTranslation();
+
+  return (
+    <span
+      className={`items-center gap-2.5 rounded-full border border-[rgba(34,197,94,.35)] bg-[rgba(34,197,94,.08)] px-4 py-2 text-[15px] font-medium leading-none text-ink min-[900px]:text-base ${className}`}
+    >
+      <OpenDot />
+      {t('hero_open')}
+    </span>
+  );
+};
+
 const Hero = () => {
   const { t } = useTranslation();
   const reducedMotion = usePrefersReducedMotion();
@@ -137,8 +170,8 @@ const Hero = () => {
     >
       <div className="grid min-h-0 flex-1 grid-cols-1 min-[900px]:grid-cols-[1.05fr_1fr]">
         <div className="flex flex-col justify-center px-6 py-8 min-[900px]:px-10 min-[900px]:py-0">
-          <p className="flex items-center gap-3 font-mono text-xs uppercase tracking-[.08em] text-muted-2">
-            <i aria-hidden className="inline-block h-px w-6 shrink-0 bg-wine-2" />
+          <p className="flex items-center gap-3 font-mono text-sm uppercase tracking-[.06em] text-[#E4E4E7] min-[900px]:text-[15px]">
+            <i aria-hidden className="inline-block h-0.5 w-8 shrink-0 bg-wine-3" />
             {t('hero_eyebrow')}
           </p>
 
@@ -149,18 +182,14 @@ const Hero = () => {
 
           <p className="max-w-[34ch] text-lg leading-[1.5] text-ink-2">{t('hero_lede')}</p>
 
-          <div className="mt-9 flex items-center gap-6">
-            <HashLink
-              smooth
-              to="/#experience"
-              className="inline-flex items-center gap-2.5 rounded-full bg-wine px-[22px] py-[15px] text-sm font-medium text-ink transition duration-200 hover:-translate-y-px hover:bg-[#A8182F]"
-            >
+          <div className="mt-10 flex flex-wrap items-center gap-3.5">
+            <Button to="/#experience" size="lg" className="min-[900px]:px-8 min-[900px]:py-[18px] min-[900px]:text-[18px]">
               {t('btn_view_experience')}
               <span aria-hidden>→</span>
-            </HashLink>
-            <Link to="/cv" className="border-b border-ink pb-0.5 text-sm font-medium">
+            </Button>
+            <Button to="/cv" variant="outline" size="lg" className="min-[900px]:px-8 min-[900px]:py-[18px] min-[900px]:text-[18px]">
               {t('btn_view_cv')}
-            </Link>
+            </Button>
           </div>
         </div>
 
@@ -190,26 +219,21 @@ const Hero = () => {
             <span>{t('hero_caption_material')}</span>
             <span aria-hidden>·</span>
             <span>
-              <b className="font-medium text-ink">{reducedMotion || fps === null ? '—' : fps}</b> {t('hero_caption_fps')}
+              <b className="font-medium text-ink">{fps === null ? '—' : fps}</b> {t('hero_caption_fps')}
             </span>
           </p>
         </div>
       </div>
 
-      <div className="grid border-t border-line font-mono text-xs uppercase tracking-[.05em] text-muted-2 min-[900px]:grid-cols-[1.05fr_1fr]">
-        <div className="flex flex-wrap items-center gap-x-10 gap-y-2 px-6 py-5 min-[900px]:px-10">
-          <span>{t('hero_stat_years')}</span>
-          <span>{t('hero_stat_apps')}</span>
+      <div className="grid border-t border-line min-[900px]:grid-cols-[1.05fr_1fr]">
+        <div className="flex flex-wrap items-center gap-2.5 px-6 py-4 min-[900px]:px-10">
+          <Metric text={t('hero_stat_years')} />
+          <Metric text={t('hero_stat_apps')} />
+          <OpenToWork className="inline-flex min-[900px]:hidden" />
         </div>
-        <div className="hidden items-center justify-between border-l border-line px-10 py-5 min-[900px]:flex">
-          <span className="flex items-center">
-            <i
-              aria-hidden
-              className="mr-2.5 inline-block h-[7px] w-[7px] rounded-full bg-wine-3 shadow-[0_0_0_3px_rgba(208,33,63,.22)]"
-            />
-            {t('hero_open')}
-          </span>
-          <span>{t('hero_scroll')}</span>
+        <div className="hidden items-center justify-between border-l border-line px-10 py-4 min-[900px]:flex">
+          <OpenToWork className="inline-flex" />
+          <span className="font-mono text-xs uppercase tracking-[.06em] text-ink-2">{t('hero_scroll')}</span>
         </div>
       </div>
     </section>

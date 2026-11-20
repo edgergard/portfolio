@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { EMAIL, SOCIALS } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
+import Button from '../ui/Button';
 import ContactForm from './ContactForm';
 
 const CV_BASE = `${import.meta.env.BASE_URL}cv/`;
@@ -45,12 +45,9 @@ const Contact = () => {
                 </a>
               ))}
             </div>
-            <Link
-              to="/cv"
-              className="mt-8 inline-flex rounded-full border border-chip px-6 py-3.5 text-sm font-medium transition-colors hover:border-wine-2"
-            >
+            <Button to="/cv" variant="outline" className="mt-8">
               {t('btn_view_cv')}
-            </Link>
+            </Button>
           </div>
           <ContactForm />
         </div>

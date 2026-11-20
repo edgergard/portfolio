@@ -7,6 +7,7 @@ import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import Button from '../ui/Button';
 
 const {
   VITE_EMAILJS_SERVICE_ID,
@@ -139,14 +140,9 @@ const ContactForm = () => {
         {errors.message && <span className={errorClass}>{t(errors.message.message || '')}</span>}
       </label>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        aria-busy={isLoading}
-        className="mt-1.5 justify-self-start rounded-full bg-wine px-6 py-[15px] text-sm font-medium text-ink transition-colors hover:bg-wine-2 disabled:cursor-wait disabled:opacity-70"
-      >
+      <Button type="submit" disabled={isLoading} aria-busy={isLoading} className="mt-1.5 justify-self-start">
         {isLoading ? t('send_sending') : `${t('send_message')} →`}
-      </button>
+      </Button>
     </form>
   );
 };

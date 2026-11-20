@@ -12,11 +12,12 @@ const FOLLOW_REACH = 0.12;
 
 type Props = {
   pointer: MutableRefObject<ScenePointer>;
-  animated: boolean;
+  /** Time multiplier: 1 normally, lower under reduced motion. */
+  speed: number;
 };
 
 /** The animated "Wine" glow: a shader plane behind the knot that fills the panel. */
-const WineBackdrop = ({ pointer, animated }: Props) => {
+const WineBackdrop = ({ pointer, speed }: Props) => {
   const uniforms = useMemo(createWineUniforms, []);
   const time = useRef(0);
   const viewport = useThree((state) => state.viewport);
@@ -26,9 +27,9 @@ const WineBackdrop = ({ pointer, animated }: Props) => {
   const scale = Math.max(1, (Math.max(width, height) * 1.02) / PLANE_SIZE);
 
   useFrame((_, delta) => {
-    const dt = animated ? Math.min(delta, MAX_DT) : 0;
+    const dt = Math.min(delta, MAX_DT);
 
-    time.current += dt;
+    time.current += dt * speed;
     uniforms.uTime.value = time.current * WINE.speed;
 
     const { x, y, hovering } = pointer.current;

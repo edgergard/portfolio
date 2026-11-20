@@ -7,3 +7,79 @@ body {
   color: #fff;
   font-family: 'Geist', sans-serif;
 }
+
+/*
+ * .bg-wine-flow: the hero's "Wine" shader approximated in CSS, for buttons and panels.
+ * Two oversized layers of soft blobs in the shader palette (#0A0A0B, #3E0712, #8B1426,
+ * #B8233F) orbit in opposite directions, so the fill keeps marbling like smoke in wine.
+ * Pure CSS (transforms only, no WebGL). Reduced motion slows it right down, never freezes.
+ * Hover/focus lift brightness and saturation. Content on top should be white.
+ * The element becomes a positioning context with clipped overflow (box-shadow still shows).
+ */
+@layer components {
+  .bg-wine-flow {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: #fff;
+    background-color: #5E0D1D;
+    transition: filter 200ms ease;
+  }
+
+  .bg-wine-flow::before,
+  .bg-wine-flow::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: max(300%, 640px);
+    aspect-ratio: 1;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* Base layer: deep wine with bright and dark pools. */
+  .bg-wine-flow::before {
+    background:
+      radial-gradient(circle at 30% 34%, rgba(214, 58, 88, 0.95) 0, rgba(184, 35, 63, 0) 13%),
+      radial-gradient(circle at 64% 30%, rgba(10, 10, 11, 0.9) 0, rgba(10, 10, 11, 0) 12%),
+      radial-gradient(circle at 70% 64%, rgba(184, 35, 63, 0.95) 0, rgba(184, 35, 63, 0) 14%),
+      radial-gradient(circle at 36% 68%, rgba(30, 4, 10, 0.95) 0, rgba(30, 4, 10, 0) 13%),
+      radial-gradient(circle at 50% 50%, rgba(139, 20, 38, 1) 0, rgba(139, 20, 38, 0) 24%),
+      radial-gradient(circle at 50% 50%, #8B1426 0, #5A0C1B 30%, #3E0712 60%);
+    animation: wine-orbit 22s linear infinite;
+  }
+
+  /* Veil layer: smaller highlights and shadows drifting the other way. */
+  .bg-wine-flow::after {
+    background:
+      radial-gradient(circle at 44% 40%, rgba(232, 84, 112, 0.55) 0, rgba(232, 84, 112, 0) 8%),
+      radial-gradient(circle at 58% 56%, rgba(10, 10, 11, 0.6) 0, rgba(10, 10, 11, 0) 9%),
+      radial-gradient(circle at 40% 58%, rgba(184, 35, 63, 0.6) 0, rgba(184, 35, 63, 0) 9%),
+      radial-gradient(circle at 60% 42%, rgba(62, 7, 18, 0.7) 0, rgba(62, 7, 18, 0) 8%);
+    animation: wine-orbit-back 31s linear infinite;
+  }
+
+  .bg-wine-flow:hover,
+  .bg-wine-flow:focus-visible {
+    filter: brightness(1.15) saturate(1.15);
+  }
+
+  @keyframes wine-orbit {
+    from { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.12); }
+    to { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+  }
+
+  @keyframes wine-orbit-back {
+    from { transform: translate(-50%, -50%) rotate(360deg) scale(1.1); }
+    50% { transform: translate(-50%, -50%) rotate(180deg) scale(0.95); }
+    to { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-wine-flow::before { animation-duration: 90s; }
+    .bg-wine-flow::after { animation-duration: 120s; }
+  }
+}

@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ACESFilmicToneMapping, type Texture } from 'three';
 import Knot from './Knot';
 import WineBackdrop from './WineBackdrop';
-import type { ScenePointer } from './motion';
+import { motionSpeed, type ScenePointer } from './motion';
 import { buildStudioEnvironment, whenProgramsReady } from './warmup';
 
 const BG = '#0A0A0B';
@@ -63,18 +63,6 @@ const SceneWarmup = ({ onReady }: { onReady: () => void }) => {
       envMap?.dispose();
     };
   }, [gl, scene, camera, onReady]);
-
-  return null;
-};
-
-/** With frameloop "never", draws one frame after mount and after every resize. */
-const RenderOnce = ({ ready }: { ready: boolean }) => {
-  const advance = useThree((state) => state.advance);
-  const size = useThree((state) => state.size);
-
-  useEffect(() => {
-    advance(performance.now());
-  }, [advance, size, ready]);
 
   return null;
 };
@@ -149,16 +137,17 @@ const useHeroPointer = (ref: RefObject<HTMLElement>, enabled: boolean) => {
       return;
     }
 
+    const state = pointer.current;
     const onMove = (event: PointerEvent) => {
       const rect = panel.getBoundingClientRect();
 
-      pointer.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      pointer.current.hovering = true;
+      state.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      state.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      state.hovering = true;
     };
 
     const onLeave = () => {
-      pointer.current.hovering = false;
+      state.hovering = false;
     };
 
     hero.addEventListener('pointermove', onMove);
@@ -167,6 +156,8 @@ const useHeroPointer = (ref: RefObject<HTMLElement>, enabled: boolean) => {
     return () => {
       hero.removeEventListener('pointermove', onMove);
       hero.removeEventListener('pointerleave', onLeave);
+      // Settle back to rest if tracking stops (e.g. reduced motion switched on mid-hover).
+      state.hovering = false;
     };
   }, [ref, enabled]);
 
@@ -176,13 +167,14 @@ const useHeroPointer = (ref: RefObject<HTMLElement>, enabled: boolean) => {
 const HeroScene = ({ reducedMotion, onFps }: Props) => {
   const host = useRef<HTMLDivElement>(null);
   const onScreen = useOnScreen(host);
+  // Reduced motion: no pointer tilt or drift, and everything moves at a calmer pace.
   const pointer = useHeroPointer(host, !reducedMotion);
-  const animated = !reducedMotion;
+  const speed = motionSpeed(reducedMotion);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
 
   // "demand" with nothing invalidating = paused; R3F still redraws on resize.
-  const frameloop = reducedMotion ? 'never' : onScreen ? 'always' : 'demand';
+  const frameloop = onScreen ? 'always' : 'demand';
 
   return (
     <div ref={host} className="absolute inset-0">
@@ -197,11 +189,10 @@ const HeroScene = ({ reducedMotion, onFps }: Props) => {
         <color attach="background" args={[BG]} />
         <SceneWarmup onReady={onReady} />
         <group visible={ready}>
-          <WineBackdrop pointer={pointer} animated={animated} />
-          <Knot pointer={pointer} animated={animated} />
+          <WineBackdrop pointer={pointer} speed={speed} />
+          <Knot pointer={pointer} speed={speed} />
         </group>
-        {ready && animated && onFps && <FpsMeter onFps={onFps} />}
-        {reducedMotion && <RenderOnce ready={ready} />}
+        {ready && onFps && <FpsMeter onFps={onFps} />}
       </Canvas>
     </div>
   );

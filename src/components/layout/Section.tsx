@@ -13,9 +13,13 @@ const Section = ({ id, index, labelKey, children }: Props) => {
 
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-line bg-bg text-ink">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-7 px-6 py-20 min-[900px]:grid-cols-[280px_1fr] min-[900px]:gap-10 min-[900px]:px-10 min-[900px]:py-[120px]">
-        <h2 id={`${id}-heading`} className="flex items-center gap-3 self-start font-mono text-xs font-normal uppercase tracking-[.08em] text-muted min-[900px]:sticky min-[900px]:top-24">
+      <div className="mx-auto max-w-[1120px] px-6 py-20 min-[900px]:px-10 min-[900px]:py-[112px]">
+        <h2
+          id={`${id}-heading`}
+          className="mb-10 flex items-center gap-3 font-mono text-[13px] font-normal uppercase tracking-[.08em] text-ink-2 min-[900px]:mb-14"
+        >
           <b className="font-medium text-wine-2">{String(index).padStart(2, '0')}</b>
+          <i aria-hidden className="inline-block h-px w-6 bg-[#3A3A40]" />
           <span>{t(labelKey)}</span>
         </h2>
         <div>{children}</div>
