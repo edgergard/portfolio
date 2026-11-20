@@ -90,5 +90,18 @@
   "hero_scroll": "Гортайте ↓",
   "hero_caption_figure": "Рис. 01 — Тороїдальний вузол (2,3)",
   "hero_caption_material": "Обсидіан",
-  "hero_caption_fps": "fps"
+  "hero_caption_fps": "fps",
+  "cv_switch_rn": "React Native",
+  "cv_switch_fe": "Frontend",
+  "cv_view_web": "Веб",
+  "cv_view_pdf": "PDF",
+  "cv_download_pdf": "Завантажити PDF",
+  "cv_open_pdf": "Відкрити PDF",
+  "cv_download": "Завантажити",
+  "cv_aria_version": "Версія CV",
+  "cv_aria_view": "Вигляд CV",
+  "cv_experience": "Досвід",
+  "cv_skills": "Навички",
+  "cv_education": "Освіта",
+  "cv_languages": "Мови"
 }

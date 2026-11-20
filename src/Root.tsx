@@ -1,5 +1,6 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import App from './App';
+import CvPage from './pages/CvPage';
 import Home from './pages/Home';
 
 export const Root = () => (
@@ -7,6 +8,7 @@ export const Root = () => (
     <Routes>
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
+        <Route path="cv" element={<CvPage />} />
       </Route>
     </Routes>
   </Router>
