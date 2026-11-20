@@ -9,6 +9,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     'plugin:@typescript-eslint/recommended',
   ],
+  settings: { react: { version: 'detect' } },
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -16,7 +17,7 @@ module.exports = {
       jsx: true,
     },
     ecmaVersion: 12,
-    project: './tsconfig.json',
+    project: ['./tsconfig.json', './tsconfig.node.json'],
     sourceType: 'module',
   },
   plugins: [
@@ -33,8 +34,12 @@ module.exports = {
     'prefer-const': 2,
     curly: [2, 'all'],
     'max-len': ['error', {
+      code: 100,
+      ignoreStrings: true,
       ignoreTemplateLiterals: true,
       ignoreComments: true,
+      ignoreUrls: true,
+      ignoreRegExpLiterals: true,
     }],
     'no-redeclare': [2, { builtinGlobals: true }],
     'no-console': 2,
@@ -79,6 +84,17 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off'
   },
   overrides: [
+    {
+      // react-three-fiber JSX uses three.js props (args, attach, uniforms, ...)
+      files: ['src/components/Hero/**/*.tsx'],
+      rules: {
+        'react/no-unknown-property': 'off',
+      },
+    },
+    {
+      files: ['**/*.test.ts', '**/*.test.tsx', 'vitest.setup.ts'],
+      env: { node: true },
+    },
     {
       'files': ['**/*.spec.jsx'],
       'rules': {

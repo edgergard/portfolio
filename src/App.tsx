@@ -1,19 +1,19 @@
-import { Outlet } from "react-router";
-import Footer from "./components/Footer";
+import { MotionConfig } from 'framer-motion';
+import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import OutletContainer from "./components/OutletContainer";
-import Header from "./components/Header";
+import Footer from './components/layout/Footer';
+import Header from './components/Header';
 
 const App = () => {
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <Header />
-      <OutletContainer>
+      <main className="min-h-screen bg-bg">
         <Outlet />
-      </OutletContainer>
+      </main>
       <Footer />
       <ToastContainer />
-    </>
+    </MotionConfig>
   );
 };
 

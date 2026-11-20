@@ -1,86 +1,62 @@
-import classNames from "classnames";
-import { Bars3Icon, HomeIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { HashLink } from "react-router-hash-link";
-import { useState } from "react";
-import BurgerMenu from "./BurgerMenu";
-import NavLink from "./NavLink";
-import { useTranslation } from "react-i18next";
-import LocaleButton from "./LocaleButton";
+import { useState } from 'react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid';
+import { HashLink } from 'react-router-hash-link';
+import { useTranslation } from 'react-i18next';
+import BurgerMenu from './BurgerMenu';
+import NavLink from './NavLink';
+import LocaleButton from './LocaleButton';
 
 const Header = () => {
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const NAV_LINKS = [
-    {
-      title: t("about"),
-      path: "about",
-    },
-    {
-      title: t("projects"),
-      path: "projects",
-    },
-    {
-      title: t("contact"),
-      path: "contact",
-    },
+    { title: t('nav_work'), path: 'projects' },
+    { title: t('nav_experience'), path: 'experience' },
+    { title: t('nav_about'), path: 'about' },
+    { title: t('nav_contact'), path: 'contact' },
+    { title: t('nav_cv'), path: '/cv' },
   ];
 
-  const handleBurgerLinkClick = () => {
-    setIsMenuOpen(false);
-  };
-
   return (
-    <nav
-      className="
-        sticky top-0 z-50 w-full py-4 px-8 md:px-24
-        flex flex-col items-center justify-between
-      bg-background border-b-[1px] border-header-border"
-    >
-      <div
-        className={classNames(
-          "flex md:mb-0 items-center justify-between w-full",
-          {
-            "mb-6": isMenuOpen,
-          }
-        )}
-      >
-        <HashLink smooth to="/#hero">
-          <HomeIcon
-            className="
-            w-8 h-8 md:w-12 md:h-12 text-white"
-          />
+    <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
+      <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
+        <HashLink smooth to="/#hero" className="text-ink">
+          Oleksandr Bryksin
         </HashLink>
 
-        <div className="block md:hidden">
-          {isMenuOpen ? (
-            <button onClick={() => setIsMenuOpen(false)}>
-              <XMarkIcon className="h-8 w-8 text-white mt-2" />
-            </button>
-          ) : (
-            <button onClick={() => setIsMenuOpen(true)}>
-              <Bars3Icon className="h-8 w-8 text-white mt-2" />
-            </button>
-          )}
-        </div>
-
-        <div className="hidden md:flex items-center gap-x-8">
-          <ul className="flex gap-8">
-            {NAV_LINKS.map(({ title, path }, index) => (
-              <li key={index}>
+        <nav className="hidden items-center gap-x-8 min-[900px]:flex">
+          <ul className="flex gap-x-8">
+            {NAV_LINKS.map(({ title, path }) => (
+              <li key={path}>
                 <NavLink title={title} path={path} />
               </li>
             ))}
           </ul>
-
           <LocaleButton />
-        </div>
+        </nav>
+
+        <button
+          type="button"
+          className="min-[900px]:hidden"
+          aria-label={isMenuOpen ? t('nav_menu_close') : t('nav_menu_open')}
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((open) => !open)}
+        >
+          {isMenuOpen ? (
+            <XMarkIcon className="h-6 w-6 text-ink" />
+          ) : (
+            <Bars3Icon className="h-6 w-6 text-ink" />
+          )}
+        </button>
       </div>
 
       {isMenuOpen && (
-        <BurgerMenu links={NAV_LINKS} onLinkClick={handleBurgerLinkClick} />
+        <div className="min-[900px]:hidden">
+          <BurgerMenu links={NAV_LINKS} onLinkClick={() => setIsMenuOpen(false)} />
+        </div>
       )}
-    </nav>
+    </header>
   );
 };
 

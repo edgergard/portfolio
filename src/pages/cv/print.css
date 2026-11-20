@@ -1,0 +1,39 @@
+@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+
+@media print {
+  html:has(.cv-print-root),
+  body:has(.cv-print-root),
+  main:has(.cv-print-root) {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .site-chrome,
+  .Toastify,
+  .cv-no-print {
+    display: none !important;
+  }
+
+  .cv-print-root,
+  .cv-print-root * {
+    background: transparent !important;
+    color: #000 !important;
+    border-color: #999 !important;
+  }
+
+  .cv-print-root {
+    padding: 0 !important;
+  }
+
+  .cv-print-root a {
+    text-decoration: none;
+  }
+
+  .cv-print-root li,
+  .cv-print-root h3 {
+    break-inside: avoid;
+  }
+}
