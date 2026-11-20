@@ -33,7 +33,7 @@ describe('Header', () => {
 describe('Section', () => {
   it('renders the padded index and translated label', () => {
     render(
-      <Section id="experience" index={2} labelKey="experience">
+      <Section id="experience" index={2} labelKey="section_experience">
         <p>body</p>
       </Section>,
     );

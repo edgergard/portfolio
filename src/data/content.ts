@@ -3,6 +3,7 @@ export type SkillGroup = { titleKey: string; items: string[] };
 export type Job = {
   id: 'pecode' | 'hys' | 'self';
   company: string;
+  companyKey?: string;
   roleKey: string;
   periodKey: string;
   bulletKeys: string[];
@@ -67,6 +68,7 @@ export const JOBS: Job[] = [
   {
     id: 'self',
     company: 'Self-employed',
+    companyKey: 'job_self_company',
     roleKey: 'job_self_role',
     periodKey: 'job_self_period',
     bulletKeys: ['job_self_b1'],

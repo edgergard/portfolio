@@ -41,7 +41,12 @@ describe('content data', () => {
     const keys = [
       ...FACTS.flatMap(f => [f.labelKey, f.unitKey]),
       ...SKILLS.map(s => s.titleKey),
-      ...JOBS.flatMap(j => [j.roleKey, j.periodKey, ...j.bulletKeys]),
+      ...JOBS.flatMap(j => [
+        j.roleKey,
+        j.periodKey,
+        ...(j.companyKey ? [j.companyKey] : []),
+        ...j.bulletKeys,
+      ]),
       ...EDUCATION.flatMap(e => [e.metaKey, e.titleKey]),
       ...CERTIFICATES.flatMap(c => [
         c.levelNameKey,
