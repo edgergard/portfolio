@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import '../../i18n';
+import i18n from '../../i18n';
 import Hero from './Hero';
 
 const scene = vi.hoisted(() => ({ fail: false }));
@@ -51,7 +51,8 @@ describe('Hero', () => {
     stubReducedMotion(false);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage('en');
     scene.fail = false;
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -100,13 +101,47 @@ describe('Hero', () => {
     expect(await screen.findByTestId('canvas')).toHaveAttribute('data-frameloop', 'always');
   });
 
-  it('gives View experience the wine-flow fill and View CV an outlined button', () => {
+  it('gives View experience the wine-flow fill and View CV the animated wine edge', () => {
     renderHero();
     expect(screen.getByRole('link', { name: /View experience/ })).toHaveClass('bg-wine-flow');
     const cv = screen.getByRole('link', { name: 'View CV' });
 
     expect(cv).not.toHaveClass('bg-wine-flow');
-    expect(cv).toHaveClass('border', 'rounded-full');
+    expect(cv).toHaveClass('wine-edge', 'rounded-full');
+    expect(cv.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+    expect(cv.querySelector('canvas')).toBeNull();
+  });
+
+  it('summarises the facts in a table (EN)', () => {
+    renderHero();
+    const rows = within(screen.getByTestId('hero-facts')).getAllByRole('row');
+
+    expect(rows.map(row => row.textContent)).toEqual([
+      'Experience2.5+years',
+      'Apps shipped5iOS & Android',
+      'EnglishC1Advanced · EF SET C2',
+    ]);
+    expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Experience');
+  });
+
+  it('summarises the facts in a table (UA)', async () => {
+    await i18n.changeLanguage('ua');
+    renderHero();
+    const rows = within(screen.getByTestId('hero-facts')).getAllByRole('row');
+
+    expect(rows.map(row => row.textContent)).toEqual([
+      'Досвід2.5+років',
+      'Випущено застосунків5iOS і Android',
+      'АнглійськаC1Просунутий · EF SET C2',
+    ]);
+    expect(screen.getByText('Відкритий до роботи')).toBeInTheDocument();
+  });
+
+  it('has no bottom strip: no metric pills and no scroll hint', () => {
+    renderHero();
+    expect(screen.queryByText(/yrs commercial/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Scroll/)).not.toBeInTheDocument();
+    expect(screen.getAllByText('Open to work')).toHaveLength(1);
   });
 
   it('shows a green Open to work dot', () => {

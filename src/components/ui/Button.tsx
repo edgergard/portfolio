@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { wineButtons } from './wineButtons/loop';
 
-export type ButtonVariant = 'primary' | 'outline';
+export type ButtonVariant = 'primary' | 'outline' | 'edge';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 type Style = { variant?: ButtonVariant; size?: ButtonSize; className?: string };
@@ -24,6 +24,11 @@ const VARIANTS: Record<ButtonVariant, string> = {
   // .bg-wine-flow (styles.css) is the CSS fill under the live shader layer; hover lifts both.
   primary: 'bg-wine-flow shadow-[0_8px_28px_-10px_rgba(184,35,63,.7)] hover:shadow-[0_10px_34px_-8px_rgba(184,35,63,.85)]',
   outline: 'border border-[#4A4A50] bg-transparent hover:border-ink hover:bg-white/[.06]',
+  // .wine-edge (styles.css) paints the animated 1px wine frame as the element's background;
+  // the ::before inset by 1px is the dark pill surface. The size padding overrides .wine-edge's.
+  edge:
+    'wine-edge relative isolate rounded-full hover:brightness-[1.2] '
+    + "before:pointer-events-none before:absolute before:inset-px before:-z-[1] before:rounded-full before:bg-[#0C0C0E] before:content-['']",
 };
 
 /** Class list for a button-looking element; use it when you can't render <Button>. */
@@ -66,7 +71,8 @@ const withLayer = (variant: ButtonVariant | undefined, children: ReactNode) => (
 /**
  * The site's button. Renders a router link with `to` (a smooth-scrolling hash link when
  * `to` has a #fragment), an <a> with `href`, otherwise a <button>.
- * `primary` shows the hero's live Wine shader (CSS wine-flow fill underneath), `outline` a hairline border.
+ * `primary` shows the hero's live Wine shader (CSS wine-flow fill underneath), `outline` a hairline border,
+ * `edge` a dark pill inside the animated wine frame of the cards (.wine-edge).
  */
 const Button = (props: ButtonProps) => {
   if (props.to !== undefined) {

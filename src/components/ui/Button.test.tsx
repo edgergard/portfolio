@@ -89,6 +89,23 @@ describe('Button', () => {
     expect(layer(screen.getByRole('link', { name: 'View CV' }))).toBeNull();
   });
 
+  it('has an edge variant: a dark pill inside the animated wine frame, without the shader layer', () => {
+    loop.register.mockClear();
+    render(
+      <HashRouter>
+        <Button to="/cv" variant="edge" size="lg">View CV</Button>
+      </HashRouter>,
+    );
+    const link = screen.getByRole('link', { name: 'View CV' });
+
+    expect(link).toHaveClass('wine-edge', 'rounded-full', 'before:bg-[#0C0C0E]', 'before:inset-px');
+    expect(link).toHaveClass('text-[17px]', 'focus-visible:outline');
+    expect(link.className).toMatch(/hover:brightness-/);
+    expect(link).not.toHaveClass('bg-wine-flow');
+    expect(layer(link)).toBeNull();
+    expect(loop.register).not.toHaveBeenCalled();
+  });
+
   it('unregisters its layer on unmount', () => {
     loop.unregister.mockClear();
     const { unmount } = render(<Button>Send</Button>);
