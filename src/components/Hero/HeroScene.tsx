@@ -1,73 +1,25 @@
 import { memo, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { ACESFilmicToneMapping, PMREMGenerator, type Material, type Texture, type WebGLRenderer } from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { ACESFilmicToneMapping, type Texture } from 'three';
 import Knot from './Knot';
 import WineBackdrop from './WineBackdrop';
 import type { ScenePointer } from './motion';
+import { buildStudioEnvironment, whenProgramsReady } from './warmup';
 
 const BG = '#0A0A0B';
 const FPS_INTERVAL_MS = 500;
-/** Blur of the studio reflections (radians). */
-const ENV_SIGMA = 0.04;
 
 type Props = {
   reducedMotion: boolean;
   onFps?: (fps: number) => void;
 };
 
-type ProgramState = { currentProgram?: { isReady: () => boolean } };
-
-/**
- * Runs draw() with renderer.render swapped for renderer.compile: every program the draw
- * would use starts compiling (in parallel, with KHR_parallel_shader_compile) for the same
- * render targets, but nothing is drawn and nothing waits for a shader link.
- */
-const compileWithoutDrawing = (gl: WebGLRenderer, draw: () => void) => {
-  const materials = new Set<Material>();
-  const render = gl.render;
-
-  gl.render = (object, camera) => {
-    gl.compile(object, camera).forEach((material) => materials.add(material));
-  };
-
-  try {
-    draw();
-  } finally {
-    gl.render = render;
-  }
-
-  return materials;
-};
-
-/** Resolves once every material's program has linked (same polling as compileAsync). */
-const whenProgramsReady = (gl: WebGLRenderer, materials: Set<Material>) =>
-  new Promise<void>((resolve) => {
-    const check = () => {
-      materials.forEach((material) => {
-        const { currentProgram } = gl.properties.get(material) as ProgramState;
-
-        if (!currentProgram || currentProgram.isReady()) {
-          materials.delete(material);
-        }
-      });
-
-      if (materials.size === 0) {
-        resolve();
-      } else {
-        setTimeout(check, 10);
-      }
-    };
-
-    check();
-  });
-
 /**
  * Prepares the scene without long main-thread stalls, then calls onReady:
- * 1. a dry PMREM pass starts compiling the room and prefilter programs, and we wait for them,
- * 2. the real PMREM pass builds the studio reflections for the glossy knot (programs are warm),
- * 3. the knot and backdrop programs (which depend on that env map) compile via compileAsync.
+ * 1. builds the studio reflections with warm programs (see buildStudioEnvironment),
+ * 2. compiles the knot and backdrop programs (which depend on that env map) in parallel.
  * Until then the scene content stays hidden, so no frame blocks on a shader link.
+ * Unmounting stops every wait; a failure leaves the gradient underneath in place.
  */
 const SceneWarmup = ({ onReady }: { onReady: () => void }) => {
   const gl = useThree((state) => state.gl);
@@ -77,39 +29,33 @@ const SceneWarmup = ({ onReady }: { onReady: () => void }) => {
   useEffect(() => {
     let alive = true;
     let envMap: Texture | null = null;
+    const isAlive = () => alive;
 
     const run = async () => {
-      const room = new RoomEnvironment();
-      // Kept alive until the real pass is done, so the shared programs are not released.
-      const dry = new PMREMGenerator(gl);
+      const studio = await buildStudioEnvironment(gl, isAlive);
 
-      const programs = compileWithoutDrawing(gl, () => dry.fromScene(room, ENV_SIGMA).dispose());
-
-      await whenProgramsReady(gl, programs);
-
-      if (alive) {
-        const pmrem = new PMREMGenerator(gl);
-
-        envMap = pmrem.fromScene(room, ENV_SIGMA).texture;
-        pmrem.dispose();
-        scene.environment = envMap;
-      }
-
-      dry.dispose();
-      room.dispose();
-
-      if (!alive) {
+      if (!studio) {
         return;
       }
 
-      await gl.compileAsync(scene, camera);
+      if (!alive) {
+        studio.dispose();
 
-      if (alive) {
+        return;
+      }
+
+      envMap = studio;
+      scene.environment = studio;
+
+      if (await whenProgramsReady(gl, gl.compile(scene, camera), isAlive)) {
         onReady();
       }
     };
 
-    run();
+    run().catch((error: unknown) => {
+      // eslint-disable-next-line no-console
+      console.warn('Hero scene warm-up failed; keeping the gradient.', error);
+    });
 
     return () => {
       alive = false;
