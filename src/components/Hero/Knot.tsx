@@ -10,19 +10,20 @@ const REST = { x: 0, y: 0 };
 
 type Props = {
   pointer: MutableRefObject<ScenePointer>;
-  animated: boolean;
+  /** Time multiplier: 1 normally, lower under reduced motion. */
+  speed: number;
 };
 
 /** Glossy black (2,3) torus knot: slow spin, gentle float, leans towards the pointer. */
-const Knot = ({ pointer, animated }: Props) => {
+const Knot = ({ pointer, speed }: Props) => {
   const mesh = useRef<Mesh>(null!);
   const tilt = useRef({ ...REST });
   const time = useRef(0);
   const aspect = useThree((state) => state.size.width / state.size.height);
 
   useFrame((_, delta) => {
-    const dt = animated ? Math.min(delta, MAX_DT) : 0;
-    const t = (time.current += dt);
+    const dt = Math.min(delta, MAX_DT);
+    const t = (time.current += dt * speed);
     const { x, y, hovering } = pointer.current;
     const target = hovering ? tiltTarget(x, y) : REST;
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { damp, stageScale, tiltTarget } from './motion';
+import { damp, motionSpeed, REDUCED_SPEED, stageScale, tiltTarget } from './motion';
 import { createWineUniforms } from './wineShader';
 
 describe('damp', () => {
@@ -37,5 +37,16 @@ describe('createWineUniforms', () => {
 
     expect(uniforms.uAmount.value).toBe(1);
     expect(uniforms.uWarp.value).toBe(3);
+  });
+});
+
+describe('motionSpeed', () => {
+  it('runs at full speed normally', () => {
+    expect(motionSpeed(false)).toBe(1);
+  });
+
+  it('keeps the scene alive but calm under reduced motion', () => {
+    expect(REDUCED_SPEED).toBeCloseTo(0.6, 6);
+    expect(motionSpeed(true)).toBe(REDUCED_SPEED);
   });
 });

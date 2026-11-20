@@ -47,14 +47,27 @@ const Experience = () => {
         ))}
       </div>
 
-      <Reveal className="mt-14 grid grid-cols-1 gap-6 min-[900px]:grid-cols-2">
+      <h3 className="mb-6 mt-16 flex items-center gap-3 font-mono text-[13px] font-normal uppercase tracking-[.08em] text-ink-2">
+        <i aria-hidden className="inline-block h-px w-6 bg-[#3A3A40]" />
+        {t('edu_heading')}
+      </h3>
+      <div className="grid grid-cols-1 gap-5 min-[860px]:grid-cols-3">
         {EDUCATION.map(edu => (
-          <div key={edu.titleKey} data-testid="edu-card" className="rounded-2xl border border-line p-6">
-            <div className="font-mono text-xs uppercase tracking-[.06em] text-muted">{t(edu.metaKey)}</div>
-            <h4 className="mt-2.5 text-lg font-medium leading-[1.35] tracking-[-0.01em]">{t(edu.titleKey)}</h4>
-          </div>
+          <Reveal key={edu.id} testId="edu-card" className="wine-edge flex">
+            <div className="flex flex-1 flex-col gap-6 rounded-[19px] bg-[linear-gradient(200deg,#141416_0%,#0A0A0B_65%)] p-7">
+              <span className="font-mono text-xs uppercase tracking-[.08em] text-[#B4B4BA]">{t(`edu_kind_${edu.kind}`)}</span>
+              <div className="text-[34px] font-medium leading-none tracking-[-0.04em] text-ink min-[860px]:text-[30px] min-[1100px]:text-[36px]">
+                {t(edu.periodKey)}
+              </div>
+              <h4 className="text-[19px] font-medium leading-[1.3] tracking-[-0.015em] text-ink">{t(edu.institutionKey)}</h4>
+              <div className="mt-auto border-t border-line pt-5">
+                <div className="font-mono text-[11px] uppercase tracking-[.08em] text-muted-2">{t('edu_programme_label')}</div>
+                <p className="mt-2 text-[15px] leading-[1.45] text-[#D4D4D8] min-[860px]:min-h-[2.9em]">{t(edu.programmeKey)}</p>
+              </div>
+            </div>
+          </Reveal>
         ))}
-      </Reveal>
+      </div>
     </Section>
   );
 };

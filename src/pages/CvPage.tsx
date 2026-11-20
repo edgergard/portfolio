@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CVS, type CvVariant } from '../data/cv';
+import type { CvVariant } from '../data/cv';
+import { getCv } from '../data/cvs';
+import Button from '../components/ui/Button';
 import CvPdf, { pdfHref } from './cv/CvPdf';
 import CvWeb from './cv/CvWeb';
 import { useCvParams, type CvView } from './cv/useCvParams';
@@ -40,9 +42,9 @@ const Switch = <T extends string>({
 );
 
 const CvPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { variant, view, setVariant, setView } = useCvParams();
-  const doc = CVS[variant];
+  const doc = getCv(variant, i18n.language);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,7 +56,7 @@ const CvPage = () => {
   ];
   const views: Option<CvView>[] = [
     { value: 'web', label: t('cv_view_web') },
-    { value: 'pdf', label: t('cv_view_pdf') },
+    { value: 'pdf', label: `${t('cv_view_pdf')}${t('cv_pdf_note')}` },
   ];
 
   return (
@@ -64,13 +66,9 @@ const CvPage = () => {
           <Switch options={variants} value={variant} onChange={setVariant} ariaLabel={t('cv_aria_version')} />
           <Switch options={views} value={view} onChange={setView} ariaLabel={t('cv_aria_view')} />
         </div>
-        <a
-          href={pdfHref(doc)}
-          download
-          className="inline-flex rounded-full border border-chip px-5 py-2.5 text-sm font-medium transition-colors hover:border-wine-2"
-        >
-          {t('cv_download_pdf')} <span aria-hidden="true" className="ml-2 font-mono text-xs text-muted">↓</span>
-        </a>
+        <Button href={pdfHref(doc)} download>
+          {t('cv_download_pdf')}{t('cv_pdf_note')} <span aria-hidden="true">↓</span>
+        </Button>
       </div>
 
       <header className="mb-12">

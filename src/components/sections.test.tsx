@@ -9,6 +9,7 @@ import Certifications from './Certifications';
 import { Projects } from './Projects';
 import Contact from './Contact';
 import { PROJECT_LIST } from '../data/projects';
+import { SKILLS } from '../data/content';
 
 vi.mock('@emailjs/browser', () => ({
   default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
@@ -38,6 +39,44 @@ describe('About', () => {
       expect(screen.getByText(title)).toBeInTheDocument();
     }
   });
+
+  it('shows every skill as a pill on a wine-flow panel', () => {
+    render(<About />);
+    const panel = screen.getByTestId('skills-panel');
+    const pills = within(panel).getAllByTestId('skill-pill');
+
+    expect(panel).toHaveClass('bg-wine-flow');
+    expect(pills).toHaveLength(SKILLS.flatMap(g => g.items).length);
+    expect(within(panel).getByText('React Native')).toBeInTheDocument();
+    expect(within(panel).getByText('TanStack Query')).toBeInTheDocument();
+  });
+
+  it('layers the hero Wine shader over the CSS fill, under the pills', () => {
+    render(<About />);
+    const panel = screen.getByTestId('skills-panel');
+    const layer = within(panel).getByTestId('wine-surface');
+
+    expect(panel).toHaveClass('bg-wine-flow');
+    expect(layer).toHaveClass('absolute', 'inset-0');
+    // The column comes after the layer and is positioned, so it paints on top.
+    expect(layer.compareDocumentPosition(within(panel).getByTestId('skills-column')))
+      .toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(within(panel).getByTestId('skills-column')).toHaveClass('relative');
+  });
+
+  it('runs the skills panel full-bleed with its content on the centred column', () => {
+    render(<About />);
+    const panel = screen.getByTestId('skills-panel');
+
+    // Not boxed by the section's 1120px column, so it can span the page edge to edge...
+    expect(panel.parentElement?.closest('[class*="max-w-[1120px]"]')).toBeNull();
+    expect(panel).not.toHaveClass('rounded-[24px]');
+    // ...while the labels and pills sit in a column matching the section content.
+    const column = within(panel).getByTestId('skills-column');
+
+    expect(column).toHaveClass('mx-auto', 'max-w-[1120px]', 'px-6', 'min-[900px]:px-10');
+    expect(within(column).getAllByTestId('skill-pill')).toHaveLength(SKILLS.flatMap(g => g.items).length);
+  });
 });
 
 describe('Experience', () => {
@@ -60,9 +99,46 @@ describe('Experience', () => {
     expect(screen.queryByText('Current')).not.toBeInTheDocument();
   });
 
-  it('renders two education cards', () => {
+  it('titles the HYS role React Native / Frontend Developer', () => {
     render(<Experience />);
-    expect(screen.getAllByTestId('edu-card')).toHaveLength(2);
+    const hys = screen.getAllByTestId('xp-row')[1];
+
+    expect(within(hys).getByRole('heading', { level: 3 })).toHaveTextContent(
+      'React Native / Frontend Developer · HYS Enterprise',
+    );
+  });
+
+  it('renders three detailed education cards', () => {
+    render(<Experience />);
+    const cards = screen.getAllByTestId('edu-card');
+
+    expect(cards).toHaveLength(3);
+    cards.forEach(card => expect(card).toHaveClass('wine-edge'));
+    expect(screen.getByRole('heading', { level: 3, name: 'Education' })).toBeInTheDocument();
+
+    const [nuft, kpi, mate] = cards;
+
+    expect(within(nuft).getByRole('heading', { level: 4 })).toHaveTextContent('National University of Food Technologies');
+    expect(within(nuft).getByText('B.Sc. in Software Engineering')).toBeInTheDocument();
+    expect(within(nuft).getByText('2026 – present')).toBeInTheDocument();
+    expect(within(nuft).getByText('University')).toBeInTheDocument();
+
+    expect(within(kpi).getByRole('heading', { level: 4 })).toHaveTextContent('Igor Sikorsky Kyiv Polytechnic Institute');
+    expect(within(kpi).getByText('Automation and Computer-Integrated Technologies')).toBeInTheDocument();
+    expect(within(kpi).getByText('2019 – 2022')).toBeInTheDocument();
+    expect(within(kpi).getByText('University')).toBeInTheDocument();
+
+    expect(within(mate).getByRole('heading', { level: 4 })).toHaveTextContent('Mate Academy');
+    expect(within(mate).getByText('Fullstack Development course')).toBeInTheDocument();
+    expect(within(mate).getByText('2023')).toBeInTheDocument();
+    expect(within(mate).getByText('Course')).toBeInTheDocument();
+  });
+
+  it('shows no status badge on the education cards', () => {
+    render(<Experience />);
+    for (const label of ['In progress', 'Completed', 'Certificate']) {
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
   });
 });
 
@@ -99,6 +175,7 @@ describe('Certifications', () => {
   it('has no placeholder card', () => {
     render(<Certifications />);
     expect(screen.getAllByTestId('cert-card')).toHaveLength(1);
+    expect(screen.getByTestId('cert-card')).toHaveClass('wine-edge');
   });
 });
 
@@ -152,22 +229,98 @@ describe('Contact', () => {
       </HashRouter>,
     );
 
-  it('renders the headline and the email link', () => {
+  it('renders the headline, the lead line and the email link', () => {
     renderContact();
     expect(screen.getByText(/Let.s build something precise\./)).toBeInTheDocument();
+    expect(screen.getByText(/The fastest way to reach me is Telegram or email\./)).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /Contact/ })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'oleksandrbryksin@gmail.com' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /oleksandrbryksin@gmail\.com/ })).toHaveAttribute(
       'href',
       'mailto:oleksandrbryksin@gmail.com',
     );
   });
 
-  it('lists socials and both CV downloads', () => {
+  it('groups the rows into Direct and Profiles & documents', () => {
     renderContact();
-    for (const name of [/LinkedIn/, /GitHub/, /Telegram/]) {
-      expect(screen.getByRole('link', { name })).toBeInTheDocument();
-    }
+    const direct = screen.getByRole('list', { name: 'Direct' });
+    const profiles = screen.getByRole('list', { name: 'Profiles & documents' });
 
+    expect(within(direct).getAllByRole('listitem')).toHaveLength(4);
+    expect(within(direct).getByText('Email')).toBeInTheDocument();
+    expect(within(direct).getByText('Phone')).toBeInTheDocument();
+    expect(within(direct).getByText('Telegram')).toBeInTheDocument();
+    expect(within(direct).getByText('WhatsApp')).toBeInTheDocument();
+    expect(within(profiles).getByText('LinkedIn')).toBeInTheDocument();
+    expect(within(profiles).getAllByText('GitHub')).toHaveLength(2);
+    expect(within(profiles).getByText('CV')).toBeInTheDocument();
+  });
+
+  it('links Telegram, WhatsApp, LinkedIn and both GitHub profiles in a new tab', () => {
+    renderContact();
+    const expected: [RegExp, string][] = [
+      [/Telegram @oleksandrbryksin/, 'https://t.me/oleksandrbryksin'],
+      [/WhatsApp @oleksandrbryksin/, 'https://wa.me/380635383049'],
+      [/LinkedIn/, 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/'],
+      [/GitHub edgergard/, 'https://github.com/edgergard'],
+      [/GitHub edgelordxd/, 'https://github.com/edgelordxd?tab=repositories'],
+    ];
+
+    for (const [name, href] of expected) {
+      const link = screen.getByRole('link', { name });
+
+      expect(link).toHaveAttribute('href', href);
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  it('shows the phone number as a tel: link with a copy action', () => {
+    renderContact();
+    const direct = screen.getByRole('list', { name: 'Direct' });
+    const row = within(direct).getByText('Phone').closest('li')!;
+    const link = within(row).getByRole('link', { name: /Phone \+380 63 538 3049/ });
+
+    expect(link).toHaveAttribute('href', 'tel:+380635383049');
+    expect(link).not.toHaveAttribute('target');
+    expect(within(row).getByRole('button', { name: 'Copy phone number' })).toBeInTheDocument();
+  });
+
+  it('opens the WhatsApp chat on wa.me in a new tab, with no copy action', () => {
+    renderContact();
+    const direct = screen.getByRole('list', { name: 'Direct' });
+    const row = within(direct).getByText('WhatsApp').closest('li')!;
+
+    expect(within(row).getByRole('link')).toHaveAttribute('href', 'https://wa.me/380635383049');
+    expect(within(row).queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  it('copies the email address and briefly shows Copied', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    renderContact();
+    const copy = screen.getByRole('button', { name: 'Copy email address' });
+
+    expect(copy.tagName).toBe('BUTTON');
+    expect(copy).toHaveAttribute('type', 'button');
+    fireEvent.click(copy);
+    expect(writeText).toHaveBeenCalledWith('oleksandrbryksin@gmail.com');
+    expect(await screen.findByText('Copied')).toBeInTheDocument();
+    expect(screen.getAllByRole('status').map(s => s.textContent)).toContain('Copied to clipboard');
+  });
+
+  it('copies the phone number', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    renderContact();
+    fireEvent.click(screen.getByRole('button', { name: 'Copy phone number' }));
+    expect(writeText).toHaveBeenCalledWith('+380635383049');
+    expect(await screen.findByText('Copied')).toBeInTheDocument();
+  });
+
+  it('offers both CV downloads and links View CV to the cv page', () => {
+    renderContact();
     const rn = screen.getByRole('link', { name: /CV · React Native/ });
 
     expect(rn).toHaveAttribute('href', '/cv/oleksandr-bryksin-react-native-cv.pdf');
@@ -176,12 +329,17 @@ describe('Contact', () => {
 
     expect(fe).toHaveAttribute('href', '/cv/oleksandr-bryksin-frontend-cv.pdf');
     expect(fe).toHaveAttribute('download');
+    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
   });
 
-  it('links View CV to the cv page and has no phone', () => {
+  it('titles the form, shows the status line and the Telegram hint', () => {
     renderContact();
-    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
-    expect(screen.queryByText(/\+380/)).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Write a message' })).toBeInTheDocument();
+    expect(screen.getByText(/Open to work · replies within 24h/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Or write on Telegram/ })).toHaveAttribute(
+      'href',
+      'https://t.me/oleksandrbryksin',
+    );
   });
 
   it('shows validation errors and does not send an empty form', async () => {
@@ -216,5 +374,15 @@ describe('Contact', () => {
     expect(busy).toHaveAttribute('aria-busy', 'true');
     resolve();
     await waitFor(() => expect(screen.getByRole('button', { name: /Send message/ })).toBeEnabled());
+  });
+
+  it('sends a valid form through EmailJS', async () => {
+    renderContact();
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
+    expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
   });
 });

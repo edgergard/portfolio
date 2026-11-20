@@ -86,7 +86,7 @@ module.exports = {
   overrides: [
     {
       // react-three-fiber JSX uses three.js props (args, attach, uniforms, ...)
-      files: ['src/components/Hero/**/*.tsx'],
+      files: ['src/components/Hero/**/*.tsx', 'src/components/Wine/**/*.tsx'],
       rules: {
         'react/no-unknown-property': 'off',
       },

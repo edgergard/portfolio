@@ -47,6 +47,43 @@ describe('Section', () => {
     expect(screen.getByRole('region', { name: /Experience/ })).toBe(document.getElementById('experience'));
     expect(document.getElementById('experience')).toBeInTheDocument();
   });
+
+  it('puts the label above the content instead of in a sticky side column', () => {
+    render(
+      <Section id="about" index={1} labelKey="section_about">
+        <p>body</p>
+      </Section>,
+    );
+    const heading = screen.getByRole('heading', { level: 2 });
+
+    expect(heading.className).not.toMatch(/sticky/);
+    expect(heading.parentElement?.className).not.toMatch(/280px/);
+    expect(heading.compareDocumentPosition(screen.getByText('body')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('centres the label horizontally above the content', () => {
+    render(
+      <Section id="about" index={1} labelKey="section_about">
+        <p>body</p>
+      </Section>,
+    );
+    const heading = screen.getByRole('heading', { level: 2 });
+
+    expect(heading).toHaveClass('justify-center', 'text-center');
+  });
+
+  it('renders a bleed slot outside the centred column', () => {
+    render(
+      <Section id="about" index={1} labelKey="section_about" bleed={<div data-testid="band" />}>
+        <p>body</p>
+      </Section>,
+    );
+    const band = screen.getByTestId('band');
+
+    expect(band.closest('[class*="max-w-[1120px]"]')).toBeNull();
+    expect(screen.getByText('body').closest('[class*="max-w-[1120px]"]')).not.toBeNull();
+    expect(screen.getByText('body').compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });
 
 describe('document language', () => {
@@ -62,6 +99,11 @@ describe('Footer', () => {
   it('shows the current year', () => {
     render(<Footer />);
     expect(screen.getByText(new RegExp(String(new Date().getFullYear())))).toBeInTheDocument();
+  });
+
+  it('no longer credits React & Three.js', () => {
+    render(<Footer />);
+    expect(screen.queryByText(/Three.js/)).not.toBeInTheDocument();
   });
 
   it('contains Back to top', () => {

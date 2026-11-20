@@ -7,6 +7,9 @@ import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import Button from '../ui/Button';
+import { TELEGRAM_URL } from '../../data/content';
+import { ArrowUpRightIcon } from './icons';
 
 const {
   VITE_EMAILJS_SERVICE_ID,
@@ -93,61 +96,92 @@ const ContactForm = () => {
     sendEmail();
   };
 
+  // Line-only fields: a bottom hairline that turns wine-3 on focus; keyboard focus also thickens it.
   const fieldClass = (invalid: boolean) =>
-    `w-full rounded-xl border bg-[#111113] px-4 py-3.5 text-[15px] text-ink outline-none transition-colors placeholder:text-muted focus-visible:ring-2 focus-visible:ring-wine-3 focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
-      invalid ? 'border-wine-3' : 'border-[#232327] focus:border-wine'
-    }`;
-  const labelClass = 'grid gap-2';
-  const captionClass = 'font-mono text-xs uppercase tracking-[.06em] text-muted-2';
+    'w-full rounded-none border-0 border-b bg-transparent px-0 pb-2.5 pt-2 text-base text-ink outline-none '
+    + 'transition-[border-color,box-shadow] duration-200 placeholder:text-muted focus:border-wine-3 '
+    + 'focus-visible:shadow-[0_1px_0_0_#D0213F] '
+    + (invalid ? 'border-wine-2' : 'border-[#2A2A2E]');
+  const labelClass = 'grid gap-1.5';
+  const captionClass = 'font-mono text-xs uppercase tracking-[.07em] text-muted-2';
   const errorClass = 'text-sm text-wine-3';
 
   return (
-    <form ref={form} onSubmit={handleSubmit(onSubmit)} className="grid content-start gap-3.5" noValidate>
-      <label className={labelClass}>
-        <span className={captionClass}>{t('email')}</span>
-        <input
-          {...register('email')}
-          placeholder="you@company.com"
-          className={fieldClass(!!errors.email)}
-          aria-invalid={!!errors.email}
-        />
-        {errors.email && <span className={errorClass}>{t(errors.email.message || '')}</span>}
-      </label>
-
-      <label className={labelClass}>
-        <span className={captionClass}>{t('subject')}</span>
-        <input
-          {...register('subject')}
-          type="text"
-          placeholder={t('subject_placeholder')}
-          autoComplete="off"
-          className={fieldClass(!!errors.subject)}
-          aria-invalid={!!errors.subject}
-        />
-        {errors.subject && <span className={errorClass}>{t(errors.subject.message || '')}</span>}
-      </label>
-
-      <label className={labelClass}>
-        <span className={captionClass}>{t('message')}</span>
-        <textarea
-          {...register('message')}
-          placeholder={t('message_placeholder')}
-          autoComplete="off"
-          className={`${fieldClass(!!errors.message)} min-h-[120px] resize-y`}
-          aria-invalid={!!errors.message}
-        />
-        {errors.message && <span className={errorClass}>{t(errors.message.message || '')}</span>}
-      </label>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        aria-busy={isLoading}
-        className="mt-1.5 justify-self-start rounded-full bg-wine px-6 py-[15px] text-sm font-medium text-ink transition-colors hover:bg-wine-2 disabled:cursor-wait disabled:opacity-70"
+    <div className="wine-edge self-start">
+      <form
+        ref={form}
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid gap-[22px] rounded-[19px] bg-[#0C0C0E] px-7 pb-6 pt-7"
+        noValidate
       >
-        {isLoading ? t('send_sending') : `${t('send_message')} →`}
-      </button>
-    </form>
+        <div>
+          <h3 className="text-xl font-medium tracking-[-0.01em]">{t('contact_form_title')}</h3>
+          <p className="mt-2 inline-flex items-center gap-2 font-mono text-[13px] text-ink-2">
+            <i
+              aria-hidden="true"
+              className="inline-block h-2 w-2 shrink-0 rounded-full bg-[#22C55E] shadow-[0_0_0_4px_rgba(34,197,94,.22)]"
+            />
+            {t('contact_form_status')}
+          </p>
+        </div>
+
+        <label className={labelClass}>
+          <span className={captionClass}>{t('email')}</span>
+          <input
+            {...register('email')}
+            type="email"
+            placeholder="you@company.com"
+            className={fieldClass(!!errors.email)}
+            aria-invalid={!!errors.email}
+          />
+          {errors.email && <span className={errorClass}>{t(errors.email.message || '')}</span>}
+        </label>
+
+        <label className={labelClass}>
+          <span className={captionClass}>{t('subject')}</span>
+          <input
+            {...register('subject')}
+            type="text"
+            placeholder={t('subject_placeholder')}
+            autoComplete="off"
+            className={fieldClass(!!errors.subject)}
+            aria-invalid={!!errors.subject}
+          />
+          {errors.subject && <span className={errorClass}>{t(errors.subject.message || '')}</span>}
+        </label>
+
+        <label className={labelClass}>
+          <span className={captionClass}>{t('message')}</span>
+          <textarea
+            {...register('message')}
+            rows={3}
+            placeholder={t('message_placeholder')}
+            autoComplete="off"
+            className={`${fieldClass(!!errors.message)} resize-none`}
+            aria-invalid={!!errors.message}
+          />
+          {errors.message && <span className={errorClass}>{t(errors.message.message || '')}</span>}
+        </label>
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <a
+            href={TELEGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={
+              'inline-flex items-center gap-1.5 rounded font-mono text-[13px] text-ink-2 transition-colors hover:text-ink '
+              + 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink'
+            }
+          >
+            {t('contact_form_telegram')}
+            <ArrowUpRightIcon size={14} />
+          </a>
+          <Button type="submit" size="sm" disabled={isLoading} aria-busy={isLoading}>
+            {isLoading ? t('send_sending') : `${t('send_message')} →`}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
 

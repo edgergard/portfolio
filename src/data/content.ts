@@ -9,7 +9,13 @@ export type Job = {
   bulletKeys: string[];
   stack: string[];
 };
-export type Education = { metaKey: string; titleKey: string };
+export type Education = {
+  id: 'nuft' | 'kpi' | 'mate';
+  kind: 'university' | 'course';
+  institutionKey: string;
+  programmeKey: string;
+  periodKey: string;
+};
 export type Certificate = {
   id: 'efset';
   issuer: string;
@@ -32,19 +38,19 @@ export const FACTS: Fact[] = [
 export const SKILLS: SkillGroup[] = [
   {
     titleKey: 'skills_web',
-    items: ['TypeScript', 'React · Next.js', 'Vue · Pinia', 'Tailwind · shadcn/ui'],
+    items: ['TypeScript', 'React', 'Next.js', 'Vue', 'Pinia', 'Tailwind CSS', 'shadcn/ui'],
   },
   {
     titleKey: 'skills_mobile',
-    items: ['React Native · Expo', 'BLE · NFC · Mesh', 'Mapbox · offline maps', 'Background geo & audio'],
+    items: ['React Native', 'Expo', 'BLE', 'NFC', 'Mesh', 'Mapbox', 'Offline maps', 'Background geo & audio'],
   },
   {
     titleKey: 'skills_data',
-    items: ['Redux Toolkit · Zustand', 'TanStack Query', 'Supabase · Firebase', 'RevenueCat · REST'],
+    items: ['Redux Toolkit', 'Zustand', 'TanStack Query', 'Supabase', 'Firebase', 'RevenueCat', 'REST'],
   },
   {
     titleKey: 'skills_ship',
-    items: ['EAS · GitHub Actions', 'TestFlight · Play Console', 'PostHog · Lighthouse', 'Three.js · OpenAI API'],
+    items: ['EAS', 'GitHub Actions', 'TestFlight', 'Play Console', 'PostHog', 'Lighthouse', 'Three.js', 'OpenAI API'],
   },
 ];
 
@@ -77,8 +83,27 @@ export const JOBS: Job[] = [
 ];
 
 export const EDUCATION: Education[] = [
-  { metaKey: 'edu_kpi_meta', titleKey: 'edu_kpi_title' },
-  { metaKey: 'edu_mate_meta', titleKey: 'edu_mate_title' },
+  {
+    id: 'nuft',
+    kind: 'university',
+    institutionKey: 'edu_nuft_institution',
+    programmeKey: 'edu_nuft_programme',
+    periodKey: 'edu_nuft_period',
+  },
+  {
+    id: 'kpi',
+    kind: 'university',
+    institutionKey: 'edu_kpi_institution',
+    programmeKey: 'edu_kpi_programme',
+    periodKey: 'edu_kpi_period',
+  },
+  {
+    id: 'mate',
+    kind: 'course',
+    institutionKey: 'edu_mate_institution',
+    programmeKey: 'edu_mate_programme',
+    periodKey: 'edu_mate_period',
+  },
 ];
 
 export const CERTIFICATES: Certificate[] = [
@@ -100,8 +125,42 @@ export const CERTIFICATES: Certificate[] = [
 
 export const EMAIL = 'oleksandrbryksin@gmail.com';
 
-export const SOCIALS: { id: 'linkedin' | 'github' | 'telegram'; label: string; href: string }[] = [
-  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/' },
-  { id: 'github', label: 'GitHub', href: 'https://github.com/edgergard' },
-  { id: 'telegram', label: 'Telegram', href: 'https://t.me/oleksandrbryksin' },
+/** Published at the owner's request; WhatsApp is registered on the same number. */
+export const PHONE = {
+  display: '+380 63 538 3049',
+  e164: '+380635383049',
+  href: 'tel:+380635383049',
+} as const;
+
+export type Social = {
+  id: 'telegram' | 'whatsapp' | 'linkedin' | 'github' | 'github-alt';
+  label: string;
+  handle: string;
+  /** Profile URL, opened in a new tab (WhatsApp's opens a chat on PHONE). */
+  href: string;
+};
+
+export const SOCIALS: Social[] = [
+  { id: 'telegram', label: 'Telegram', handle: '@oleksandrbryksin', href: 'https://t.me/oleksandrbryksin' },
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    handle: '@oleksandrbryksin',
+    href: `https://wa.me/${PHONE.e164.slice(1)}`,
+  },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    handle: 'oleksandr-bryksin',
+    href: 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/',
+  },
+  { id: 'github', label: 'GitHub', handle: 'edgergard', href: 'https://github.com/edgergard' },
+  {
+    id: 'github-alt',
+    label: 'GitHub',
+    handle: 'edgelordxd',
+    href: 'https://github.com/edgelordxd?tab=repositories',
+  },
 ];
+
+export const TELEGRAM_URL = 'https://t.me/oleksandrbryksin';
