@@ -1,11 +1,18 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { HashRouter } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 import { describe, expect, it, vi } from 'vitest';
 import '../i18n';
 import About from './About';
 import Experience from './Experience';
 import Certifications from './Certifications';
 import { Projects } from './Projects';
+import Contact from './Contact';
 import { PROJECT_LIST } from '../data/projects';
+
+vi.mock('@emailjs/browser', () => ({
+  default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
+}));
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
 vi.mock('framer-motion', () => ({
@@ -121,5 +128,65 @@ describe('Projects', () => {
     const rows = screen.getAllByTestId('project-row');
     expect(rows[0]).toHaveAttribute('data-reverse', 'false');
     expect(rows[1]).toHaveAttribute('data-reverse', 'true');
+  });
+});
+
+describe('Contact', () => {
+  const renderContact = () =>
+    render(
+      <HashRouter>
+        <Contact />
+      </HashRouter>,
+    );
+
+  it('renders the headline and the email link', () => {
+    renderContact();
+    expect(screen.getByRole('heading', { name: /Let.s build something precise\./ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'oleksandrbryksin@gmail.com' })).toHaveAttribute(
+      'href',
+      'mailto:oleksandrbryksin@gmail.com',
+    );
+  });
+
+  it('lists socials and both CV downloads', () => {
+    renderContact();
+    for (const name of [/LinkedIn/, /GitHub/, /Telegram/]) {
+      expect(screen.getByRole('link', { name })).toBeInTheDocument();
+    }
+    const rn = screen.getByRole('link', { name: /CV · React Native/ });
+    expect(rn).toHaveAttribute('href', '/cv/oleksandr-bryksin-react-native-cv.pdf');
+    expect(rn).toHaveAttribute('download');
+    const fe = screen.getByRole('link', { name: /CV · Frontend/ });
+    expect(fe).toHaveAttribute('href', '/cv/oleksandr-bryksin-frontend-cv.pdf');
+    expect(fe).toHaveAttribute('download');
+  });
+
+  it('links View CV to the cv page and has no phone', () => {
+    renderContact();
+    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
+    expect(screen.queryByText(/\+380/)).not.toBeInTheDocument();
+  });
+
+  it('shows validation errors and does not send an empty form', async () => {
+    renderContact();
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    expect(await screen.findByText('Subject is required.')).toBeInTheDocument();
+    expect(screen.getByText('Message is required.')).toBeInTheDocument();
+    expect(emailjs.sendForm).not.toHaveBeenCalled();
+  });
+
+  it('disables the button and sets aria-busy while sending', async () => {
+    let resolve!: () => void;
+    vi.mocked(emailjs.sendForm).mockReturnValueOnce(new Promise<never>((r) => { resolve = () => r(undefined as never); }));
+    renderContact();
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    const busy = await screen.findByRole('button', { name: 'Sending…' });
+    expect(busy).toBeDisabled();
+    expect(busy).toHaveAttribute('aria-busy', 'true');
+    resolve();
+    await waitFor(() => expect(screen.getByRole('button', { name: /Send message/ })).toBeEnabled());
   });
 });

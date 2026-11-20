@@ -1,6 +1,4 @@
 {
-  "contact": "Контакти",
-  "i_am_currently_looking": "Зараз я шукаю нові можливості, моя пошта завжди відкрита.",
   "email": "Пошта",
   "subject": "Тема",
   "subject_placeholder": "Вітаю",
@@ -76,7 +74,9 @@
   "cert_awarded": "Видано 18 лист. 2026",
   "cert_view": "Переглянути сертифікат",
   "contact_headline": "Створімо щось точне.",
-  "contact_cv": "CV · PDF",
+  "contact_cv_rn": "CV · React Native",
+  "contact_cv_fe": "CV · Frontend",
+  "send_sending": "Надсилання…",
   "nav_cv": "CV",
   "nav_menu_open": "Відкрити меню",
   "nav_menu_close": "Закрити меню",
