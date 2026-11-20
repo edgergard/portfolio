@@ -2,7 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import '../../i18n';
+import { act } from '@testing-library/react';
+import i18n from '../../i18n';
 import { CVS } from '../../data/cv';
+import { CVS_UA } from '../../data/cv.ua';
 import Footer from '../../components/layout/Footer';
 import Header from '../../components/Header';
 import CvPage from '../CvPage';
@@ -142,4 +145,57 @@ describe('CVS data', () => {
       expect(doc.experience.length).toBeGreaterThanOrEqual(1);
     });
   }
+});
+
+describe('CvPage localisation', () => {
+  afterEach(async () => {
+    await act(async () => {
+      await i18n.changeLanguage('en');
+    });
+  });
+
+  it('shows the Ukrainian title and summary in UA, and English again after switching back', async () => {
+    renderAt();
+    expect(screen.getByText(CVS['react-native'].title)).toBeInTheDocument();
+    expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
+
+    await act(async () => {
+      await i18n.changeLanguage('ua');
+    });
+    expect(screen.getByText(CVS_UA['react-native'].title)).toBeInTheDocument();
+    expect(screen.getByText(CVS_UA['react-native'].summary)).toBeInTheDocument();
+    expect(screen.queryByText(CVS['react-native'].title)).toBeNull();
+
+    await act(async () => {
+      await i18n.changeLanguage('en');
+    });
+    expect(screen.getByText(CVS['react-native'].title)).toBeInTheDocument();
+    expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
+  });
+
+  it('UA translation mirrors the EN structure for both variants', () => {
+    for (const v of ['react-native', 'frontend'] as const) {
+      const en = CVS[v];
+      const ua = CVS_UA[v];
+
+      const projCount = (d: typeof en) => d.experience.map(j => j.projects?.length ?? 0);
+
+      expect(projCount(ua)).toEqual(projCount(en));
+      expect(ua.experience.map(j => j.bullets.length)).toEqual(
+        en.experience.map(j => j.bullets.length),
+      );
+      expect(ua.skills.map(s => s.items.length)).toEqual(en.skills.map(s => s.items.length));
+      expect(ua.education).toHaveLength(en.education.length);
+      expect(ua.summary).not.toBe(en.summary);
+      expect(ua.pdf).toBe(en.pdf);
+    }
+  });
+
+  it('shows the HYS role in Ukrainian UA', async () => {
+    await act(async () => {
+      await i18n.changeLanguage('ua');
+    });
+    renderAt();
+    expect(screen.getAllByText(/React Native \/ Frontend-розробник/).length).toBeGreaterThan(0);
+  });
 });

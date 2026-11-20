@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CVS, type CvVariant } from '../data/cv';
+import type { CvVariant } from '../data/cv';
+import { getCv } from '../data/cv.ua';
 import Button from '../components/ui/Button';
 import CvPdf, { pdfHref } from './cv/CvPdf';
 import CvWeb from './cv/CvWeb';
@@ -41,9 +42,9 @@ const Switch = <T extends string>({
 );
 
 const CvPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { variant, view, setVariant, setView } = useCvParams();
-  const doc = CVS[variant];
+  const doc = getCv(variant, i18n.language);
 
   useEffect(() => {
     window.scrollTo(0, 0);
