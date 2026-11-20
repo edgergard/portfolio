@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { useTranslation } from 'react-i18next';
@@ -27,11 +27,42 @@ const usePrefersReducedMotion = () => {
   return reduced;
 };
 
-const hasWebGL = () => typeof window.WebGLRenderingContext !== 'undefined';
+/** True only if a WebGL context can actually be created (not just when the API exists). */
+const hasWebGL = () => {
+  if (typeof window.WebGLRenderingContext === 'undefined') return false;
+
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+
+    // Release the probe context right away; browsers cap live contexts.
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+
+    return gl !== null;
+  } catch {
+    return false;
+  }
+};
 
 const WineFallback = (props: { 'data-testid'?: string }) => (
   <div aria-hidden className="absolute inset-0" style={{ background: WINE_GRADIENT }} {...props} />
 );
+
+/**
+ * Keeps a scene failure (context creation error, lazy chunk 404 after a redeploy)
+ * inside the panel: the gradient replaces the canvas and the rest of the page stays up.
+ */
+class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? <WineFallback data-testid="hero-fallback" /> : this.props.children;
+  }
+}
 
 /** Registration mark centred on a corner of the panel's hairline. */
 const Cross = ({ className }: { className: string }) => (
@@ -47,6 +78,8 @@ const Hero = () => {
   const { t } = useTranslation();
   const reducedMotion = usePrefersReducedMotion();
   const [fps, setFps] = useState<number | null>(null);
+  // Probe once: Hero re-renders with every fps update.
+  const [webGL] = useState(hasWebGL);
 
   return (
     <section
@@ -83,10 +116,12 @@ const Hero = () => {
         </div>
 
         <div className="relative h-[45vh] border-t border-line min-[900px]:h-auto min-[900px]:border-l min-[900px]:border-t-0">
-          {hasWebGL() ? (
-            <Suspense fallback={<WineFallback />}>
-              <HeroScene reducedMotion={reducedMotion} onFps={setFps} />
-            </Suspense>
+          {webGL ? (
+            <SceneBoundary>
+              <Suspense fallback={<WineFallback />}>
+                <HeroScene reducedMotion={reducedMotion} onFps={setFps} />
+              </Suspense>
+            </SceneBoundary>
           ) : (
             <WineFallback data-testid="hero-fallback" />
           )}
@@ -100,7 +135,7 @@ const Hero = () => {
             <span>{t('hero_caption_material')}</span>
             <span aria-hidden>·</span>
             <span>
-              <b className="font-medium text-ink">{fps ?? '—'}</b> {t('hero_caption_fps')}
+              <b className="font-medium text-ink">{reducedMotion || fps === null ? '—' : fps}</b> {t('hero_caption_fps')}
             </span>
           </p>
         </div>
