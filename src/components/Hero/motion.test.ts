@@ -46,7 +46,7 @@ describe('motionSpeed', () => {
   });
 
   it('keeps the scene alive but calm under reduced motion', () => {
-    expect(REDUCED_SPEED).toBeCloseTo(0.35, 6);
+    expect(REDUCED_SPEED).toBeCloseTo(0.6, 6);
     expect(motionSpeed(true)).toBe(REDUCED_SPEED);
   });
 });

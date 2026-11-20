@@ -8,5 +8,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
+    // Let tests read styles.css as ?raw text (vitest blanks CSS by default).
+    css: { include: [/styles\.css/] },
   },
 });

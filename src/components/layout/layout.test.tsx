@@ -60,6 +60,30 @@ describe('Section', () => {
     expect(heading.parentElement?.className).not.toMatch(/280px/);
     expect(heading.compareDocumentPosition(screen.getByText('body')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
+
+  it('centres the label horizontally above the content', () => {
+    render(
+      <Section id="about" index={1} labelKey="section_about">
+        <p>body</p>
+      </Section>,
+    );
+    const heading = screen.getByRole('heading', { level: 2 });
+
+    expect(heading).toHaveClass('justify-center', 'text-center');
+  });
+
+  it('renders a bleed slot outside the centred column', () => {
+    render(
+      <Section id="about" index={1} labelKey="section_about" bleed={<div data-testid="band" />}>
+        <p>body</p>
+      </Section>,
+    );
+    const band = screen.getByTestId('band');
+
+    expect(band.closest('[class*="max-w-[1120px]"]')).toBeNull();
+    expect(screen.getByText('body').closest('[class*="max-w-[1120px]"]')).not.toBeNull();
+    expect(screen.getByText('body').compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });
 
 describe('document language', () => {

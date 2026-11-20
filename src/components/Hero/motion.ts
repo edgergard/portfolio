@@ -19,8 +19,8 @@ export const tiltTarget = (px: number, py: number): { x: number; y: number } => 
   y: clamp(px, 1.5) * 0.6,
 });
 
-/** Share of normal speed the hero keeps under prefers-reduced-motion: calm, but alive. */
-export const REDUCED_SPEED = 0.35;
+/** Share of normal speed the hero keeps under prefers-reduced-motion: gentler, still clearly alive. */
+export const REDUCED_SPEED = 0.6;
 
 /** Animation speed multiplier for the hero scene. */
 export const motionSpeed = (reducedMotion: boolean): number => (reducedMotion ? REDUCED_SPEED : 1);

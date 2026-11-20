@@ -1,21 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { EDUCATION, JOBS, type Education } from '../../data/content';
+import { EDUCATION, JOBS } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
-
-const BADGE = 'inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1 font-mono text-[11px] uppercase leading-[normal] tracking-[.06em]';
-
-const STATUS_CLASS: Record<Education['status'], string> = {
-  progress: `${BADGE} border-[#5E0C1C] bg-[rgba(139,20,38,0.18)] text-white`,
-  completed: `${BADGE} border-chip bg-white/[0.03] text-[#D4D4D8]`,
-  certificate: `${BADGE} border-wine bg-transparent text-white`,
-};
-
-const STATUS_DOT: Record<Education['status'], string> = {
-  progress: 'size-1.5 rounded-full bg-wine-3 shadow-[0_0_0_3px_rgba(208,33,63,0.25)] motion-safe:animate-pulse',
-  completed: 'size-1.5 rounded-full bg-[#A3A3A9]',
-  certificate: 'size-1.5 rotate-45 bg-wine-3',
-};
 
 const Experience = () => {
   const { t } = useTranslation();
@@ -72,13 +58,7 @@ const Experience = () => {
             testId="edu-card"
             className="group flex flex-col gap-6 rounded-[20px] border border-line bg-[linear-gradient(200deg,#141416_0%,#0A0A0B_65%)] p-7 transition-colors duration-300 hover:border-[#5E0C1C]"
           >
-            <div className="flex items-center justify-between gap-3">
-              <span className="font-mono text-xs uppercase tracking-[.08em] text-[#B4B4BA]">{t(`edu_kind_${edu.kind}`)}</span>
-              <span className={STATUS_CLASS[edu.status]}>
-                <i aria-hidden className={STATUS_DOT[edu.status]} />
-                {t(`edu_status_${edu.status}`)}
-              </span>
-            </div>
+            <span className="font-mono text-xs uppercase tracking-[.08em] text-[#B4B4BA]">{t(`edu_kind_${edu.kind}`)}</span>
             <div className="text-[34px] font-medium leading-none tracking-[-0.04em] text-ink min-[860px]:text-[30px] min-[1100px]:text-[36px]">
               {t(edu.periodKey)}
             </div>

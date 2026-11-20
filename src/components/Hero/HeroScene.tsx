@@ -3,7 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ACESFilmicToneMapping, type Texture } from 'three';
 import Knot from './Knot';
 import WineBackdrop from './WineBackdrop';
-import { motionSpeed, type ScenePointer } from './motion';
+import { motionSpeed } from './motion';
+import { useHeroPointer } from './useHeroPointer';
 import { buildStudioEnvironment, whenProgramsReady } from './warmup';
 
 const BG = '#0A0A0B';
@@ -122,53 +123,11 @@ const useOnScreen = (ref: RefObject<HTMLElement>) => {
   return intersecting && pageVisible;
 };
 
-/**
- * Tracks the pointer anywhere over the hero section, in NDC of the canvas panel,
- * so the knot reacts while the visitor reads the text column too.
- */
-const useHeroPointer = (ref: RefObject<HTMLElement>, enabled: boolean) => {
-  const pointer = useRef<ScenePointer>({ x: 0, y: 0, hovering: false });
-
-  useEffect(() => {
-    const panel = ref.current;
-    const hero = panel?.closest('section') ?? panel;
-
-    if (!enabled || !panel || !hero) {
-      return;
-    }
-
-    const state = pointer.current;
-    const onMove = (event: PointerEvent) => {
-      const rect = panel.getBoundingClientRect();
-
-      state.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      state.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      state.hovering = true;
-    };
-
-    const onLeave = () => {
-      state.hovering = false;
-    };
-
-    hero.addEventListener('pointermove', onMove);
-    hero.addEventListener('pointerleave', onLeave);
-
-    return () => {
-      hero.removeEventListener('pointermove', onMove);
-      hero.removeEventListener('pointerleave', onLeave);
-      // Settle back to rest if tracking stops (e.g. reduced motion switched on mid-hover).
-      state.hovering = false;
-    };
-  }, [ref, enabled]);
-
-  return pointer;
-};
-
 const HeroScene = ({ reducedMotion, onFps }: Props) => {
   const host = useRef<HTMLDivElement>(null);
   const onScreen = useOnScreen(host);
-  // Reduced motion: no pointer tilt or drift, and everything moves at a calmer pace.
-  const pointer = useHeroPointer(host, !reducedMotion);
+  // Pointer tilt and drift work the same under reduced motion; only the pace is gentler.
+  const pointer = useHeroPointer(host);
   const speed = motionSpeed(reducedMotion);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);

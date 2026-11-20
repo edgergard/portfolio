@@ -12,7 +12,6 @@ export type Job = {
 export type Education = {
   id: 'nuft' | 'kpi' | 'mate';
   kind: 'university' | 'course';
-  status: 'progress' | 'completed' | 'certificate';
   institutionKey: string;
   programmeKey: string;
   periodKey: string;
@@ -87,7 +86,6 @@ export const EDUCATION: Education[] = [
   {
     id: 'nuft',
     kind: 'university',
-    status: 'progress',
     institutionKey: 'edu_nuft_institution',
     programmeKey: 'edu_nuft_programme',
     periodKey: 'edu_nuft_period',
@@ -95,7 +93,6 @@ export const EDUCATION: Education[] = [
   {
     id: 'kpi',
     kind: 'university',
-    status: 'completed',
     institutionKey: 'edu_kpi_institution',
     programmeKey: 'edu_kpi_programme',
     periodKey: 'edu_kpi_period',
@@ -103,7 +100,6 @@ export const EDUCATION: Education[] = [
   {
     id: 'mate',
     kind: 'course',
-    status: 'certificate',
     institutionKey: 'edu_mate_institution',
     programmeKey: 'edu_mate_programme',
     periodKey: 'edu_mate_period',

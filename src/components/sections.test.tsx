@@ -50,6 +50,20 @@ describe('About', () => {
     expect(within(panel).getByText('React Native')).toBeInTheDocument();
     expect(within(panel).getByText('TanStack Query')).toBeInTheDocument();
   });
+
+  it('runs the skills panel full-bleed with its content on the centred column', () => {
+    render(<About />);
+    const panel = screen.getByTestId('skills-panel');
+
+    // Not boxed by the section's 1120px column, so it can span the page edge to edge...
+    expect(panel.parentElement?.closest('[class*="max-w-[1120px]"]')).toBeNull();
+    expect(panel).not.toHaveClass('rounded-[24px]');
+    // ...while the labels and pills sit in a column matching the section content.
+    const column = within(panel).getByTestId('skills-column');
+
+    expect(column).toHaveClass('mx-auto', 'max-w-[1120px]', 'px-6', 'min-[900px]:px-10');
+    expect(within(column).getAllByTestId('skill-pill')).toHaveLength(SKILLS.flatMap(g => g.items).length);
+  });
 });
 
 describe('Experience', () => {
@@ -93,20 +107,24 @@ describe('Experience', () => {
     expect(within(nuft).getByRole('heading', { level: 4 })).toHaveTextContent('National University of Food Technologies');
     expect(within(nuft).getByText('B.Sc. in Software Engineering')).toBeInTheDocument();
     expect(within(nuft).getByText('2026 – present')).toBeInTheDocument();
-    expect(within(nuft).getByText('In progress')).toBeInTheDocument();
     expect(within(nuft).getByText('University')).toBeInTheDocument();
 
     expect(within(kpi).getByRole('heading', { level: 4 })).toHaveTextContent('Igor Sikorsky Kyiv Polytechnic Institute');
     expect(within(kpi).getByText('Automation and Computer-Integrated Technologies')).toBeInTheDocument();
     expect(within(kpi).getByText('2019 – 2022')).toBeInTheDocument();
-    expect(within(kpi).getByText('Completed')).toBeInTheDocument();
     expect(within(kpi).getByText('University')).toBeInTheDocument();
 
     expect(within(mate).getByRole('heading', { level: 4 })).toHaveTextContent('Mate Academy');
     expect(within(mate).getByText('Fullstack Development course')).toBeInTheDocument();
     expect(within(mate).getByText('2023')).toBeInTheDocument();
-    expect(within(mate).getByText('Certificate')).toBeInTheDocument();
     expect(within(mate).getByText('Course')).toBeInTheDocument();
+  });
+
+  it('shows no status badge on the education cards', () => {
+    render(<Experience />);
+    for (const label of ['In progress', 'Completed', 'Certificate']) {
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
   });
 });
 

@@ -50,11 +50,21 @@ describe('content data', () => {
   });
 
   it('lists the three education entries from the CV', () => {
-    expect(EDUCATION.map(e => [e.id, e.kind, e.status])).toEqual([
-      ['nuft', 'university', 'progress'],
-      ['kpi', 'university', 'completed'],
-      ['mate', 'course', 'certificate'],
+    expect(EDUCATION.map(e => [e.id, e.kind])).toEqual([
+      ['nuft', 'university'],
+      ['kpi', 'university'],
+      ['mate', 'course'],
     ]);
+  });
+
+  it('drops the education status field and its translation keys', () => {
+    for (const edu of EDUCATION) {
+      expect(edu).not.toHaveProperty('status');
+    }
+
+    for (const dict of [en, ua]) {
+      expect(Object.keys(dict).filter(k => k.startsWith('edu_status_'))).toEqual([]);
+    }
   });
 
   it('has the same translation keys in EN and UA', () => {
@@ -71,7 +81,7 @@ describe('content data', () => {
         ...(j.companyKey ? [j.companyKey] : []),
         ...j.bulletKeys,
       ]),
-      ...EDUCATION.flatMap(e => [e.institutionKey, e.programmeKey, e.periodKey, `edu_kind_${e.kind}`, `edu_status_${e.status}`]),
+      ...EDUCATION.flatMap(e => [e.institutionKey, e.programmeKey, e.periodKey, `edu_kind_${e.kind}`]),
       ...CERTIFICATES.flatMap(c => [
         c.levelNameKey,
         c.awardedKey,

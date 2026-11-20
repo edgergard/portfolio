@@ -27,5 +27,6 @@ Testing Library on jsdom.
 ## Notes
 
 - The 3D scene is lazy-loaded and mounted once the page is idle; without WebGL a CSS
-  gradient is shown instead. With `prefers-reduced-motion` the scene renders one still frame.
+  gradient is shown instead. With `prefers-reduced-motion` the scene and the wine fills keep
+  moving at a gentler pace (pointer tilt still works); nothing freezes.
 - CV PDFs live in `public/cv/`; the contact form sends through EmailJS.
