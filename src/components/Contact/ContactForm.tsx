@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import Loader from '../Loader';
 import { useTranslation } from 'react-i18next';
 
 const {
@@ -180,7 +179,7 @@ const ContactForm = () => {
             py-2.5 px-5 text-white font-medium
             bg-button-main rounded-lg hover:bg-blood transition-all"
         >
-          {isLoading ? <Loader /> : t('send_message')}
+          {isLoading ? '…' : t('send_message')}
         </button>
       </form>
     </div>

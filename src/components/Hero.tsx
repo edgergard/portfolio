@@ -1,12 +1,10 @@
 import { HashLink } from 'react-router-hash-link';
-import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
-import { ReactLogo } from '../images';
 import { useTranslation } from 'react-i18next';
 import { CV_LINK } from '../utils/constants';
 
 const Hero = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <section id="hero">
@@ -17,26 +15,11 @@ const Hero = () => {
         className="grid lg:grid-cols-2 pt-12 md:pt-24"
       >
         <div>
-          <div className="
-            mb-10 text-white text-4xl md:text-7xl lg:text-[94px] font-extrabold"
-          >
-            <h1 className="mb-4 md:mb-10 text-blood">
-              {t('hello')}
-            </h1>
-
-            <TypeAnimation
-              key={i18n.language}
-              sequence={[
-                t('name'),
-                1000,
-                t('occupation'),
-                1000
-              ]}
-              wrapper="span"
-              speed={50}
-              repeat={Infinity}
-            />
-          </div>
+          <h1 className="mb-10 text-white text-4xl md:text-7xl lg:text-[94px] font-extrabold">
+            Oleksandr{" "}
+            <br />
+            Bryksin
+          </h1>
 
           <p className="text-text-secondary text-xl mb-8">
             {t('always_looking_for')}
@@ -68,13 +51,6 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="
-          hidden lg:flex items-center ml-40
-          size-[360px] xl:size-[460px]
-          rounded-full justify-center bg-hero-icon-bg"
-        >
-          <img src={ReactLogo} />
-        </div>
       </motion.div>
     </section>
   );

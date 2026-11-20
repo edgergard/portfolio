@@ -14,9 +14,9 @@ const Contact = () => {
       className="grid lg:grid-cols-2 gap-y-12 pt-12 md:pt-24"
     >
       <div>
-        <h1 className="text-xl font-bold text-white mb-2">
+        <h2 className="text-xl font-bold text-white mb-2">
           {t('contact')}
-        </h1>
+        </h2>
 
         <p className="text-text-secondary max-w-md mb-4">
           {t('i_am_currently_looking')}
