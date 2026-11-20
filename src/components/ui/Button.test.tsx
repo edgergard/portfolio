@@ -1,7 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import Button, { buttonClass } from './Button';
+
+const loop = vi.hoisted(() => ({ unregister: vi.fn(), register: vi.fn() }));
+
+vi.mock('./wineButtons/loop', () => ({ wineButtons: { register: loop.register } }));
+loop.register.mockImplementation(() => loop.unregister);
+
+/** The shader layer inside a button, if any. */
+const layer = (el: HTMLElement) => el.querySelector('canvas');
 
 describe('Button', () => {
   it('renders a native button with the wine-flow fill by default', () => {
@@ -53,5 +61,40 @@ describe('Button', () => {
     expect(buttonClass()).toMatch(/text-\[16px\]/);
     expect(buttonClass({ size: 'lg' })).toMatch(/text-\[17px\]/);
     expect(buttonClass()).toMatch(/focus-visible:/);
+  });
+
+  it('gives primary buttons a hidden canvas layer for the shared Wine shader, over the CSS fill', () => {
+    loop.register.mockClear();
+    render(<Button type="submit">Send</Button>);
+    const button = screen.getByRole('button', { name: 'Send' });
+    const canvas = layer(button);
+
+    expect(button).toHaveClass('bg-wine-flow');
+    expect(button).toHaveTextContent(/^Send$/);
+    expect(canvas).toHaveAttribute('aria-hidden', 'true');
+    expect(canvas).toHaveClass('absolute', 'inset-0', 'pointer-events-none', '-z-[1]', 'opacity-0');
+    expect(loop.register).toHaveBeenCalledWith(canvas);
+  });
+
+  it('adds the layer to primary links too, and never to outline buttons', () => {
+    render(
+      <HashRouter>
+        <Button href="/cv.pdf" download>Download</Button>
+        <Button to="/#experience">Experience</Button>
+        <Button to="/cv" variant="outline">View CV</Button>
+      </HashRouter>,
+    );
+    expect(layer(screen.getByRole('link', { name: 'Download' }))).not.toBeNull();
+    expect(layer(screen.getByRole('link', { name: 'Experience' }))).not.toBeNull();
+    expect(layer(screen.getByRole('link', { name: 'View CV' }))).toBeNull();
+  });
+
+  it('unregisters its layer on unmount', () => {
+    loop.unregister.mockClear();
+    const { unmount } = render(<Button>Send</Button>);
+
+    expect(loop.unregister).not.toHaveBeenCalled();
+    unmount();
+    expect(loop.unregister).toHaveBeenCalledTimes(1);
   });
 });

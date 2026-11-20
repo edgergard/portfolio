@@ -46,7 +46,8 @@ body {
   .bg-wine-flow::after {
     content: '';
     position: absolute;
-    z-index: -1;
+    /* Below a live shader layer at z-index -1 (primary buttons), above the element's background. */
+    z-index: -2;
     inset: -50%;
     pointer-events: none;
     will-change: translate, scale, rotate;
