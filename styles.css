@@ -83,3 +83,32 @@ body {
     .bg-wine-flow::after { animation-duration: 120s; }
   }
 }
+
+/*
+ * .wine-edge: a 1px animated wine-gradient frame (the Contact form card). The gradient sits
+ * on the wrapper and drifts; the child paints the inner surface, leaving 1px of it visible.
+ */
+@layer components {
+  .wine-edge {
+    padding: 1px;
+    border-radius: 20px;
+    background: linear-gradient(
+      140deg,
+      rgba(184, 35, 63, 0.9),
+      rgba(62, 7, 18, 0.2) 40%,
+      rgba(139, 20, 38, 0.7) 75%,
+      rgba(184, 35, 63, 0.2)
+    );
+    background-size: 200% 200%;
+    animation: wine-edge 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes wine-edge {
+    from { background-position: 0% 0%; }
+    to { background-position: 100% 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wine-edge { animation-duration: 40s; }
+  }
+}

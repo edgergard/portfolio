@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 
 export type ButtonVariant = 'primary' | 'outline';
-export type ButtonSize = 'md' | 'lg';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 type Style = { variant?: ButtonVariant; size?: ButtonSize; className?: string };
 
@@ -14,6 +14,7 @@ const BASE
   + 'disabled:cursor-wait disabled:opacity-70';
 
 const SIZES: Record<ButtonSize, string> = {
+  sm: 'px-[18px] py-[11px] text-[15px]',
   md: 'px-[22px] py-3 text-[16px]',
   lg: 'px-7 py-4 text-[17px]',
 };

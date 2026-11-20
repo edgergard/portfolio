@@ -1,8 +1,8 @@
 {
   "email": "Пошта",
   "subject": "Тема",
-  "subject_placeholder": "Вітаю",
-  "message_placeholder": "Поговоримо про...",
+  "subject_placeholder": "Роль, проєкт або питання",
+  "message_placeholder": "Привіт, Олександре, поговорімо про…",
   "message": "Повідомлення",
   "send_message": "Відправити повідомлення",
   "message_success": "Повідомлення було успішно відправлено.",
@@ -116,5 +116,21 @@
   "cv_experience": "Досвід",
   "cv_skills": "Навички",
   "cv_education": "Освіта",
-  "cv_languages": "Мови"
+  "cv_languages": "Мови",
+  "contact_lead": "Найшвидше зі мною зв’язатися в Telegram або поштою. Відкритий до ролей React Native та Frontend.",
+  "contact_group_direct": "Напряму",
+  "contact_group_profiles": "Профілі та документи",
+  "contact_email_name": "Пошта",
+  "contact_cv_name": "CV",
+  "contact_cv_rn_short": "React Native",
+  "contact_cv_fe_short": "Frontend",
+  "contact_cv_pdf": "PDF",
+  "contact_copy": "Копіювати",
+  "contact_copied": "Скопійовано",
+  "contact_copied_announce": "Скопійовано в буфер обміну",
+  "contact_copy_email": "Копіювати адресу пошти",
+  "contact_copy_whatsapp": "Копіювати нікнейм WhatsApp",
+  "contact_form_title": "Напишіть повідомлення",
+  "contact_form_status": "Відкритий до роботи · відповідаю протягом 24 год",
+  "contact_form_telegram": "Або напишіть у Telegram"
 }

@@ -1,8 +1,8 @@
 {
   "email": "Email",
   "subject": "Subject",
-  "subject_placeholder": "Hi",
-  "message_placeholder": "Let's talk about...",
+  "subject_placeholder": "Role, project or question",
+  "message_placeholder": "Hi Oleksandr, let’s talk about…",
   "message": "Message",
   "send_message": "Send message",
   "message_success": "Message was successfully sent.",
@@ -116,5 +116,21 @@
   "cv_experience": "Experience",
   "cv_skills": "Skills",
   "cv_education": "Education",
-  "cv_languages": "Languages"
+  "cv_languages": "Languages",
+  "contact_lead": "The fastest way to reach me is Telegram or email. Open to React Native and Frontend roles.",
+  "contact_group_direct": "Direct",
+  "contact_group_profiles": "Profiles & documents",
+  "contact_email_name": "Email",
+  "contact_cv_name": "CV",
+  "contact_cv_rn_short": "React Native",
+  "contact_cv_fe_short": "Frontend",
+  "contact_cv_pdf": "PDF",
+  "contact_copy": "Copy",
+  "contact_copied": "Copied",
+  "contact_copied_announce": "Copied to clipboard",
+  "contact_copy_email": "Copy email address",
+  "contact_copy_whatsapp": "Copy WhatsApp handle",
+  "contact_form_title": "Write a message",
+  "contact_form_status": "Open to work · replies within 24h",
+  "contact_form_telegram": "Or write on Telegram"
 }

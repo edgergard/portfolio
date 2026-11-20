@@ -13,6 +13,11 @@ describe('Button', () => {
     expect(button.className).not.toMatch(/translate/);
   });
 
+  it('has a compact small size', () => {
+    render(<Button size="sm">Send</Button>);
+    expect(screen.getByRole('button', { name: 'Send' })).toHaveClass('text-[15px]');
+  });
+
   it('renders an anchor when given href', () => {
     render(<Button href="/cv.pdf" download>Download</Button>);
     const link = screen.getByRole('link', { name: 'Download' });

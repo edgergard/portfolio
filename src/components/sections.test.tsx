@@ -196,22 +196,86 @@ describe('Contact', () => {
       </HashRouter>,
     );
 
-  it('renders the headline and the email link', () => {
+  it('renders the headline, the lead line and the email link', () => {
     renderContact();
     expect(screen.getByText(/Let.s build something precise\./)).toBeInTheDocument();
+    expect(screen.getByText(/The fastest way to reach me is Telegram or email\./)).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /Contact/ })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'oleksandrbryksin@gmail.com' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /oleksandrbryksin@gmail\.com/ })).toHaveAttribute(
       'href',
       'mailto:oleksandrbryksin@gmail.com',
     );
   });
 
-  it('lists socials and both CV downloads', () => {
+  it('groups the rows into Direct and Profiles & documents', () => {
     renderContact();
-    for (const name of [/LinkedIn/, /GitHub/, /Telegram/]) {
-      expect(screen.getByRole('link', { name })).toBeInTheDocument();
-    }
+    const direct = screen.getByRole('list', { name: 'Direct' });
+    const profiles = screen.getByRole('list', { name: 'Profiles & documents' });
 
+    expect(within(direct).getAllByRole('listitem')).toHaveLength(3);
+    expect(within(direct).getByText('Email')).toBeInTheDocument();
+    expect(within(direct).getByText('Telegram')).toBeInTheDocument();
+    expect(within(direct).getByText('WhatsApp')).toBeInTheDocument();
+    expect(within(profiles).getByText('LinkedIn')).toBeInTheDocument();
+    expect(within(profiles).getAllByText('GitHub')).toHaveLength(2);
+    expect(within(profiles).getByText('CV')).toBeInTheDocument();
+  });
+
+  it('links Telegram, LinkedIn and both GitHub profiles in a new tab', () => {
+    renderContact();
+    const expected: [RegExp, string][] = [
+      [/Telegram @oleksandrbryksin/, 'https://t.me/oleksandrbryksin'],
+      [/LinkedIn/, 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/'],
+      [/GitHub edgergard/, 'https://github.com/edgergard'],
+      [/GitHub edgelordxd/, 'https://github.com/edgelordxd?tab=repositories'],
+    ];
+
+    for (const [name, href] of expected) {
+      const link = screen.getByRole('link', { name });
+
+      expect(link).toHaveAttribute('href', href);
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  it('shows the WhatsApp handle with a copy action and no link', () => {
+    renderContact();
+    const direct = screen.getByRole('list', { name: 'Direct' });
+    const row = within(direct).getByText('WhatsApp').closest('li')!;
+
+    expect(within(row).getByText('@oleksandrbryksin')).toBeInTheDocument();
+    expect(within(row).queryByRole('link')).not.toBeInTheDocument();
+    expect(within(row).getByRole('button', { name: /Copy/ })).toBeInTheDocument();
+  });
+
+  it('copies the email address and briefly shows Copied', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    renderContact();
+    const copy = screen.getByRole('button', { name: 'Copy email address' });
+
+    expect(copy.tagName).toBe('BUTTON');
+    expect(copy).toHaveAttribute('type', 'button');
+    fireEvent.click(copy);
+    expect(writeText).toHaveBeenCalledWith('oleksandrbryksin@gmail.com');
+    expect(await screen.findByText('Copied')).toBeInTheDocument();
+    expect(screen.getAllByRole('status').map(s => s.textContent)).toContain('Copied to clipboard');
+  });
+
+  it('copies the WhatsApp handle', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    renderContact();
+    fireEvent.click(screen.getByRole('button', { name: 'Copy WhatsApp handle' }));
+    expect(writeText).toHaveBeenCalledWith('@oleksandrbryksin');
+    expect(await screen.findByText('Copied')).toBeInTheDocument();
+  });
+
+  it('offers both CV downloads and links View CV to the cv page, with no phone', () => {
+    renderContact();
     const rn = screen.getByRole('link', { name: /CV · React Native/ });
 
     expect(rn).toHaveAttribute('href', '/cv/oleksandr-bryksin-react-native-cv.pdf');
@@ -220,12 +284,18 @@ describe('Contact', () => {
 
     expect(fe).toHaveAttribute('href', '/cv/oleksandr-bryksin-frontend-cv.pdf');
     expect(fe).toHaveAttribute('download');
-  });
-
-  it('links View CV to the cv page and has no phone', () => {
-    renderContact();
     expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
     expect(screen.queryByText(/\+380/)).not.toBeInTheDocument();
+  });
+
+  it('titles the form, shows the status line and the Telegram hint', () => {
+    renderContact();
+    expect(screen.getByRole('heading', { level: 3, name: 'Write a message' })).toBeInTheDocument();
+    expect(screen.getByText(/Open to work · replies within 24h/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Or write on Telegram/ })).toHaveAttribute(
+      'href',
+      'https://t.me/oleksandrbryksin',
+    );
   });
 
   it('shows validation errors and does not send an empty form', async () => {
@@ -260,5 +330,15 @@ describe('Contact', () => {
     expect(busy).toHaveAttribute('aria-busy', 'true');
     resolve();
     await waitFor(() => expect(screen.getByRole('button', { name: /Send message/ })).toBeEnabled());
+  });
+
+  it('sends a valid form through EmailJS', async () => {
+    renderContact();
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
+    expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
   });
 });

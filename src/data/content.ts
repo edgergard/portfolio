@@ -129,8 +129,30 @@ export const CERTIFICATES: Certificate[] = [
 
 export const EMAIL = 'oleksandrbryksin@gmail.com';
 
-export const SOCIALS: { id: 'linkedin' | 'github' | 'telegram'; label: string; href: string }[] = [
-  { id: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/' },
-  { id: 'github', label: 'GitHub', href: 'https://github.com/edgergard' },
-  { id: 'telegram', label: 'Telegram', href: 'https://t.me/oleksandrbryksin' },
+export type Social = {
+  id: 'telegram' | 'whatsapp' | 'linkedin' | 'github' | 'github-alt';
+  label: string;
+  handle: string;
+  /** Profile URL; WhatsApp has none (wa.me needs a phone number), so its row offers Copy instead. */
+  href?: string;
+};
+
+export const SOCIALS: Social[] = [
+  { id: 'telegram', label: 'Telegram', handle: '@oleksandrbryksin', href: 'https://t.me/oleksandrbryksin' },
+  { id: 'whatsapp', label: 'WhatsApp', handle: '@oleksandrbryksin' },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    handle: 'oleksandr-bryksin',
+    href: 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/',
+  },
+  { id: 'github', label: 'GitHub', handle: 'edgergard', href: 'https://github.com/edgergard' },
+  {
+    id: 'github-alt',
+    label: 'GitHub',
+    handle: 'edgelordxd',
+    href: 'https://github.com/edgelordxd?tab=repositories',
+  },
 ];
+
+export const TELEGRAM_URL = 'https://t.me/oleksandrbryksin';

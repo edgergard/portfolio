@@ -7,6 +7,7 @@ import {
   FACTS,
   JOBS,
   SKILLS,
+  SOCIALS,
 } from './content';
 
 const sources = import.meta.glob('/src/**/*.{ts,tsx,json}', {
@@ -27,6 +28,16 @@ describe('content data', () => {
       url: 'https://cert.efset.org/en/oWhPgz',
     });
     expect(CERTIFICATES[0].parts.map(p => p.value)).toEqual([72, 76]);
+  });
+
+  it('lists the contact profiles, including WhatsApp and both GitHub accounts', () => {
+    expect(SOCIALS.map(s => [s.id, s.handle, s.href])).toEqual([
+      ['telegram', '@oleksandrbryksin', 'https://t.me/oleksandrbryksin'],
+      ['whatsapp', '@oleksandrbryksin', undefined],
+      ['linkedin', 'oleksandr-bryksin', 'https://www.linkedin.com/in/oleksandr-bryksin-898687253/'],
+      ['github', 'edgergard', 'https://github.com/edgergard'],
+      ['github-alt', 'edgelordxd', 'https://github.com/edgelordxd?tab=repositories'],
+    ]);
   });
 
   it('has the four facts', () => {
