@@ -113,6 +113,7 @@ describe('Experience', () => {
     const cards = screen.getAllByTestId('edu-card');
 
     expect(cards).toHaveLength(3);
+    cards.forEach(card => expect(card).toHaveClass('wine-edge'));
     expect(screen.getByRole('heading', { level: 3, name: 'Education' })).toBeInTheDocument();
 
     const [nuft, kpi, mate] = cards;
@@ -174,6 +175,7 @@ describe('Certifications', () => {
   it('has no placeholder card', () => {
     render(<Certifications />);
     expect(screen.getAllByTestId('cert-card')).toHaveLength(1);
+    expect(screen.getByTestId('cert-card')).toHaveClass('wine-edge');
   });
 });
 
