@@ -134,6 +134,18 @@ body {
     animation: wine-edge calc(6s * var(--wine-slow)) ease-in-out infinite alternate;
   }
 
+  /* Brighter frame for small elements (the View CV pill): a 1px ring around a short pill
+     reads much fainter than around a large card, so lift the dim stops. */
+  .wine-edge--bright {
+    background-image: linear-gradient(
+      140deg,
+      rgba(208, 33, 63, 1),
+      rgba(139, 20, 38, 0.45) 40%,
+      rgba(184, 35, 63, 0.95) 75%,
+      rgba(208, 33, 63, 0.45)
+    );
+  }
+
   @keyframes wine-edge {
     from { background-position: 0% 0%; }
     to { background-position: 100% 100%; }

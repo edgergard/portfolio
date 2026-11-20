@@ -27,7 +27,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   // .wine-edge (styles.css) paints the animated 1px wine frame as the element's background;
   // the ::before inset by 1px is the dark pill surface. The size padding overrides .wine-edge's.
   edge:
-    'wine-edge relative isolate rounded-full hover:brightness-[1.2] '
+    'wine-edge wine-edge--bright relative isolate rounded-full hover:brightness-[1.2] '
     + "before:pointer-events-none before:absolute before:inset-px before:-z-[1] before:rounded-full before:bg-[#0C0C0E] before:content-['']",
 };
 
