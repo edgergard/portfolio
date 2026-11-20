@@ -9,6 +9,7 @@ import Certifications from './Certifications';
 import { Projects } from './Projects';
 import Contact from './Contact';
 import { PROJECT_LIST } from '../data/projects';
+import { SKILLS } from '../data/content';
 
 vi.mock('@emailjs/browser', () => ({
   default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
@@ -38,6 +39,17 @@ describe('About', () => {
       expect(screen.getByText(title)).toBeInTheDocument();
     }
   });
+
+  it('shows every skill as a pill on a wine-flow panel', () => {
+    render(<About />);
+    const panel = screen.getByTestId('skills-panel');
+    const pills = within(panel).getAllByTestId('skill-pill');
+
+    expect(panel).toHaveClass('bg-wine-flow');
+    expect(pills).toHaveLength(SKILLS.flatMap(g => g.items).length);
+    expect(within(panel).getByText('React Native')).toBeInTheDocument();
+    expect(within(panel).getByText('TanStack Query')).toBeInTheDocument();
+  });
 });
 
 describe('Experience', () => {
@@ -60,9 +72,41 @@ describe('Experience', () => {
     expect(screen.queryByText('Current')).not.toBeInTheDocument();
   });
 
-  it('renders two education cards', () => {
+  it('titles the HYS role React Native / Frontend Developer', () => {
     render(<Experience />);
-    expect(screen.getAllByTestId('edu-card')).toHaveLength(2);
+    const hys = screen.getAllByTestId('xp-row')[1];
+
+    expect(within(hys).getByRole('heading', { level: 3 })).toHaveTextContent(
+      'React Native / Frontend Developer · HYS Enterprise',
+    );
+  });
+
+  it('renders three detailed education cards', () => {
+    render(<Experience />);
+    const cards = screen.getAllByTestId('edu-card');
+
+    expect(cards).toHaveLength(3);
+    expect(screen.getByRole('heading', { level: 3, name: 'Education' })).toBeInTheDocument();
+
+    const [nuft, kpi, mate] = cards;
+
+    expect(within(nuft).getByRole('heading', { level: 4 })).toHaveTextContent('National University of Food Technologies');
+    expect(within(nuft).getByText('B.Sc. in Software Engineering')).toBeInTheDocument();
+    expect(within(nuft).getByText('2026 – present')).toBeInTheDocument();
+    expect(within(nuft).getByText('In progress')).toBeInTheDocument();
+    expect(within(nuft).getByText('University')).toBeInTheDocument();
+
+    expect(within(kpi).getByRole('heading', { level: 4 })).toHaveTextContent('Igor Sikorsky Kyiv Polytechnic Institute');
+    expect(within(kpi).getByText('Automation and Computer-Integrated Technologies')).toBeInTheDocument();
+    expect(within(kpi).getByText('2019 – 2022')).toBeInTheDocument();
+    expect(within(kpi).getByText('Completed')).toBeInTheDocument();
+    expect(within(kpi).getByText('University')).toBeInTheDocument();
+
+    expect(within(mate).getByRole('heading', { level: 4 })).toHaveTextContent('Mate Academy');
+    expect(within(mate).getByText('Fullstack Development course')).toBeInTheDocument();
+    expect(within(mate).getByText('2023')).toBeInTheDocument();
+    expect(within(mate).getByText('Certificate')).toBeInTheDocument();
+    expect(within(mate).getByText('Course')).toBeInTheDocument();
   });
 });
 

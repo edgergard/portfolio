@@ -32,19 +32,34 @@ const About = () => {
           ))}
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 min-[900px]:grid-cols-4">
-          {SKILLS.map(group => (
-            <div key={group.titleKey}>
-              <div className="font-mono text-xs uppercase tracking-[.06em] text-muted">{t(group.titleKey)}</div>
-              <ul className="mt-3.5 grid list-none gap-2 text-base leading-[normal]">
-                {group.items.map(item => (
-                  <li key={item} className="flex items-center gap-2.5 before:size-1 before:shrink-0 before:rounded-full before:bg-[#5A5A60] before:content-['']">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div
+          data-testid="skills-panel"
+          className="bg-wine-flow mt-14 rounded-[24px] hover:filter-none border border-white/10 p-6 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] min-[900px]:p-10"
+        >
+          <h3 className="font-mono text-[13px] font-normal uppercase tracking-[.08em] text-white/85">
+            {t('about_skills_heading')}
+          </h3>
+          <div className="mt-7 grid grid-cols-1 gap-x-10 gap-y-8 min-[900px]:grid-cols-2">
+            {SKILLS.map(group => (
+              <div key={group.titleKey}>
+                <div className="flex items-center gap-2.5 font-mono text-xs uppercase tracking-[.08em] text-white/75">
+                  <i aria-hidden className="inline-block h-px w-4 bg-white/40" />
+                  {t(group.titleKey)}
+                </div>
+                <ul className="mt-3.5 flex list-none flex-wrap gap-2">
+                  {group.items.map(item => (
+                    <li
+                      key={item}
+                      data-testid="skill-pill"
+                      className="rounded-full border border-white/15 bg-[rgba(10,10,11,0.42)] px-4 py-2 text-[15px] font-medium leading-tight text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-colors duration-200 hover:border-white/35 hover:bg-[rgba(10,10,11,0.6)] min-[900px]:text-base"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </Reveal>
     </Section>

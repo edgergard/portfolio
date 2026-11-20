@@ -9,7 +9,14 @@ export type Job = {
   bulletKeys: string[];
   stack: string[];
 };
-export type Education = { metaKey: string; titleKey: string };
+export type Education = {
+  id: 'nuft' | 'kpi' | 'mate';
+  kind: 'university' | 'course';
+  status: 'progress' | 'completed' | 'certificate';
+  institutionKey: string;
+  programmeKey: string;
+  periodKey: string;
+};
 export type Certificate = {
   id: 'efset';
   issuer: string;
@@ -32,19 +39,19 @@ export const FACTS: Fact[] = [
 export const SKILLS: SkillGroup[] = [
   {
     titleKey: 'skills_web',
-    items: ['TypeScript', 'React · Next.js', 'Vue · Pinia', 'Tailwind · shadcn/ui'],
+    items: ['TypeScript', 'React', 'Next.js', 'Vue', 'Pinia', 'Tailwind CSS', 'shadcn/ui'],
   },
   {
     titleKey: 'skills_mobile',
-    items: ['React Native · Expo', 'BLE · NFC · Mesh', 'Mapbox · offline maps', 'Background geo & audio'],
+    items: ['React Native', 'Expo', 'BLE', 'NFC', 'Mesh', 'Mapbox', 'Offline maps', 'Background geo & audio'],
   },
   {
     titleKey: 'skills_data',
-    items: ['Redux Toolkit · Zustand', 'TanStack Query', 'Supabase · Firebase', 'RevenueCat · REST'],
+    items: ['Redux Toolkit', 'Zustand', 'TanStack Query', 'Supabase', 'Firebase', 'RevenueCat', 'REST'],
   },
   {
     titleKey: 'skills_ship',
-    items: ['EAS · GitHub Actions', 'TestFlight · Play Console', 'PostHog · Lighthouse', 'Three.js · OpenAI API'],
+    items: ['EAS', 'GitHub Actions', 'TestFlight', 'Play Console', 'PostHog', 'Lighthouse', 'Three.js', 'OpenAI API'],
   },
 ];
 
@@ -77,8 +84,30 @@ export const JOBS: Job[] = [
 ];
 
 export const EDUCATION: Education[] = [
-  { metaKey: 'edu_kpi_meta', titleKey: 'edu_kpi_title' },
-  { metaKey: 'edu_mate_meta', titleKey: 'edu_mate_title' },
+  {
+    id: 'nuft',
+    kind: 'university',
+    status: 'progress',
+    institutionKey: 'edu_nuft_institution',
+    programmeKey: 'edu_nuft_programme',
+    periodKey: 'edu_nuft_period',
+  },
+  {
+    id: 'kpi',
+    kind: 'university',
+    status: 'completed',
+    institutionKey: 'edu_kpi_institution',
+    programmeKey: 'edu_kpi_programme',
+    periodKey: 'edu_kpi_period',
+  },
+  {
+    id: 'mate',
+    kind: 'course',
+    status: 'certificate',
+    institutionKey: 'edu_mate_institution',
+    programmeKey: 'edu_mate_programme',
+    periodKey: 'edu_mate_period',
+  },
 ];
 
 export const CERTIFICATES: Certificate[] = [

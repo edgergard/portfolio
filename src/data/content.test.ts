@@ -33,6 +33,19 @@ describe('content data', () => {
     expect(FACTS.map(f => f.value)).toEqual(['2.5+', '5', '95–100', 'C1']);
   });
 
+  it('titles the HYS role React Native / Frontend Developer in EN and UA', () => {
+    expect(en.job_hys_role).toBe('React Native / Frontend Developer');
+    expect(ua.job_hys_role).toBe('React Native / Frontend-розробник');
+  });
+
+  it('lists the three education entries from the CV', () => {
+    expect(EDUCATION.map(e => [e.id, e.kind, e.status])).toEqual([
+      ['nuft', 'university', 'progress'],
+      ['kpi', 'university', 'completed'],
+      ['mate', 'course', 'certificate'],
+    ]);
+  });
+
   it('has the same translation keys in EN and UA', () => {
     expect(Object.keys(ua).sort()).toEqual(Object.keys(en).sort());
   });
@@ -47,7 +60,7 @@ describe('content data', () => {
         ...(j.companyKey ? [j.companyKey] : []),
         ...j.bulletKeys,
       ]),
-      ...EDUCATION.flatMap(e => [e.metaKey, e.titleKey]),
+      ...EDUCATION.flatMap(e => [e.institutionKey, e.programmeKey, e.periodKey, `edu_kind_${e.kind}`, `edu_status_${e.status}`]),
       ...CERTIFICATES.flatMap(c => [
         c.levelNameKey,
         c.awardedKey,
