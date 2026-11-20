@@ -18,10 +18,27 @@ export const BUFFER_WIDTH = 512;
 export const BUFFER_HEIGHT = 256;
 
 /**
- * The patch of the hero's shader plane (in its UVs) the buffer shows: the vivid centre,
- * well inside the radial fade (which starts at 0.35 * radius from the centre), at 2:1.
+ * How much of the hero's shader plane (in UV) one CSS pixel of the hero panel shows on a
+ * 1440x900 desktop. The camera (fov 32 at z 8) sees 2 * 10.5 * tan(16deg) = 6.02 units of
+ * the 9-unit plane at z -2.5 across the 828px-tall panel: 6.02 / 9 / 828 = 0.00081.
  */
-export const UV_WINDOW = { u: [0.25, 0.75], v: [0.375, 0.625] } as const;
+export const HERO_UV_PER_PX = 0.00081;
+
+/** Button width (CSS px) at which a button's grain matches the hero's exactly: the hero's View experience is ~210px. */
+export const MATCH_WIDTH = 200;
+
+/**
+ * The patch of the hero's shader plane (in its UVs) the buffer shows: the vivid centre
+ * (well inside the radial fade, which starts at 0.35 * radius from the centre), at 2:1.
+ * Buttons wider than 2:1 cover-fit the buffer's full width, so a MATCH_WIDTH button spans
+ * exactly as much of the noise as the same width of the hero panel: the same material.
+ */
+const U_SPAN = HERO_UV_PER_PX * MATCH_WIDTH;
+
+export const UV_WINDOW = {
+  u: [0.5 - U_SPAN / 2, 0.5 + U_SPAN / 2],
+  v: [0.5 - U_SPAN / 4, 0.5 + U_SPAN / 4],
+} as const;
 
 /**
  * One offscreen WebGLRenderer drawing the hero's Wine shader (same uniforms, palette,
@@ -34,7 +51,8 @@ export const createWineBufferRenderer = async (
   const gl = new WebGLRenderer({
     antialias: false,
     alpha: false,
-    preserveDrawingBuffer: true,
+    // No preserveDrawingBuffer: the loop copies each frame with drawImage in the same task
+    // as gl.render, before the buffer is presented and cleared.
     powerPreference: 'low-power',
   });
 

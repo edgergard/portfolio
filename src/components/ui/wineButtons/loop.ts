@@ -34,19 +34,35 @@ type Status = 'idle' | 'loading' | 'ready' | 'failed';
 const MAX_DPR = 2;
 const GOLDEN = 0.618034;
 
-/** Source rectangle for drawing a (bw x bh) buffer into a (w x h) box with object-fit: cover. */
-export const coverRect = (bw: number, bh: number, w: number, h: number, offset: number) => {
+export type Rect = { sx: number; sy: number; sw: number; sh: number };
+
+/**
+ * Source rectangle for drawing a (bw x bh) buffer into a (w x h) box with object-fit: cover.
+ * Writes into `out` (the render loop passes one reused rect, so frames don't allocate).
+ */
+export const coverRect = (
+  bw: number,
+  bh: number,
+  w: number,
+  h: number,
+  offset: number,
+  out: Rect = { sx: 0, sy: 0, sw: 0, sh: 0 },
+): Rect => {
   const box = w / h;
 
   if (box >= bw / bh) {
-    const sh = bw / box;
-
-    return { sx: 0, sy: (bh - sh) * offset, sw: bw, sh };
+    out.sw = bw;
+    out.sh = bw / box;
+    out.sx = 0;
+    out.sy = (bh - out.sh) * offset;
+  } else {
+    out.sw = bh * box;
+    out.sh = bh;
+    out.sx = (bw - out.sw) * offset;
+    out.sy = 0;
   }
 
-  const sw = bh * box;
-
-  return { sx: (bw - sw) * offset, sy: 0, sw, sh: bh };
+  return out;
 };
 
 const defaultWhenIdle = (cb: () => void) => {
@@ -79,6 +95,16 @@ const defaultWhenIdle = (cb: () => void) => {
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
+/** Reads prefers-reduced-motion from one MediaQueryList, created on first use. */
+const cachedReducedMotion = () => {
+  let query: MediaQueryList | null = null;
+
+  return () => (query ??= window.matchMedia(REDUCED_MOTION)).matches;
+};
+
+/** Context losses the loop recovers from (by loading a fresh renderer) before keeping the CSS fill. */
+const MAX_RESTARTS = 1;
+
 const setState = (canvas: HTMLCanvasElement, state: 'loading' | 'live' | 'fallback') => {
   canvas.dataset.state = state;
   // Hidden until it holds a frame: the CSS wine-flow fill underneath shows meanwhile.
@@ -90,13 +116,14 @@ const setState = (canvas: HTMLCanvasElement, state: 'loading' | 'live' | 'fallba
  * every frame the renderer draws the Wine shader once into its small buffer and the loop
  * copies that into each on-screen button (cover-fit, device pixels). The loop pauses when no
  * button is on screen or the tab is hidden, and tears the renderer down with the last button.
+ * A lost context is recovered once with a fresh renderer; a second loss keeps the CSS fill.
  */
 export const createWineButtonLoop = ({
   load,
   raf = (cb) => window.requestAnimationFrame(cb),
   caf = (id) => window.cancelAnimationFrame(id),
   whenIdle = defaultWhenIdle,
-  reducedMotion = () => window.matchMedia(REDUCED_MOTION).matches,
+  reducedMotion = cachedReducedMotion(),
 }: LoopOptions) => {
   const entries = new Map<HTMLCanvasElement, Entry>();
   let status: Status = 'idle';
@@ -108,9 +135,15 @@ export const createWineButtonLoop = ({
   let registered = 0;
   let time = 0;
   let last: number | null = null;
+  let restarts = 0;
+  /** Entries that are on screen and have a 2D context: the only ones a frame can draw into. */
+  let drawable = 0;
+  // Per-frame scratch, reused so the loop doesn't allocate.
+  const rect: Rect = { sx: 0, sy: 0, sw: 0, sh: 0 };
+  let dpr = 1;
 
-  const anyOnScreen = () => [...entries.values()].some((e) => e.onScreen);
-  const shouldRun = () => status === 'ready' && !document.hidden && anyOnScreen();
+  const isDrawable = (entry: Entry) => entry.onScreen && entry.ctx !== null;
+  const shouldRun = () => status === 'ready' && !document.hidden && drawable > 0;
 
   const stop = () => {
     if (frame !== null) {
@@ -129,16 +162,27 @@ export const createWineButtonLoop = ({
 
   const onVisibility = () => (document.hidden ? stop() : start());
 
-  const teardown = () => {
+  /** Stops the loop and drops the renderer (and any load in flight). */
+  const dropRenderer = () => {
     stop();
     cancelIdle?.();
     cancelIdle = null;
-    renderer?.dispose();
+
+    try {
+      renderer?.dispose();
+    } catch {
+      // A lost context can throw while releasing; there is nothing left to free.
+    }
+
     renderer = null;
+    generation++;
+  };
+
+  const teardown = () => {
+    dropRenderer();
     observer?.disconnect();
     observer = null;
     document.removeEventListener('visibilitychange', onVisibility);
-    generation++;
   };
 
   const fail = (error?: unknown) => {
@@ -150,6 +194,27 @@ export const createWineButtonLoop = ({
     teardown();
     status = 'failed';
     entries.forEach((_, canvas) => setState(canvas, 'fallback'));
+  };
+
+  const drawEntry = (entry: Entry, canvas: HTMLCanvasElement) => {
+    if (!renderer || !isDrawable(entry)) {
+      return;
+    }
+
+    const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+    const h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+
+    coverRect(renderer.width, renderer.height, w, h, entry.offset, rect);
+    entry.ctx!.drawImage(renderer.source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, w, h);
+
+    if (canvas.dataset.state !== 'live') {
+      setState(canvas, 'live');
+    }
   };
 
   function tick(now: number) {
@@ -168,30 +233,8 @@ export const createWineButtonLoop = ({
 
     try {
       renderer.render(time);
-
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
-
-      entries.forEach((entry, canvas) => {
-        if (!entry.onScreen || !entry.ctx) {
-          return;
-        }
-
-        const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
-        const h = Math.max(1, Math.round(canvas.clientHeight * dpr));
-
-        if (canvas.width !== w || canvas.height !== h) {
-          canvas.width = w;
-          canvas.height = h;
-        }
-
-        const { sx, sy, sw, sh } = coverRect(renderer!.width, renderer!.height, w, h, entry.offset);
-
-        entry.ctx.drawImage(renderer!.source, sx, sy, sw, sh, 0, 0, w, h);
-
-        if (canvas.dataset.state !== 'live') {
-          setState(canvas, 'live');
-        }
-      });
+      dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      entries.forEach(drawEntry);
     } catch (error) {
       fail(error);
 
@@ -201,13 +244,27 @@ export const createWineButtonLoop = ({
     start();
   }
 
+  /** Context lost: load a fresh renderer once (the CSS fill shows meanwhile), then give up. */
+  const onLost = () => {
+    if (restarts >= MAX_RESTARTS) {
+      fail(new Error('WebGL context lost'));
+
+      return;
+    }
+
+    restarts++;
+    dropRenderer();
+    entries.forEach((_, canvas) => setState(canvas, 'loading'));
+    beginLoading();
+  };
+
   const beginLoading = () => {
     status = 'loading';
     const mine = generation;
 
     cancelIdle = whenIdle(() => {
       cancelIdle = null;
-      load(() => mine === generation && fail(new Error('WebGL context lost')))
+      load(() => mine === generation && onLost())
         .then((r) => {
           if (mine !== generation) {
             r.dispose();
@@ -232,12 +289,14 @@ export const createWineButtonLoop = ({
       records.forEach((record) => {
         const entry = entries.get(record.target as HTMLCanvasElement);
 
-        if (entry) {
+        if (entry && entry.onScreen !== record.isIntersecting) {
+          drawable -= isDrawable(entry) ? 1 : 0;
           entry.onScreen = record.isIntersecting;
+          drawable += isDrawable(entry) ? 1 : 0;
         }
       });
 
-      if (anyOnScreen()) {
+      if (drawable > 0) {
         start();
       } else {
         stop();
@@ -253,13 +312,21 @@ export const createWineButtonLoop = ({
       return () => {};
     }
 
-    setState(canvas, 'loading');
-    entries.set(canvas, {
+    if (entries.has(canvas)) {
+      return () => {};
+    }
+
+    const entry: Entry = {
       ctx: canvas.getContext('2d'),
       // Assume visible until the observer says otherwise (its first report is async).
       onScreen: true,
       offset: (registered++ * GOLDEN) % 1,
-    });
+    };
+
+    // No 2D context: nothing to draw into, so this button keeps its CSS fill.
+    setState(canvas, entry.ctx ? 'loading' : 'fallback');
+    entries.set(canvas, entry);
+    drawable += isDrawable(entry) ? 1 : 0;
     ensureWatchers();
     observer?.observe(canvas);
 
@@ -270,9 +337,12 @@ export const createWineButtonLoop = ({
     }
 
     return () => {
-      if (!entries.delete(canvas)) {
+      if (entries.get(canvas) !== entry) {
         return;
       }
+
+      entries.delete(canvas);
+      drawable -= isDrawable(entry) ? 1 : 0;
 
       observer?.unobserve(canvas);
 

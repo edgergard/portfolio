@@ -333,18 +333,20 @@ describe('wine button loop', () => {
     expect(late.canvas.dataset.state).toBe('fallback');
   });
 
-  it('hides every canvas and stops when a frame throws or the context is lost', async () => {
+  it('reloads a fresh renderer once when the context is lost, then keeps the CSS fill', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     let lose = () => {};
 
-    const renderer = fakeRenderer();
-    const { clock, loop } = setup({
-      load: async (onLost) => {
-        lose = onLost;
+    const made: ReturnType<typeof fakeRenderer>[] = [];
+    const load = vi.fn(async (onLost: () => void) => {
+      lose = onLost;
+      const r = fakeRenderer();
 
-        return renderer;
-      },
+      made.push(r);
+
+      return r;
     });
+    const { clock, loop } = setup({ load });
     const a = buttonCanvas();
 
     loop.register(a.canvas);
@@ -353,10 +355,46 @@ describe('wine button loop', () => {
     expect(a.canvas.dataset.state).toBe('live');
 
     lose();
-    expect(a.canvas.dataset.state).toBe('fallback');
-    expect(renderer.dispose).toHaveBeenCalledTimes(1);
+    expect(made[0].dispose).toHaveBeenCalledTimes(1);
+    expect(a.canvas.dataset.state).toBe('loading');
     expect(clock.pending()).toBe(0);
+    await flush();
+    clock.step();
+    expect(load).toHaveBeenCalledTimes(2);
+    expect(made[1].render).toHaveBeenCalledTimes(1);
+    expect(a.canvas.dataset.state).toBe('live');
 
+    lose();
+    expect(made[1].dispose).toHaveBeenCalledTimes(1);
+    expect(a.canvas.dataset.state).toBe('fallback');
+    expect(clock.pending()).toBe(0);
+    await flush();
+    expect(load).toHaveBeenCalledTimes(2);
+  });
+
+  it('ignores a loss reported by a renderer it has already replaced', async () => {
+    const losers: Array<() => void> = [];
+    const { clock, loop } = setup({
+      load: vi.fn(async (onLost: () => void) => {
+        losers.push(onLost);
+
+        return fakeRenderer();
+      }),
+    });
+    const a = buttonCanvas();
+
+    loop.register(a.canvas);
+    await flush();
+    losers[0]();
+    await flush();
+    losers[0]();
+    clock.step();
+    expect(losers).toHaveLength(2);
+    expect(a.canvas.dataset.state).toBe('live');
+  });
+
+  it('hides every canvas and stops when a frame throws', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
     const thrower = fakeRenderer();
     const broken = setup({ load: async () => thrower });
     const b = buttonCanvas();
@@ -370,6 +408,53 @@ describe('wine button loop', () => {
     expect(b.canvas.dataset.state).toBe('fallback');
     expect(broken.clock.pending()).toBe(0);
   });
+
+  it('does not render while no on-screen button has a 2D context', async () => {
+    const { clock, renderer, loop } = setup();
+    const a = buttonCanvas();
+    const b = buttonCanvas();
+
+    vi.mocked(a.canvas.getContext).mockReturnValue(null);
+    loop.register(a.canvas);
+    expect(a.canvas.dataset.state).toBe('fallback');
+    await flush();
+    clock.step();
+    expect(renderer.render).not.toHaveBeenCalled();
+    expect(clock.pending()).toBe(0);
+
+    loop.register(b.canvas);
+    clock.step();
+    expect(renderer.render).toHaveBeenCalledTimes(1);
+
+    setOnScreen(b.canvas, false);
+    clock.step();
+    clock.step();
+    expect(renderer.render).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads prefers-reduced-motion from one cached MediaQueryList, not per frame', async () => {
+    const matchMedia = vi.fn(() => ({ matches: false }) as MediaQueryList);
+
+    vi.stubGlobal('matchMedia', matchMedia);
+    const clock = frames();
+    const loop = createWineButtonLoop({
+      load: async () => fakeRenderer(),
+      raf: clock.raf,
+      caf: clock.caf,
+      whenIdle: (cb) => {
+        cb();
+
+        return () => {};
+      },
+    });
+
+    loop.register(buttonCanvas().canvas);
+    await flush();
+    clock.step();
+    clock.step();
+    clock.step();
+    expect(matchMedia).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('coverRect', () => {
@@ -380,5 +465,12 @@ describe('coverRect', () => {
 
   it('crops the buffer width for squarer boxes', () => {
     expect(coverRect(512, 256, 100, 100, 0.5)).toEqual({ sx: 128, sy: 0, sw: 256, sh: 256 });
+  });
+
+  it('writes into a given rect instead of allocating one', () => {
+    const out = { sx: 9, sy: 9, sw: 9, sh: 9 };
+
+    expect(coverRect(512, 256, 200, 50, 0, out)).toBe(out);
+    expect(out).toEqual({ sx: 0, sy: 0, sw: 512, sh: 128 });
   });
 });
