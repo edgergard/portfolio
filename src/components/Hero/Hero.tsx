@@ -119,9 +119,16 @@ const Hero = () => {
   const { t } = useTranslation();
   const reducedMotion = usePrefersReducedMotion();
   const [fps, setFps] = useState<number | null>(null);
-  // Probe once: Hero re-renders with every fps update.
-  const [webGL] = useState(hasWebGL);
-  const sceneReady = useIdleMount();
+  const idle = useIdleMount();
+  // Probed once, when idle: creating a context is a blocking GPU-process round trip.
+  // null = not probed yet (the gradient shows meanwhile).
+  const [webGL, setWebGL] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (idle) {
+      setWebGL(hasWebGL());
+    }
+  }, [idle]);
 
   return (
     <section
@@ -158,14 +165,18 @@ const Hero = () => {
         </div>
 
         <div className="relative h-[45vh] border-t border-line min-[900px]:h-auto min-[900px]:border-l min-[900px]:border-t-0">
-          {!webGL ? (
+          {webGL === false ? (
             <WineFallback data-testid="hero-fallback" />
-          ) : sceneReady ? (
-            <SceneBoundary>
-              <Suspense fallback={<WineFallback />}>
-                <HeroScene reducedMotion={reducedMotion} onFps={setFps} />
-              </Suspense>
-            </SceneBoundary>
+          ) : webGL ? (
+            <>
+              {/* Stays under the canvas, which is transparent until its shaders are ready. */}
+              <WineFallback />
+              <SceneBoundary>
+                <Suspense fallback={null}>
+                  <HeroScene reducedMotion={reducedMotion} onFps={setFps} />
+                </Suspense>
+              </SceneBoundary>
+            </>
           ) : (
             <WineFallback />
           )}

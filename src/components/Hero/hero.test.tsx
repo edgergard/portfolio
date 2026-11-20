@@ -89,6 +89,8 @@ describe('Hero', () => {
   it('mounts the scene only after the page is idle', async () => {
     renderHero();
     expect(screen.queryByTestId('canvas')).not.toBeInTheDocument();
+    // The WebGL probe (a blocking context creation) waits for idle too.
+    expect(HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled();
     expect(await screen.findByTestId('canvas')).toBeInTheDocument();
   });
 
@@ -98,17 +100,17 @@ describe('Hero', () => {
     expect(await screen.findByTestId('canvas')).toHaveAttribute('data-frameloop', 'never');
   });
 
-  it('falls back to a gradient without WebGL', () => {
+  it('falls back to a gradient without WebGL', async () => {
     vi.stubGlobal('WebGLRenderingContext', undefined);
     renderHero();
-    expect(screen.getByTestId('hero-fallback')).toBeInTheDocument();
+    expect(await screen.findByTestId('hero-fallback')).toBeInTheDocument();
     expect(screen.queryByTestId('canvas')).not.toBeInTheDocument();
   });
 
-  it('falls back to a gradient when a context cannot be created', () => {
+  it('falls back to a gradient when a context cannot be created', async () => {
     vi.mocked(HTMLCanvasElement.prototype.getContext).mockReturnValue(null);
     renderHero();
-    expect(screen.getByTestId('hero-fallback')).toBeInTheDocument();
+    expect(await screen.findByTestId('hero-fallback')).toBeInTheDocument();
     expect(screen.queryByTestId('canvas')).not.toBeInTheDocument();
   });
 

@@ -1,6 +1,6 @@
-import { memo, useEffect, useRef, useState, type RefObject } from 'react';
+import { memo, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { ACESFilmicToneMapping, PMREMGenerator } from 'three';
+import { ACESFilmicToneMapping, PMREMGenerator, type Material, type Texture, type WebGLRenderer } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import Knot from './Knot';
 import WineBackdrop from './WineBackdrop';
@@ -8,43 +8,127 @@ import type { ScenePointer } from './motion';
 
 const BG = '#0A0A0B';
 const FPS_INTERVAL_MS = 500;
+/** Blur of the studio reflections (radians). */
+const ENV_SIGMA = 0.04;
 
 type Props = {
   reducedMotion: boolean;
   onFps?: (fps: number) => void;
 };
 
-/** Studio reflections for the glossy knot: RoomEnvironment prefiltered through PMREM. */
-const StudioEnvironment = () => {
+type ProgramState = { currentProgram?: { isReady: () => boolean } };
+
+/**
+ * Runs draw() with renderer.render swapped for renderer.compile: every program the draw
+ * would use starts compiling (in parallel, with KHR_parallel_shader_compile) for the same
+ * render targets, but nothing is drawn and nothing waits for a shader link.
+ */
+const compileWithoutDrawing = (gl: WebGLRenderer, draw: () => void) => {
+  const materials = new Set<Material>();
+  const render = gl.render;
+
+  gl.render = (object, camera) => {
+    gl.compile(object, camera).forEach((material) => materials.add(material));
+  };
+
+  try {
+    draw();
+  } finally {
+    gl.render = render;
+  }
+
+  return materials;
+};
+
+/** Resolves once every material's program has linked (same polling as compileAsync). */
+const whenProgramsReady = (gl: WebGLRenderer, materials: Set<Material>) =>
+  new Promise<void>((resolve) => {
+    const check = () => {
+      materials.forEach((material) => {
+        const { currentProgram } = gl.properties.get(material) as ProgramState;
+
+        if (!currentProgram || currentProgram.isReady()) {
+          materials.delete(material);
+        }
+      });
+
+      if (materials.size === 0) {
+        resolve();
+      } else {
+        setTimeout(check, 10);
+      }
+    };
+
+    check();
+  });
+
+/**
+ * Prepares the scene without long main-thread stalls, then calls onReady:
+ * 1. a dry PMREM pass starts compiling the room and prefilter programs, and we wait for them,
+ * 2. the real PMREM pass builds the studio reflections for the glossy knot (programs are warm),
+ * 3. the knot and backdrop programs (which depend on that env map) compile via compileAsync.
+ * Until then the scene content stays hidden, so no frame blocks on a shader link.
+ */
+const SceneWarmup = ({ onReady }: { onReady: () => void }) => {
   const gl = useThree((state) => state.gl);
   const scene = useThree((state) => state.scene);
+  const camera = useThree((state) => state.camera);
 
   useEffect(() => {
-    const pmrem = new PMREMGenerator(gl);
-    const room = new RoomEnvironment();
-    const envMap = pmrem.fromScene(room, 0.04).texture;
+    let alive = true;
+    let envMap: Texture | null = null;
 
-    scene.environment = envMap;
-    room.dispose();
-    pmrem.dispose();
+    const run = async () => {
+      const room = new RoomEnvironment();
+      // Kept alive until the real pass is done, so the shared programs are not released.
+      const dry = new PMREMGenerator(gl);
+
+      const programs = compileWithoutDrawing(gl, () => dry.fromScene(room, ENV_SIGMA).dispose());
+
+      await whenProgramsReady(gl, programs);
+
+      if (alive) {
+        const pmrem = new PMREMGenerator(gl);
+
+        envMap = pmrem.fromScene(room, ENV_SIGMA).texture;
+        pmrem.dispose();
+        scene.environment = envMap;
+      }
+
+      dry.dispose();
+      room.dispose();
+
+      if (!alive) {
+        return;
+      }
+
+      await gl.compileAsync(scene, camera);
+
+      if (alive) {
+        onReady();
+      }
+    };
+
+    run();
 
     return () => {
+      alive = false;
       scene.environment = null;
-      envMap.dispose();
+      envMap?.dispose();
     };
-  }, [gl, scene]);
+  }, [gl, scene, camera, onReady]);
 
   return null;
 };
 
 /** With frameloop "never", draws one frame after mount and after every resize. */
-const RenderOnce = () => {
+const RenderOnce = ({ ready }: { ready: boolean }) => {
   const advance = useThree((state) => state.advance);
   const size = useThree((state) => state.size);
 
   useEffect(() => {
     advance(performance.now());
-  }, [advance, size]);
+  }, [advance, size, ready]);
 
   return null;
 };
@@ -148,6 +232,8 @@ const HeroScene = ({ reducedMotion, onFps }: Props) => {
   const onScreen = useOnScreen(host);
   const pointer = useHeroPointer(host, !reducedMotion);
   const animated = !reducedMotion;
+  const [ready, setReady] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
 
   // "demand" with nothing invalidating = paused; R3F still redraws on resize.
   const frameloop = reducedMotion ? 'never' : onScreen ? 'always' : 'demand';
@@ -159,13 +245,17 @@ const HeroScene = ({ reducedMotion, onFps }: Props) => {
         camera={{ fov: 32, position: [0, 0, 8], near: 0.1, far: 100 }}
         gl={{ toneMapping: ACESFilmicToneMapping }}
         frameloop={frameloop}
+        // Transparent until warm-up is done: the gradient underneath shows instead of a blank frame.
+        style={{ opacity: ready ? 1 : 0 }}
       >
         <color attach="background" args={[BG]} />
-        <StudioEnvironment />
-        <WineBackdrop pointer={pointer} animated={animated} />
-        <Knot pointer={pointer} animated={animated} />
-        {animated && onFps && <FpsMeter onFps={onFps} />}
-        {reducedMotion && <RenderOnce />}
+        <SceneWarmup onReady={onReady} />
+        <group visible={ready}>
+          <WineBackdrop pointer={pointer} animated={animated} />
+          <Knot pointer={pointer} animated={animated} />
+        </group>
+        {ready && animated && onFps && <FpsMeter onFps={onFps} />}
+        {reducedMotion && <RenderOnce ready={ready} />}
       </Canvas>
     </div>
   );
