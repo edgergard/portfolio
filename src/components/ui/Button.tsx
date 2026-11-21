@@ -22,13 +22,13 @@ const SIZES: Record<ButtonSize, string> = {
 
 const VARIANTS: Record<ButtonVariant, string> = {
   // .bg-wine-flow (styles.css) is the CSS fill under the live shader layer; hover lifts both.
-  primary: 'bg-wine-flow shadow-[0_8px_28px_-10px_rgba(184,35,63,.7)] hover:shadow-[0_10px_34px_-8px_rgba(184,35,63,.85)]',
-  outline: 'border border-[#4A4A50] bg-transparent hover:border-ink hover:bg-white/[.06]',
+  primary: 'bg-wine-flow text-white shadow-[0_8px_28px_-10px_rgba(184,35,63,.7)] hover:shadow-[0_10px_34px_-8px_rgba(184,35,63,.85)]',
+  outline: 'border border-rule bg-transparent hover:border-ink hover:bg-ink/[.06]',
   // .wine-edge (styles.css) paints the animated 1px wine frame as the element's background;
   // the ::before inset by 1px is the dark pill surface. The size padding overrides .wine-edge's.
   edge:
     'wine-edge wine-edge--bright relative isolate rounded-full hover:brightness-[1.2] '
-    + "before:pointer-events-none before:absolute before:inset-px before:-z-[1] before:rounded-full before:bg-[#0C0C0E] before:content-['']",
+    + "before:pointer-events-none before:absolute before:inset-px before:-z-[1] before:rounded-full before:bg-surface before:content-['']",
 };
 
 /** Class list for a button-looking element; use it when you can't render <Button>. */

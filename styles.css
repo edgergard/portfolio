@@ -2,9 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme colours (RGB channels for Tailwind's /alpha). Dark is the default; the light theme
+ * applies with [data-theme="light"] on <html>, set before first paint (index.html) from the
+ * visitor's saved choice; without one the site is dark.
+ * The Wine bands, buttons and the hero's 3D panel keep their dark wine look in both themes.
+ * Every grey keeps at least 7:1 contrast on its page background (WCAG AAA for body text), from
+ * ink-2 (brightest secondary) down to muted (labels, captions).
+ */
+:root {
+  color-scheme: dark;
+  --c-bg: 10 10 11;
+  --c-ink: 255 255 255;
+  --c-ink-2: 190 190 196;
+  --c-muted: 154 154 162;
+  --c-muted-2: 171 171 178;
+  --c-line: 30 30 33;
+  --c-chip: 42 42 46;
+  --c-rule: 58 58 64;
+  --c-surface: 18 18 20;
+  --c-surface-2: 20 20 22;
+  --c-soft: 228 228 231;
+  --c-soft-2: 214 214 219;
+  --c-soft-3: 196 196 202;
+  --c-rose: 255 138 155;
+  --c-open: 231 251 239;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --c-bg: 250 247 245;
+  --c-ink: 20 20 22;
+  --c-ink-2: 68 68 75;
+  --c-muted: 84 84 92;
+  --c-muted-2: 76 76 83;
+  --c-line: 219 210 205;
+  --c-chip: 222 214 209;
+  --c-rule: 200 191 186;
+  --c-surface: 255 255 255;
+  --c-surface-2: 244 239 236;
+  --c-soft: 38 38 42;
+  --c-soft-2: 50 50 55;
+  --c-soft-3: 74 74 81;
+  --c-rose: 179 18 46;
+  --c-open: 22 101 52;
+}
+
+/* Wine bands keep the dark palette in the light theme too (see BAND in Section.tsx). */
+:root[data-theme='light'] .on-wine {
+  --c-bg: 10 10 11;
+  --c-ink: 255 255 255;
+  --c-ink-2: 190 190 196;
+  --c-muted: 154 154 162;
+  --c-muted-2: 171 171 178;
+  --c-line: 30 30 33;
+  --c-chip: 42 42 46;
+  --c-rule: 58 58 64;
+  --c-surface: 18 18 20;
+  --c-surface-2: 20 20 22;
+  --c-soft: 228 228 231;
+  --c-soft-2: 214 214 219;
+  --c-soft-3: 196 196 202;
+  --c-rose: 255 138 155;
+  --c-open: 231 251 239;
+}
+
 body {
-  background: #0A0A0B;
-  color: #fff;
+  background: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
   font-family: 'Geist', sans-serif;
 }
 
@@ -39,6 +104,16 @@ body {
     color: #fff;
     background-color: #5E0D1D;
     transition: filter 200ms ease;
+  }
+
+  /* Light theme: the same marbling, lifted (matches the shader's brighter light palette). */
+  :root[data-theme='light'] .bg-wine-flow {
+    background-color: #8B1426;
+  }
+
+  :root[data-theme='light'] .bg-wine-flow::before,
+  :root[data-theme='light'] .bg-wine-flow::after {
+    filter: brightness(1.45) saturate(1.1);
   }
 
   /* Each layer is twice the element in both directions, so drifting never shows an edge. */
@@ -251,4 +326,215 @@ body {
     from { translate: 0 0; }
     to { translate: 0 -100px; }
   }
+}
+
+/*
+ * .glass-chip: the Core stack lens (useMagnify sets --s scale, --tx shift and --m glass, 0..1).
+ * The chip at the pointer grows into brighter "liquid glass" (stronger blur and saturation of the
+ * wine behind it, a lighter rim, a top highlight, a soft shadow); its neighbours shrink and slide
+ * aside. No will-change: a promoted layer would keep the text rasterised at its old size and look
+ * blurry when scaled; without it the browser re-rasterises the text sharp at the new scale.
+ */
+@layer components {
+  .glass-chip {
+    --s: 1;
+    --tx: 0px;
+    --m: 0;
+    position: relative;
+    transform: translateX(var(--tx)) scale(var(--s));
+    border-color: rgba(255, 255, 255, calc(0.2 + var(--m) * 0.45));
+    background-color: rgba(10, 10, 11, calc(0.4 - var(--m) * 0.22));
+    backdrop-filter: blur(calc(2px + var(--m) * 10px)) saturate(calc(100% + var(--m) * 90%));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, calc(0.06 + var(--m) * 0.45)),
+      inset 0 -6px 12px rgba(255, 255, 255, calc(var(--m) * 0.08)),
+      0 10px 26px -12px rgba(10, 10, 11, calc(var(--m) * 0.75));
+    -webkit-font-smoothing: antialiased;
+    transition:
+      transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 240ms ease,
+      background-color 240ms ease,
+      box-shadow 240ms ease,
+      backdrop-filter 240ms ease;
+  }
+}
+
+/*
+ * Light theme polish (from a page-by-page colour and contrast audit). Every rule is scoped to
+ * :root[data-theme='light'], so the dark theme is untouched. Wine areas got a brighter shader in
+ * the light theme; these rules retint what sits on it (glass, small text, rings) to match.
+ */
+:root[data-theme='light'] .glass {
+  /* Wine-tinted glass instead of neutral black, which turned muddy brown on the brighter wine. */
+  background-color: rgba(60, 6, 18, 0.48);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme='light'] [data-testid='archive-cta']:hover {
+  background-color: rgba(60, 6, 18, 0.6);
+  border-color: rgba(255, 154, 171, 0.8);
+}
+
+:root[data-theme='light'] [data-testid='archive-cta'] img {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Small wine-3 text and hover rings on wine glass: a light rose that holds contrast there. */
+:root[data-theme='light'] [data-testid='project-row'] .text-wine-3 {
+  color: #FF9AAB;
+}
+
+:root[data-theme='light'] [data-testid='project-row'] a:hover {
+  border-color: #FF9AAB;
+}
+
+/* Softer, cleaner lift under Wine bands (the dark-tuned shadow read as a grey smudge on cream). */
+:root[data-theme='light'] .on-wine.bg-wine-flow {
+  box-shadow: 0 18px 48px -30px rgba(204, 46, 77, 0.35);
+}
+
+/* Small white text that sits directly on the brighter wine. */
+:root[data-theme='light'] .hero-caption {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 8px rgba(90, 8, 24, 0.45);
+}
+
+:root[data-theme='light'] .contact-lead {
+  color: #fff;
+  text-shadow: 0 1px 14px rgba(60, 6, 18, 0.45);
+}
+
+:root[data-theme='light'] .skills-band dt {
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(60, 6, 18, 0.5);
+}
+
+:root[data-theme='light'] [data-testid='xp-metric'] span {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(62, 7, 18, 0.55);
+}
+
+:root[data-theme='light'] [data-testid='xp-metric'] b,
+:root[data-theme='light'] .wine-badge {
+  text-shadow: 0 1px 2px rgba(62, 7, 18, 0.55);
+}
+
+/* Core stack chips: wine-tinted glass, a rim that reads. */
+:root[data-theme='light'] .skills-band dd > span {
+  background-color: rgba(90, 8, 24, 0.3);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+:root[data-theme='light'] .glass-chip {
+  background-color: rgba(90, 8, 24, calc(0.3 - var(--m) * 0.16));
+  border-color: rgba(255, 255, 255, calc(0.34 + var(--m) * 0.4));
+}
+
+/* Form placeholders on the wine glass. */
+:root[data-theme='light'] .on-wine input::placeholder,
+:root[data-theme='light'] .on-wine textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Card frames: the faint stops of the animated frame vanished on the light page. */
+:root[data-theme='light'] .wine-edge:not(.wine-edge--bright) {
+  background-image: linear-gradient(
+    140deg,
+    rgba(184, 35, 63, 0.9),
+    rgba(184, 35, 63, 0.35) 40%,
+    rgba(150, 24, 44, 0.75) 75%,
+    rgba(184, 35, 63, 0.35)
+  );
+}
+
+/* Education cards: white to page, like the job cards (surface-2 is darker than bg in light). */
+:root[data-theme='light'] [data-testid='edu-card'] > div {
+  background-image: linear-gradient(200deg, #fff 0%, rgb(var(--c-bg)) 75%);
+}
+
+:root[data-theme='light'] [data-testid='xp-monogram'] {
+  background-image: linear-gradient(140deg, #CC2E4D, #7A1328);
+}
+
+/* Certificate: on-brand bar fill (not neon), visible track and divider. */
+:root[data-theme='light'] .cert-fill {
+  filter: brightness(1.05) saturate(1.05);
+  box-shadow: 0 0 10px rgba(165, 28, 54, 0.35);
+}
+
+:root[data-theme='light'] [data-testid='cert-bar'] {
+  background-color: rgb(var(--c-rule) / 0.55);
+}
+
+:root[data-theme='light'] #certifications .border-line {
+  border-color: rgb(var(--c-rule));
+}
+
+/* Toasts are light in the light theme; their dark-theme close button and bar were white/grey. */
+:root[data-theme='light'] .Toastify__close-button {
+  color: rgb(var(--c-ink));
+  opacity: 0.55;
+}
+
+:root[data-theme='light'] .Toastify__close-button:hover {
+  opacity: 0.9;
+}
+
+:root[data-theme='light'] .Toastify__progress-bar-theme--dark {
+  background: #A51C36;
+}
+
+/* Archive on the wine: white filter pills and link rings, readable column heads, row hover. */
+:root[data-theme='light'] [data-testid='archive-page'] [role='group'] button[aria-pressed='false'] {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] [role='group'] button[aria-pressed='false']:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] [role='group'] button[aria-pressed='true'] {
+  background-color: rgba(10, 10, 11, 0.32);
+  border-color: #fff;
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] tbody a {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] tbody a:hover {
+  border-color: #fff;
+}
+
+:root[data-theme='light'] .archive-th {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme='light'] [data-testid='archive-glass'] {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme='light'] [data-testid='archive-row']:hover {
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.07), transparent 70%);
+}
+
+/* CV page: brighter active toggle, contact cards with a visible edge. */
+:root[data-theme='light'] [data-testid='toggle-highlight'] {
+  background-color: rgba(204, 46, 77, 0.12);
+  border-color: #CC2E4D;
+}
+
+:root[data-theme='light'] [role='radiogroup'] [aria-checked='true'] {
+  color: #7A1328;
+}
+
+:root[data-theme='light'] .cv-contact {
+  border-color: rgb(var(--c-rule));
+  box-shadow: 0 1px 2px rgba(20, 20, 22, 0.05), 0 4px 14px -8px rgba(122, 19, 40, 0.18);
+}
+
+:root[data-theme='light'] .cv-contact:hover {
+  border-color: #8B1426;
 }

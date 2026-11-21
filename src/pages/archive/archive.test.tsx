@@ -81,6 +81,34 @@ describe('ArchivePage', () => {
     });
   });
 
+  it('shows stack badges on the live wine fill, like the Experience badges', () => {
+    renderPage();
+    const badges = screen.getAllByTestId('archive-badge');
+
+    expect(badges.length).toBeGreaterThan(6);
+    badges.forEach(b => {
+      expect(b).toHaveClass('bg-wine-flow');
+      expect(b.querySelector('canvas')).not.toBeNull();
+    });
+  });
+
+  it('sits on the live wine shader with the list in a glass panel', () => {
+    renderPage();
+    const wine = screen.getByTestId('archive-wine');
+
+    expect(wine).toHaveClass('bg-wine-flow', 'fixed', 'inset-0');
+    expect(within(wine).getByTestId('wine-surface')).toBeInTheDocument();
+    expect(screen.getByTestId('archive-page')).toHaveClass('on-wine', 'isolate');
+    expect(within(screen.getByTestId('archive-glass')).getByRole('table')).toBeInTheDocument();
+  });
+
+  it('shows the type pill in white text with a white border', () => {
+    renderPage();
+    screen.getAllByTestId('archive-type').forEach(pill => {
+      expect(pill).toHaveClass('text-white', 'border-white');
+    });
+  });
+
   it('scrolls to top on mount', () => {
     renderPage();
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);

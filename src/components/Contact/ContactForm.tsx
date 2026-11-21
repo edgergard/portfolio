@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import { GLASS } from '../layout/Section';
 import { TELEGRAM_URL } from '../../data/content';
 import { ArrowUpRightIcon } from './icons';
 
@@ -23,7 +24,7 @@ const API = {
   USER_PUBLIC_KEY: VITE_EMAILJS_KEY,
 };
 
-const TOAST_CLASS = '!rounded-xl !border !border-line !bg-[#111113] !font-sans !text-ink';
+const TOAST_CLASS = '!rounded-xl !border !border-line !bg-surface !font-sans !text-ink';
 
 const FormSchema = z.object({
   email: z
@@ -98,25 +99,25 @@ const ContactForm = () => {
 
   // Line-only fields: a bottom hairline that turns wine-3 on focus; keyboard focus also thickens it.
   const fieldClass = (invalid: boolean) =>
-    'w-full rounded-none border-0 border-b bg-transparent px-0 pb-2.5 pt-2 text-base text-ink outline-none '
-    + 'transition-[border-color,box-shadow] duration-200 placeholder:text-muted focus:border-wine-3 '
-    + 'focus-visible:shadow-[0_1px_0_0_#D0213F] '
-    + (invalid ? 'border-wine-2' : 'border-[#2A2A2E]');
+    'w-full rounded-none border-0 border-b bg-transparent px-0 pb-2.5 pt-2 text-base text-white outline-none '
+    + 'transition-[border-color,box-shadow] duration-200 placeholder:text-white/40 focus:border-white '
+    + 'focus-visible:shadow-[0_1px_0_0_#FFFFFF] '
+    + (invalid ? 'border-[#FF8A9B]' : 'border-white/20');
   const labelClass = 'grid gap-1.5';
-  const captionClass = 'font-mono text-xs uppercase tracking-[.07em] text-muted-2';
-  const errorClass = 'text-sm text-wine-3';
+  const captionClass = 'font-mono text-xs uppercase tracking-[.07em] text-white/60';
+  const errorClass = 'text-sm text-[#FFB3BF]';
 
   return (
-    <div className="wine-edge self-start">
+    <div className="self-start">
       <form
         ref={form}
         onSubmit={handleSubmit(onSubmit)}
-        className="grid gap-[22px] rounded-[19px] bg-[#0C0C0E] px-7 pb-6 pt-7"
+        className={`${GLASS} grid gap-[22px] px-7 pb-6 pt-7`}
         noValidate
       >
         <div>
-          <h3 className="text-xl font-medium tracking-[-0.01em]">{t('contact_form_title')}</h3>
-          <p className="mt-2 inline-flex items-center gap-2 font-mono text-[13px] text-ink-2">
+          <h3 className="text-xl font-medium tracking-[-0.01em] text-white">{t('contact_form_title')}</h3>
+          <p className="mt-2 inline-flex items-center gap-2 font-mono text-[13px] text-white/75">
             <i
               aria-hidden="true"
               className="inline-block h-2 w-2 shrink-0 rounded-full bg-[#22C55E] shadow-[0_0_0_4px_rgba(34,197,94,.22)]"
@@ -169,8 +170,8 @@ const ContactForm = () => {
             target="_blank"
             rel="noopener noreferrer"
             className={
-              'inline-flex items-center gap-1.5 rounded font-mono text-[13px] text-ink-2 transition-colors hover:text-ink '
-              + 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink'
+              'inline-flex items-center gap-1.5 rounded font-mono text-[13px] text-white/75 transition-colors hover:text-white '
+              + 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white'
             }
           >
             {t('contact_form_telegram')}

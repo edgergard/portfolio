@@ -7,8 +7,9 @@ import { motionSpeed } from './motion';
 import { useOnScreen } from './sceneSupport';
 import { useHeroPointer } from './useHeroPointer';
 import { buildStudioEnvironment, whenProgramsReady } from './warmup';
+import { useCurrentTheme } from '../../theme';
+import { WINE_THEMES } from './wineShader';
 
-const BG = '#0A0A0B';
 const FPS_INTERVAL_MS = 500;
 
 type Props = {
@@ -100,6 +101,7 @@ const HeroScene = ({ reducedMotion, onFps }: Props) => {
   // Pointer tilt and drift work the same under reduced motion; only the pace is gentler.
   const pointer = useHeroPointer(host);
   const speed = motionSpeed(reducedMotion);
+  const theme = useCurrentTheme();
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
 
@@ -116,7 +118,7 @@ const HeroScene = ({ reducedMotion, onFps }: Props) => {
         // Transparent until warm-up is done: the gradient underneath shows instead of a blank frame.
         style={{ opacity: ready ? 1 : 0 }}
       >
-        <color attach="background" args={[BG]} />
+        <color attach="background" args={[WINE_THEMES[theme].bg]} />
         <SceneWarmup onReady={onReady} />
         <group visible={ready}>
           <WineBackdrop pointer={pointer} speed={speed} />

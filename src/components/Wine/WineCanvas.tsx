@@ -5,8 +5,9 @@ import WineBackdrop from '../Hero/WineBackdrop';
 import { motionSpeed, type ScenePointer } from '../Hero/motion';
 import { useOnScreen } from '../Hero/sceneSupport';
 import { whenProgramsReady } from '../Hero/warmup';
+import { useCurrentTheme } from '../../theme';
+import { WINE_THEMES } from '../Hero/wineShader';
 
-const BG = '#0A0A0B';
 
 /** No pointer drift here: the glow stays centred, as in the hero when the pointer is away. */
 const RESTING_POINTER = { current: { x: 0, y: 0, hovering: false } satisfies ScenePointer };
@@ -48,6 +49,7 @@ const WineCanvas = ({ reducedMotion }: Props) => {
   const host = useRef<HTMLDivElement>(null);
   const onScreen = useOnScreen(host);
   const speed = motionSpeed(reducedMotion);
+  const theme = useCurrentTheme();
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
 
@@ -62,7 +64,7 @@ const WineCanvas = ({ reducedMotion }: Props) => {
         // Transparent until the program is ready: the CSS fill underneath shows meanwhile.
         style={{ opacity: ready ? 1 : 0 }}
       >
-        <color attach="background" args={[BG]} />
+        <color attach="background" args={[WINE_THEMES[theme].bg]} />
         <Warmup onReady={onReady} />
         <group visible={ready}>
           <WineBackdrop pointer={RESTING_POINTER} speed={speed} />

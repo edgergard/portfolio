@@ -37,7 +37,7 @@ describe('content data', () => {
   });
 
   it('has the four facts', () => {
-    expect(FACTS.map(f => f.value)).toEqual(['2.5+', '5', '95–100', 'C1']);
+    expect(FACTS.map(f => f.value)).toEqual(['2.5+', '5', '12', 'C1']);
   });
 
   it('titles the HYS role React Native / Frontend Developer in EN and UA', () => {

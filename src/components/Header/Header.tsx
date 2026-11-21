@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BurgerMenu from './BurgerMenu';
 import NavLink from './NavLink';
 import LocaleButton from './LocaleButton';
+import ThemeButton from './ThemeButton';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ const Header = () => {
   return (
     <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
       <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
-        <HashLink smooth to="/#hero" className="text-ink">
+        <HashLink smooth to="/#hero" className="text-ink" data-testid="brand">
           Oleksandr Bryksin
         </HashLink>
 
@@ -34,21 +35,25 @@ const Header = () => {
             ))}
           </ul>
           <LocaleButton />
+          <ThemeButton />
         </nav>
 
-        <button
-          type="button"
-          className="min-[900px]:hidden"
-          aria-label={isMenuOpen ? t('nav_menu_close') : t('nav_menu_open')}
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((open) => !open)}
-        >
-          {isMenuOpen ? (
-            <XMarkIcon className="h-6 w-6 text-ink" />
-          ) : (
-            <Bars3Icon className="h-6 w-6 text-ink" />
-          )}
-        </button>
+        <div className="flex items-center gap-4 min-[900px]:hidden">
+          <ThemeButton />
+          <button
+            type="button"
+            className="min-[900px]:hidden"
+            aria-label={isMenuOpen ? t('nav_menu_close') : t('nav_menu_open')}
+            aria-expanded={isMenuOpen}
+            onClick={() => setIsMenuOpen((open) => !open)}
+          >
+            {isMenuOpen ? (
+              <XMarkIcon className="h-6 w-6 text-ink" />
+            ) : (
+              <Bars3Icon className="h-6 w-6 text-ink" />
+            )}
+          </button>
+        </div>
       </div>
 
       {isMenuOpen && (

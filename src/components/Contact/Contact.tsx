@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { EMAIL, PHONE, SOCIALS, type Social } from '../../data/content';
 import Reveal from '../layout/Reveal';
-import Section from '../layout/Section';
+import Section, { GLASS } from '../layout/Section';
 import ContactForm from './ContactForm';
 import CopyButton from './CopyButton';
 import { ArrowDownIcon, ArrowUpRightIcon, BrandIcon, DocumentIcon, PhoneIcon, type Brand } from './icons';
@@ -25,25 +25,26 @@ const BRAND: Record<Social['id'], Brand> = {
 
 const social = (id: Social['id']) => SOCIALS.find(s => s.id === id)!;
 
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink';
-const ROW = 'group flex items-center gap-3 sm:gap-3.5 border-b border-line py-3';
+const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
+// Every row's bottom hairline has the same rounded ends, whether the row is a link or a list item.
+const ROW = 'group flex items-center gap-3 sm:gap-3.5 rounded-lg border-b border-white/10 py-3';
 const MAIN = `flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5 rounded-lg ${FOCUS}`;
 
 /** Round action on the right of a row; brightens with a wine border when the row is hovered. */
 const CIRCLE
-  = 'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#3A3A40] text-[#E6E6EA] '
-  + 'transition-colors duration-200 group-hover:border-wine-2 group-hover:text-ink';
+  = 'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white/90 '
+  + 'transition-colors duration-200 group-hover:border-white group-hover:bg-white/10 group-hover:text-white';
 
 const Tile = ({ children }: { children: ReactNode }) => (
-  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] border border-[#232327] bg-[#161618] text-ink">
+  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] border border-white/10 bg-white/[.06] text-white">
     {children}
   </span>
 );
 
 const Text = ({ name, handle }: { name: string; handle: string }) => (
   <span className="grid min-w-0">
-    <span className="text-[17px] leading-snug">{name}</span>
-    <span className="font-mono text-[11px] text-muted-2 [overflow-wrap:anywhere] min-[420px]:text-[13px]">{handle}</span>
+    <span className="text-[17px] leading-snug text-white">{name}</span>
+    <span className="font-mono text-[11px] text-white/60 [overflow-wrap:anywhere] min-[420px]:text-[13px]">{handle}</span>
   </span>
 );
 
@@ -53,7 +54,7 @@ const ProfileRow = ({ id }: { id: Social['id'] }) => {
 
   return (
     <li>
-      <a href={s.href} target="_blank" rel="noopener noreferrer" className={`${ROW} rounded-lg ${FOCUS}`}>
+      <a href={s.href} target="_blank" rel="noopener noreferrer" data-row className={`${ROW} ${FOCUS}`}>
         <Tile><BrandIcon brand={BRAND[id]} /></Tile>
         <Text name={s.label} handle={s.handle} />
         <span className={`ml-auto ${CIRCLE}`}><ArrowUpRightIcon /></span>
@@ -63,11 +64,11 @@ const ProfileRow = ({ id }: { id: Social['id'] }) => {
 };
 
 const Group = ({ id, title, children }: { id: string; title: string; children: ReactNode }) => (
-  <div className="mt-9">
-    <h3 id={id} className="mb-2.5 font-mono text-[13px] font-normal uppercase tracking-[.07em] text-ink-2">
+  <div className={`${GLASS} mt-6 px-5 pb-2 pt-5 min-[900px]:px-7`}>
+    <h3 id={id} className="mb-1.5 font-mono text-[13px] font-normal uppercase tracking-[.07em] text-white/70">
       {title}
     </h3>
-    <ul aria-labelledby={id} className="border-t border-line">
+    <ul aria-labelledby={id} className="[&>li:last-child>[data-row]]:border-b-0 [&>li:last-child]:border-b-0">
       {children}
     </ul>
   </div>
@@ -77,14 +78,14 @@ const Contact = () => {
   const { t } = useTranslation();
 
   return (
-    <Section id="contact" index={5} labelKey="section_contact">
+    <Section id="contact" index={5} labelKey="section_contact" band>
       <Reveal>
         <div className="grid grid-cols-1 gap-14 min-[900px]:grid-cols-2">
           <div>
-            <p className="text-[clamp(40px,5vw,72px)] font-medium leading-none tracking-[-0.045em]">
+            <p className="text-[clamp(40px,5vw,72px)] font-medium leading-none tracking-[-0.045em] text-white [text-shadow:0_2px_24px_rgba(10,10,11,0.35)]">
               {t('contact_headline')}
             </p>
-            <p className="mt-[18px] max-w-[40ch] text-[17px] leading-relaxed text-ink-2">{t('contact_lead')}</p>
+            <p className="contact-lead mt-[18px] max-w-[40ch] text-[17px] leading-relaxed text-white/85">{t('contact_lead')}</p>
 
             <Group id="contact-direct" title={t('contact_group_direct')}>
               <li className={ROW}>
@@ -109,10 +110,11 @@ const Contact = () => {
               <ProfileRow id="linkedin" />
               <ProfileRow id="github" />
               <ProfileRow id="github-alt" />
-              <li className={ROW}>
+              {/* Not one link (two downloads and the page link), so no row-wide hover on the arrow. */}
+              <li className={ROW.replace('group ', '')}>
                 <Tile><DocumentIcon /></Tile>
                 <span className="grid min-w-0 flex-1 gap-1.5">
-                  <span className="text-[17px] leading-snug">{t('contact_cv_name')}</span>
+                  <span className="text-[17px] leading-snug text-white">{t('contact_cv_name')}</span>
                   <span className="flex flex-wrap gap-2">
                     {CVS.map(cv => (
                       <a
@@ -121,13 +123,13 @@ const Contact = () => {
                         download
                         aria-label={`${t(cv.key)}, ${t('contact_cv_pdf')}`}
                         className={
-                          'inline-flex items-center gap-1.5 rounded-full border border-[#3A3A40] px-3 py-1 font-mono '
-                          + `text-[13px] text-[#E6E6EA] transition-colors hover:border-wine-2 hover:text-ink ${FOCUS}`
+                          'inline-flex items-center gap-1.5 rounded-full border border-white/25 px-3 py-1 font-mono '
+                          + `text-[13px] text-white/90 transition-colors hover:border-white hover:bg-white/10 hover:text-white ${FOCUS}`
                         }
                       >
                         <ArrowDownIcon />
                         {t(cv.shortKey)}
-                        <span className="text-muted-2">{t('contact_cv_pdf')}</span>
+                        <span className="text-white/60">{t('contact_cv_pdf')}</span>
                       </a>
                     ))}
                   </span>
@@ -135,7 +137,7 @@ const Contact = () => {
                 <Link
                   to="/cv"
                   aria-label={t('btn_view_cv')}
-                  className={`${CIRCLE} ${FOCUS} hover:border-wine-2 hover:text-ink`}
+                  className={`${CIRCLE} ${FOCUS} hover:border-white hover:bg-white/10`}
                 >
                   <ArrowUpRightIcon />
                 </Link>

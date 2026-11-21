@@ -94,13 +94,13 @@ describe('Experience job cards', () => {
     expect(within(hys).getAllByTestId('xp-badge').map(b => b.textContent)).toContain('PostHog');
   });
 
-  it('puts the bullets in a native "What I did" disclosure, open only for the first job', () => {
+  it('puts the bullets in a native "What I did" disclosure, open on every job', () => {
     render(<Experience />);
     const [pecode, hys] = cards();
     const details = (card: HTMLElement) => card.querySelector('details')!;
 
     expect(details(pecode)).toHaveAttribute('open');
-    expect(details(hys)).not.toHaveAttribute('open');
+    expect(details(hys)).toHaveAttribute('open');
     expect(within(pecode).getByText('What I did').tagName).toBe('SUMMARY');
     expect(within(pecode).getAllByRole('listitem', { hidden: true })).toHaveLength(5);
   });

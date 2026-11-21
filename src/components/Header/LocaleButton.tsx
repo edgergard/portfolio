@@ -20,7 +20,7 @@ const LocaleButton = () => {
     <div className="flex w-fit items-center gap-x-2">
       {LOCALES.map(({ value, label }, i) => (
         <span key={value} className="flex items-center gap-x-2">
-          {i > 0 && <span className="text-[#55555B]">/</span>}
+          {i > 0 && <span className="text-rule">/</span>}
           <button
             type="button"
             onClick={() => handleClick(value)}

@@ -3,6 +3,25 @@ import { Color, Vector2, type IUniform } from 'three';
 /** Page background, deep wine, burgundy, bright wine. */
 export const WINE_PALETTE = ['#0A0A0B', '#3E0712', '#8B1426', '#B8233F'] as const;
 
+/**
+ * The shader's colours per theme. Dark is the original. Light lifts every stop (no near-black
+ * pools), so the wine reads bright and juicy on the light page while white text on it stays legible.
+ */
+export const WINE_THEMES = {
+  dark: { bg: '#0A0A0B', palette: WINE_PALETTE },
+  light: { bg: '#7A1328', palette: ['#7A1328', '#A51C36', '#CC2E4D', '#EC5874'] },
+} as const;
+
+export type WineTheme = keyof typeof WINE_THEMES;
+
+/** Points the shader's colour uniforms at a theme's palette. */
+export const applyWineTheme = (uniforms: Record<string, IUniform>, theme: WineTheme) => {
+  const { bg, palette } = WINE_THEMES[theme];
+
+  (uniforms.uBg.value as Color).set(bg);
+  ['uC1', 'uC2', 'uC3', 'uC4'].forEach((key, i) => (uniforms[key].value as Color).set(palette[i]));
+};
+
 export const WINE = { speed: 0.26, warp: 3.0, radius: 0.95, amount: 1.0 } as const;
 
 const BG = '#0A0A0B';

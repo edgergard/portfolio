@@ -134,6 +134,17 @@ describe('Projects section', () => {
     expect(within(band).getByTestId('wine-surface')).toBeInTheDocument();
   });
 
+  it('shows stack badges on the live wine fill, like the Experience badges', () => {
+    renderSection();
+    const badges = screen.getAllByTestId('project-badge');
+
+    expect(badges.length).toBeGreaterThan(3);
+    badges.forEach(b => {
+      expect(b).toHaveClass('bg-wine-flow');
+      expect(b.querySelector('canvas')).not.toBeNull();
+    });
+  });
+
   it('alternates the media side', () => {
     renderSection();
     const rows = screen.getAllByTestId('project-row');
@@ -186,6 +197,16 @@ describe('Projects section', () => {
     const link = screen.getByRole('link', { name: `All projects · Archive (${PROJECT_LIST.length})` });
 
     expect(link).toHaveAttribute('href', '#/projects');
+  });
+
+  it('shows the archive as a glass card: year range, "See all N projects", previews, arrow', () => {
+    renderSection();
+    const cta = screen.getByTestId('archive-cta');
+
+    expect(cta).toHaveTextContent('Archive · 2023 — 2024');
+    expect(cta).toHaveTextContent(`See all ${PROJECT_LIST.length} projects`);
+    expect(cta.querySelectorAll('img')).toHaveLength(3);
+    expect(cta).toHaveClass('backdrop-blur-[14px]');
   });
 
   it('translates the archive link and type to Ukrainian', async () => {
@@ -326,7 +347,7 @@ describe('ProjectMedia', () => {
 
 describe('translations', () => {
   it('has every new key in EN and UA', () => {
-    for (const key of ['projects_archive_link', 'project_type_web', 'project_type_mobile', 'btn_app_store', 'btn_google_play']) {
+    for (const key of ['projects_archive_link', 'projects_archive_kicker', 'projects_archive_title', 'project_type_web', 'project_type_mobile', 'btn_app_store', 'btn_google_play']) {
       expect(en).toHaveProperty(key);
       expect(ua).toHaveProperty(key);
     }

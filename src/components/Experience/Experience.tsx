@@ -3,20 +3,22 @@ import { EDUCATION, JOBS, type Job } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
 import WineCanvas from '../ui/WineCanvas';
+import WineBadge from '../ui/WineBadge';
+import { SkillsHeading } from '../About/SkillsList';
 import EducationCard, { EDU_CARD_FRAME } from './EducationCard';
 
-/** Metric tile / stack badge surface: the live Wine shader over the CSS wine-flow fill (no hover lift: not interactive). */
+/** Metric tile surface: the live Wine shader over the CSS wine-flow fill (no hover lift: not interactive). */
 const WINE_FILL = 'bg-wine-flow hover:filter-none border';
 
 /**
  * One job inside the .wine-edge frame: monogram, role and company line, period and duration;
  * three metric tiles; the bullets in a native "What I did" disclosure; the stack as badges.
  */
-const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
+const JobCard = ({ job }: { job: Job }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="rounded-[19px] bg-[linear-gradient(160deg,#121214,#0A0A0B_70%)] p-5 min-[640px]:p-[30px]">
+    <div className="rounded-[19px] bg-[linear-gradient(160deg,rgb(var(--c-surface)),rgb(var(--c-bg))_70%)] p-5 min-[640px]:p-[30px]">
       <div className="mb-[22px] grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 min-[640px]:grid-cols-[auto_1fr_auto] min-[640px]:gap-x-5">
         <div
           aria-hidden
@@ -47,12 +49,12 @@ const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
         ))}
       </div>
 
-      <details open={open} className="group">
-        <summary className="mb-3.5 mt-1.5 inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs uppercase tracking-[.07em] text-[#E4E4E7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+      <details open className="group">
+        <summary className="mb-3.5 mt-1.5 inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs uppercase tracking-[.07em] text-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
           {t('xp_details_summary')}
           <span aria-hidden className="text-[#D0213F] transition-transform duration-200 group-open:rotate-180">↓</span>
         </summary>
-        <ul className="grid max-w-[72ch] list-none gap-[9px] text-[15.5px] leading-6 text-[#C9C9CE]">
+        <ul className="grid max-w-[72ch] list-none gap-[9px] text-[15.5px] leading-6 text-soft-2">
           {job.bulletKeys.map(key => (
             <li
               key={key}
@@ -66,14 +68,7 @@ const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
 
       <div className="mt-5 flex flex-wrap gap-1.5 border-t border-line pt-[18px]">
         {job.stack.map(tag => (
-          <span
-            key={tag}
-            data-testid="xp-badge"
-            className={`${WINE_FILL} rounded-full border-white/[.18] px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-white`}
-          >
-            <WineCanvas />
-            {tag}
-          </span>
+          <WineBadge key={tag} data-testid="xp-badge">{tag}</WineBadge>
         ))}
       </div>
     </div>
@@ -86,17 +81,16 @@ const Experience = () => {
   return (
     <Section id="experience" index={2} labelKey="section_experience">
       <div className="grid gap-[22px]">
-        {JOBS.map((job, i) => (
+        {JOBS.map(job => (
           <Reveal key={job.id} testId="xp-card" className="wine-edge">
-            <JobCard job={job} open={i === 0} />
+            <JobCard job={job} />
           </Reveal>
         ))}
       </div>
 
-      <h3 className="mb-6 mt-16 flex items-center gap-3 font-mono text-[13px] font-normal uppercase tracking-[.08em] text-ink-2">
-        <i aria-hidden className="inline-block h-px w-6 bg-[#3A3A40]" />
-        {t('edu_heading')}
-      </h3>
+      <div className="mt-16">
+        <SkillsHeading as="h3">{t('edu_heading')}</SkillsHeading>
+      </div>
       <div className="grid grid-cols-1 gap-5 min-[860px]:grid-cols-3">
         {EDUCATION.map(edu => (
           <Reveal key={edu.id} testId="edu-card" className={EDU_CARD_FRAME}>

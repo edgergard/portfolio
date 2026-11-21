@@ -98,7 +98,7 @@ describe('Button', () => {
     );
     const link = screen.getByRole('link', { name: 'View CV' });
 
-    expect(link).toHaveClass('wine-edge', 'rounded-full', 'before:bg-[#0C0C0E]', 'before:inset-px');
+    expect(link).toHaveClass('wine-edge', 'rounded-full', 'before:bg-surface', 'before:inset-px');
     expect(link).toHaveClass('text-[17px]', 'focus-visible:outline');
     expect(link.className).toMatch(/hover:brightness-/);
     expect(link).not.toHaveClass('bg-wine-flow');

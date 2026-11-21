@@ -40,7 +40,7 @@ const Toggle = <T extends string>({ options, value, onChange, groupLabel }: Prop
     <div
       role="radiogroup"
       aria-label={groupLabel}
-      className="relative inline-grid grid-cols-2 rounded-full border border-[#2A2A2E] p-[3px]"
+      className="relative inline-grid grid-cols-2 rounded-full border border-chip p-[3px]"
     >
       <span
         aria-hidden
@@ -61,7 +61,7 @@ const Toggle = <T extends string>({ options, value, onChange, groupLabel }: Prop
           tabIndex={i === active ? 0 : -1}
           onClick={() => select(i)}
           onKeyDown={onKeyDown}
-          className={`relative z-[1] whitespace-nowrap rounded-full px-4 py-2 text-center font-mono text-xs uppercase tracking-[.06em] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+          className={`relative z-[1] whitespace-nowrap rounded-full px-4 py-2 text-center font-mono text-xs uppercase tracking-[.06em] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
             i === active ? 'text-ink' : 'text-muted-2 hover:text-ink-2'
           }`}
         >

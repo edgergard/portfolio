@@ -1,8 +1,9 @@
-import { useMemo, useRef, type MutableRefObject } from 'react';
+import { useEffect, useMemo, useRef, type MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { Vector2 } from 'three';
 import { damp, MAX_DT, type ScenePointer } from './motion';
-import { createWineUniforms, fragmentShader, vertexShader, WINE } from './wineShader';
+import { useCurrentTheme } from '../../theme';
+import { applyWineTheme, createWineUniforms, fragmentShader, vertexShader, WINE } from './wineShader';
 
 const FOLLOW_RATE = 2;
 const PLANE_Z = -2.5;
@@ -16,9 +17,12 @@ type Props = {
   speed: number;
 };
 
-/** The animated "Wine" glow: a shader plane behind the knot that fills the panel. */
+/** The animated "Wine" glow: a shader plane behind the knot that fills the panel (palette per theme). */
 const WineBackdrop = ({ pointer, speed }: Props) => {
   const uniforms = useMemo(createWineUniforms, []);
+  const theme = useCurrentTheme();
+
+  useEffect(() => applyWineTheme(uniforms, theme), [uniforms, theme]);
   const time = useRef(0);
   const viewport = useThree((state) => state.viewport);
   const camera = useThree((state) => state.camera);

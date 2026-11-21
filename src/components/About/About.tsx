@@ -1,18 +1,26 @@
 import { useTranslation } from 'react-i18next';
 import { FACTS, SKILLS } from '../../data/content';
 import Reveal from '../layout/Reveal';
-import Section from '../layout/Section';
+import Section, { COLUMN } from '../layout/Section';
 import SkillsBand from './SkillsBand';
+import SkillsList, { SkillsHeading } from './SkillsList';
 
 const Skills = () => {
   const { t } = useTranslation();
 
   return (
     <Reveal className="mt-14">
-      <SkillsBand
-        heading={t('about_skills_heading')}
-        groups={SKILLS.map(g => ({ title: t(g.titleKey), items: g.items }))}
-      />
+      <div className={COLUMN}>
+        <SkillsHeading as="h3">{t('about_skills_heading')}</SkillsHeading>
+      </div>
+      <SkillsBand>
+        <SkillsList
+          rows={SKILLS.map(g => ({ group: t(g.titleKey), items: g.items }))}
+          data-testid="home-skills"
+          itemTestId="skill-pill"
+          magnify
+        />
+      </SkillsBand>
     </Reveal>
   );
 };
@@ -35,12 +43,12 @@ const About = () => {
               data-testid="fact"
               className="border-b border-line py-7 min-[560px]:odd:pr-6 min-[560px]:even:border-l min-[560px]:even:pl-6 min-[1100px]:border-b-0 min-[1100px]:border-l min-[1100px]:px-6 min-[1100px]:first:border-l-0 min-[1100px]:first:pl-0"
             >
-              <div className="font-mono text-[13px] uppercase tracking-[.06em] text-[#B4B4BA] min-[900px]:text-sm">{t(fact.labelKey)}</div>
+              <div className="font-mono text-[13px] uppercase tracking-[.06em] text-soft-3 min-[900px]:text-sm">{t(fact.labelKey)}</div>
               <div className="mt-4 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                 <span className="text-[44px] font-medium leading-none tracking-[-0.045em] text-ink min-[900px]:text-[60px]">
                   {fact.value}
                 </span>
-                <small className="text-[18px] font-normal leading-tight text-[#D4D4D8] min-[900px]:text-[19px]">{t(fact.unitKey)}</small>
+                <small className="text-[18px] font-normal leading-tight text-soft-2 min-[900px]:text-[19px]">{t(fact.unitKey)}</small>
               </div>
             </div>
           ))}
