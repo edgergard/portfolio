@@ -9,14 +9,12 @@ vi.mock('../ui/wineButtons/loop', () => ({ wineButtons: { register: loop.registe
 loop.register.mockImplementation(() => loop.unregister);
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
-vi.mock('motion/react', () => ({
-  motion: {
-    div: ({ children, className, ...rest }: Record<string, unknown>) => (
-      <div className={className as string} data-testid={rest['data-testid'] as string}>
-        {children as React.ReactNode}
-      </div>
-    ),
-  },
+vi.mock('motion/react-m', () => ({
+  div: ({ children, className, ...rest }: Record<string, unknown>) => (
+    <div className={className as string} data-testid={rest['data-testid'] as string}>
+      {children as React.ReactNode}
+    </div>
+  ),
 }));
 
 afterEach(() => {

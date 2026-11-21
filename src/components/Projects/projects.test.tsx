@@ -12,12 +12,10 @@ import { renderWithI18n as render } from '../../test/renderWithI18n';
 import type { Lang } from '../../lib/locale';
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
-vi.mock('motion/react', () => ({
-  motion: {
-    div: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
-      <div className={className}>{children}</div>
-    ),
-  },
+vi.mock('motion/react-m', () => ({
+  div: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+    <div className={className}>{children}</div>
+  ),
 }));
 
 // The live shader is covered by its own tests; keep three.js out of these.
