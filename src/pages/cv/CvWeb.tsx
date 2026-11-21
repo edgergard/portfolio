@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import SkillsBand from '../../components/About/SkillsBand';
 import EducationCard, { EDU_CARD_FRAME } from '../../components/Experience/EducationCard';
+import { BrandIcon, type Brand } from '../../components/Contact/icons';
+import { wineButtons } from '../../components/ui/wineButtons/loop';
 import type { CvDoc } from '../../data/cv';
 
 /** The CV page's content column (width and side gutters); the skills band spans past it. */
@@ -30,6 +32,36 @@ const Bullets = ({ items, className }: { items: string[]; className: string }) =
   </ul>
 );
 
+const platform = (href: string): { key: 'email' | 'telegram' | 'linkedin' | 'github'; brand: Brand; value: string } => {
+  if (href.startsWith('mailto:')) {
+    return { key: 'email', brand: 'gmail', value: href.slice(7) };
+  }
+
+  if (href.includes('t.me/')) {
+    return { key: 'telegram', brand: 'telegram', value: `@${href.split('t.me/')[1]}` };
+  }
+
+  if (href.includes('linkedin.com')) {
+    return { key: 'linkedin', brand: 'linkedin', value: href.split('/in/')[1].replace(/\/$/, '') };
+  }
+
+  return { key: 'github', brand: 'github', value: href.split('github.com/')[1] };
+};
+
+/** Icon tile with the live Wine shader (registered like a primary button; .bg-wine-flow is the fallback). */
+const ContactTile = ({ brand }: { brand: Brand }) => {
+  const canvas = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => wineButtons.register(canvas.current!), []);
+
+  return (
+    <span aria-hidden className="bg-wine-flow relative isolate grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-[10px] text-white">
+      <canvas ref={canvas} className="pointer-events-none absolute inset-0 -z-[1] h-full w-full opacity-0 transition-opacity duration-300" />
+      <BrandIcon brand={brand} size={16} />
+    </span>
+  );
+};
+
 const CvWeb = ({ doc }: { doc: CvDoc }) => {
   const { t } = useTranslation();
 
@@ -37,14 +69,27 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
     <article>
       <div className={CV_COLUMN}>
         <p className="max-w-[64ch] text-lg leading-[1.55] text-ink-2">{doc.summary}</p>
-        <ul className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-muted-2">
-          {doc.contacts.map(c => (
-            <li key={c.href}>
-              <a href={c.href} className="border-b border-wine-3/70 pb-px transition-colors hover:text-wine-3">
-                {c.label}
-              </a>
-            </li>
-          ))}
+        <ul className="mt-6 flex list-none flex-wrap gap-3">
+          {doc.contacts.map(c => {
+            const { key, brand, value } = platform(c.href);
+            const name = t(`cv_contact_${key}`);
+
+            return (
+              <li key={c.href}>
+                <a
+                  href={c.href}
+                  aria-label={`${name}: ${value}`}
+                  className="inline-flex items-center gap-3 rounded-[14px] border border-[#1E1E21] bg-[#111113] py-2 pl-2 pr-[18px] transition-colors hover:border-wine focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <ContactTile brand={brand} />
+                  <span className="flex flex-col">
+                    <span className="mb-0.5 font-mono text-[10px] uppercase leading-none tracking-[.08em] text-[#8C8C92]">{name}</span>
+                    <span className="text-sm text-white">{value}</span>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
         <Block title={t('cv_experience')}>

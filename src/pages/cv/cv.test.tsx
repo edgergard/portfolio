@@ -106,6 +106,13 @@ describe('CvPage', () => {
     expect(loc()).toContain('v=react-native');
   });
 
+  it('web view shows the four contact mini cards with platform in the accessible name', () => {
+    renderAt('?view=web');
+    for (const name of [/^Email: oleksandrbryksin@gmail.com/, /^Telegram: @oleksandrbryksin/, /^LinkedIn: oleksandr-bryksin/, /^GitHub: edgergard/]) {
+      expect(screen.getByRole('link', { name })).toBeInTheDocument();
+    }
+  });
+
   it('clicking Web writes view=web and shows the web CV', () => {
     renderAt();
     fireEvent.click(radio('Web'));

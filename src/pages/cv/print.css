@@ -30,6 +30,7 @@
 
   /* No shader or dark surfaces on paper: drop the Wine layer, the wine-flow blobs and shadows. */
   .cv-print-root [data-testid='wine-surface'],
+  .cv-print-root canvas,
   .cv-print-root .bg-wine-flow::before,
   .cv-print-root .bg-wine-flow::after {
     display: none !important;
