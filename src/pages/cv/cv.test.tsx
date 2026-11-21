@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import '../../i18n';
@@ -45,78 +46,103 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks());
 
 describe('CvPage', () => {
-  const sw = (name: string) => screen.getByRole('switch', { name });
+  const radio = (name: string) => screen.getByRole('radio', { name });
+  const loc = () => screen.getByTestId('loc').textContent;
 
   it('defaults to React Native and the PDF view', () => {
     mockNarrow(false);
     const { container } = renderAt();
 
-    expect(sw('React Native')).toHaveAttribute('aria-checked', 'true');
-    expect(sw('PDF')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('React Native')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('PDF')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'false');
+    expect(radio('Web')).toHaveAttribute('aria-checked', 'false');
     expect(container.querySelector('object[type="application/pdf"]')).not.toBeNull();
     expect(screen.getByText(CVS['react-native'].title)).toBeInTheDocument();
   });
 
   it('reads ?v=frontend&view=web', () => {
     renderAt('?v=frontend&view=web');
-    expect(sw('React Native')).toHaveAttribute('aria-checked', 'false');
-    expect(sw('PDF')).toHaveAttribute('aria-checked', 'false');
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('Web')).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByText(CVS.frontend.summary)).toBeInTheDocument();
   });
 
   it('falls back to React Native and PDF for invalid params', () => {
     renderAt('?v=bogus&view=x');
-    expect(sw('React Native')).toHaveAttribute('aria-checked', 'true');
-    expect(sw('PDF')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('React Native')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('PDF')).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('renders the switches as labelled toggles: Frontend / React Native and Web / PDF', () => {
+  it('renders two segmented radiogroups: [React Native | Frontend] and [Web | PDF]', () => {
     renderAt();
-    const version = screen.getByRole('group', { name: 'CV version' });
-    const view = screen.getByRole('group', { name: 'CV view' });
+    const version = screen.getByRole('radiogroup', { name: 'CV version' });
+    const view = screen.getByRole('radiogroup', { name: 'CV view' });
 
-    expect(version.textContent).toMatch(/Frontend.*React Native/);
-    expect(view.textContent).toMatch(/Web.*PDF/);
-    expect(within(version).getByRole('switch')).toBe(sw('React Native'));
-    expect(within(view).getByRole('switch')).toBe(sw('PDF'));
+    expect(within(version).getAllByRole('radio').map(r => r.textContent)).toEqual(['React Native', 'Frontend']);
+    expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['Web', 'PDF']);
+    expect(version).toHaveClass('rounded-full', 'border-[#2A2A2E]', 'p-[3px]');
   });
 
-  it('toggling the version switch writes v=frontend to the URL and back', () => {
+  it('the wine highlight slides under the active option (instant under reduced motion)', () => {
+    renderAt();
+    const view = screen.getByRole('radiogroup', { name: 'CV view' });
+    const hl = within(view).getByTestId('toggle-highlight');
+
+    expect(hl).toHaveClass('border-wine-3', 'bg-wine/25', 'translate-x-full', 'transition-transform', 'motion-reduce:transition-none');
+    fireEvent.click(radio('Web'));
+    expect(hl).toHaveClass('translate-x-0');
+    expect(radio('Web')).toHaveClass('text-ink');
+    expect(radio('PDF')).toHaveClass('text-muted-2');
+  });
+
+  it('clicking an option writes v= to the URL and back', () => {
     renderAt('?view=web');
-    fireEvent.click(sw('React Native'));
-    expect(screen.getByTestId('loc').textContent).toContain('v=frontend');
-    expect(sw('React Native')).toHaveAttribute('aria-checked', 'false');
+    fireEvent.click(radio('Frontend'));
+    expect(loc()).toContain('v=frontend');
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByText(CVS.frontend.title)).toBeInTheDocument();
-    fireEvent.click(sw('React Native'));
-    expect(screen.getByTestId('loc').textContent).toContain('v=react-native');
+    fireEvent.click(radio('React Native'));
+    expect(loc()).toContain('v=react-native');
   });
 
-  it('toggling the view switch writes view=web and shows the web CV', () => {
+  it('clicking Web writes view=web and shows the web CV', () => {
     renderAt();
-    fireEvent.click(sw('PDF'));
-    expect(screen.getByTestId('loc').textContent).toContain('view=web');
+    fireEvent.click(radio('Web'));
+    expect(loc()).toContain('view=web');
     expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
   });
 
-  it('clicking a side label selects that side', () => {
+  it('only the selected option is in the tab order, with a visible focus ring', () => {
     renderAt();
-    const view = screen.getByRole('group', { name: 'CV view' });
-
-    fireEvent.click(within(view).getByText('Web'));
-    expect(sw('PDF')).toHaveAttribute('aria-checked', 'false');
-    fireEvent.click(within(view).getByText('Web'));
-    expect(sw('PDF')).toHaveAttribute('aria-checked', 'false');
-    fireEvent.click(within(view).getByText('PDF'));
-    expect(sw('PDF')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('PDF')).toHaveAttribute('tabindex', '0');
+    expect(radio('Web')).toHaveAttribute('tabindex', '-1');
+    expect(radio('PDF').tagName).toBe('BUTTON');
+    expect(radio('PDF').className).toMatch(/focus-visible:outline/);
   });
 
-  it('switches are native buttons (Space/Enter) with a visible focus ring', () => {
-    renderAt();
-    const s = sw('PDF');
+  it('arrow keys, Home and End move the selection and focus, and update the URL', async () => {
+    const user = userEvent.setup();
 
-    expect(s.tagName).toBe('BUTTON');
-    expect(s).toHaveAttribute('type', 'button');
-    expect(s.className).toMatch(/focus-visible:outline/);
+    renderAt();
+
+    await user.tab();
+    expect(radio('React Native')).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(radio('Frontend')).toHaveFocus();
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'true');
+    expect(loc()).toContain('v=frontend');
+    await user.keyboard('{ArrowLeft}');
+    expect(radio('React Native')).toHaveAttribute('aria-checked', 'true');
+    expect(loc()).toContain('v=react-native');
+
+    radio('PDF').focus();
+    await user.keyboard('{Home}');
+    expect(radio('Web')).toHaveFocus();
+    expect(loc()).toContain('view=web');
+    expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
+    await user.keyboard('{End}');
+    expect(loc()).toContain('view=pdf');
   });
 
   it('Download PDF links to the selected PDF with the download attribute', () => {
@@ -167,7 +193,7 @@ describe('CvPage', () => {
     expect(screen.getAllByText(/· Pecode/)[0].className).toMatch(/FF8A9B/);
   });
 
-  it('runs the skills as a full-bleed Wine band with the CV groups and pills', () => {
+  it('keeps the CV skills dl layout (label left, mono chips right) on a full-bleed Wine band', () => {
     renderAt('?view=web');
     const panel = screen.getByTestId('skills-panel');
     const doc = CVS['react-native'];
@@ -175,12 +201,24 @@ describe('CvPage', () => {
     expect(panel).toHaveClass('bg-wine-flow');
     expect(within(panel).getByTestId('wine-surface')).toBeInTheDocument();
     expect(panel.closest('[class*="max-w-"]')).toBeNull();
-    for (const g of doc.skills) {
-      expect(within(panel).getByText(g.group)).toBeInTheDocument();
-    }
-
-    expect(within(panel).getAllByTestId('skill-pill')).toHaveLength(doc.skills.flatMap(g => g.items).length);
     expect(within(panel).getByTestId('skills-column')).toHaveClass('relative', 'mx-auto');
+
+    const dl = within(panel).getByTestId('cv-skills');
+
+    expect(dl.tagName).toBe('DL');
+    const dts = dl.querySelectorAll('dt');
+    const dds = dl.querySelectorAll('dd');
+
+    expect([...dts].map(d => d.textContent)).toEqual(doc.skills.map(g => g.group));
+    expect(dts[0]).toHaveClass('font-mono', 'uppercase');
+    expect(dts[0].parentElement).toHaveClass('min-[900px]:grid-cols-[200px_1fr]');
+    doc.skills.forEach((g, i) => {
+      const chips = [...dds[i].children];
+
+      expect(chips.map(c => c.textContent)).toEqual(g.items);
+      expect(chips[0]).toHaveClass('rounded-full', 'font-mono', 'text-[11px]', 'border-white/20', 'bg-[rgba(10,10,11,.4)]');
+    });
+    expect(within(panel).queryByTestId('skill-pill')).toBeNull();
   });
 
   it('shows the education as wine-edge cards with kind, period, institution and programme', () => {

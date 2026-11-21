@@ -80,10 +80,25 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
         <div className={CV_COLUMN}>
           <Heading>{t('cv_skills')}</Heading>
         </div>
-        <SkillsBand
-          column={CV_COLUMN}
-          groups={doc.skills.map(s => ({ title: s.group, items: s.items }))}
-        />
+        <SkillsBand column={CV_COLUMN}>
+          <dl data-testid="cv-skills" className="grid gap-4">
+            {doc.skills.map(s => (
+              <div key={s.group} className="grid grid-cols-1 gap-1.5 min-[900px]:grid-cols-[200px_1fr] min-[900px]:gap-8">
+                <dt className={`${label} pt-1 text-white/75`}>{s.group}</dt>
+                <dd className="flex flex-wrap gap-1.5">
+                  {s.items.map(i => (
+                    <span
+                      key={i}
+                      className="rounded-full border border-white/20 bg-[rgba(10,10,11,.4)] px-2.5 py-[5px] font-mono text-[11px] tracking-[.02em] text-[#E4E4E7]"
+                    >
+                      {i}
+                    </span>
+                  ))}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </SkillsBand>
       </section>
 
       <div className={CV_COLUMN}>

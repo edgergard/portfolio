@@ -22,20 +22,24 @@ const CvPage = () => {
     <div className="cv-print-root bg-bg py-20 text-ink min-[900px]:py-[120px]">
       <div className={CV_COLUMN}>
         <div className="cv-no-print mb-10 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-x-10 gap-y-4">
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
             <Toggle
               groupLabel={t('cv_aria_version')}
-              left={t('cv_switch_fe')}
-              right={t('cv_switch_rn')}
-              checked={variant === 'react-native'}
-              onChange={on => setVariant(on ? 'react-native' : 'frontend')}
+              options={[
+                { value: 'react-native', label: t('cv_switch_rn') },
+                { value: 'frontend', label: t('cv_switch_fe') },
+              ]}
+              value={variant}
+              onChange={setVariant}
             />
             <Toggle
               groupLabel={t('cv_aria_view')}
-              left={t('cv_view_web')}
-              right={`${t('cv_view_pdf')}${t('cv_pdf_note')}`}
-              checked={view === 'pdf'}
-              onChange={on => setView(on ? 'pdf' : 'web')}
+              options={[
+                { value: 'web', label: t('cv_view_web') },
+                { value: 'pdf', label: `${t('cv_view_pdf')}${t('cv_pdf_note')}` },
+              ]}
+              value={view}
+              onChange={setView}
             />
           </div>
           <Button href={pdfHref(doc)} download>
