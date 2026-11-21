@@ -1,3 +1,4 @@
+import archiveCss from '../../../styles.css?raw';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -149,5 +150,11 @@ describe('route', () => {
       </MemoryRouter>,
     );
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+  });
+});
+
+describe('archive row dividers', () => {
+  it('turns the row and header dividers white on the wine glass in the light theme', () => {
+    expect(archiveCss).toMatch(/:root\[data-theme='light'\] \[data-testid='archive-row'\],\s*:root\[data-theme='light'\] \[data-testid='archive-head'\] \{\s*border-color: rgba\(255, 255, 255/);
   });
 });

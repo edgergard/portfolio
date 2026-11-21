@@ -30,7 +30,13 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
     <article
       data-testid="project-row"
       data-reverse={reverse}
-      className={`${GLASS} grid h-full grid-cols-1 items-center gap-6 p-5 min-[900px]:grid-cols-[1.35fr_1fr] min-[900px]:gap-14 min-[900px]:p-9`}
+      className={
+        `${GLASS} grid h-full grid-cols-1 items-center gap-6 p-5 min-[900px]:gap-14 min-[900px]:p-9 `
+        // The media column is the wide one on either side, so every frame comes out the same size.
+        + (reverse
+          ? 'min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]'
+          : 'min-[900px]:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]')
+      }
     >
       <div className={reverse ? 'min-[900px]:order-2' : ''}>
         <ProjectMedia project={project} />

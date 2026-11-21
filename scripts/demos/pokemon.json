@@ -1,0 +1,141 @@
+{
+  "before": [
+    {
+      "waitFor": "input[placeholder^='Search']"
+    }
+  ],
+  "steps": [
+    {
+      "wait": 400
+    },
+    {
+      "click": "input[placeholder='Ash']",
+      "ms": 450
+    },
+    {
+      "type": "Ash",
+      "delay": 110
+    },
+    {
+      "click": "input[placeholder='Ketchum']",
+      "ms": 400
+    },
+    {
+      "type": "Ketchum",
+      "delay": 90
+    },
+    {
+      "click": "input[placeholder^='Search']",
+      "ms": 450
+    },
+    {
+      "type": "pika",
+      "delay": 110
+    },
+    {
+      "waitFor": "[role='option']",
+      "timeout": 8000
+    },
+    {
+      "wait": 300
+    },
+    {
+      "click": "[role='option']",
+      "nth": 0,
+      "ms": 400
+    },
+    {
+      "click": "input[role='combobox']",
+      "ms": 350
+    },
+    {
+      "type": "char",
+      "delay": 110
+    },
+    {
+      "waitFor": "[role='option']",
+      "timeout": 8000
+    },
+    {
+      "wait": 300
+    },
+    {
+      "click": "[role='option']",
+      "nth": 0,
+      "ms": 400
+    },
+    {
+      "click": "input[role='combobox']",
+      "ms": 350
+    },
+    {
+      "type": "bulb",
+      "delay": 110
+    },
+    {
+      "waitFor": "[role='option']",
+      "timeout": 8000
+    },
+    {
+      "wait": 300
+    },
+    {
+      "click": "[role='option']",
+      "nth": 0,
+      "ms": 400
+    },
+    {
+      "click": "input[role='combobox']",
+      "ms": 350
+    },
+    {
+      "type": "squirt",
+      "delay": 100
+    },
+    {
+      "waitFor": "[role='option']",
+      "timeout": 8000
+    },
+    {
+      "wait": 300
+    },
+    {
+      "click": "[role='option']",
+      "nth": 0,
+      "ms": 400
+    },
+    {
+      "wait": 400
+    },
+    {
+      "wait": 700
+    },
+    {
+      "click": "a[href='#/battle']",
+      "ms": 500
+    },
+    {
+      "waitFor": "a[href='#/']",
+      "timeout": 8000
+    },
+    {
+      "wait": 900
+    },
+    {
+      "click": "button",
+      "text": "Fight",
+      "ms": 500
+    },
+    {
+      "wait": 1200
+    },
+    {
+      "click": "button",
+      "text": "Double speed",
+      "ms": 400
+    },
+    {
+      "wait": 6500
+    }
+  ]
+}

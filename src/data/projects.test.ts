@@ -8,7 +8,7 @@ describe('projects data model', () => {
 
   it('featuredProjects returns the 3 featured in order', () => {
     expect(featuredProjects().map((p) => p.name)).toEqual([
-      'Gadget Luxe',
+      'Pokemon Trainer',
       'Vue Weather App',
       'Rick and Morty API app',
     ]);

@@ -605,3 +605,35 @@ body {
 :root[data-theme='light'] .hero-wine-fallback {
   background: radial-gradient(circle at 50% 50%, #EC5874 0%, #CC2E4D 28%, #A51C36 58%, #7A1328 88%);
 }
+
+/* Project browser frames: a light browser bar (traffic-light dots, dark address) on the light page. */
+:root[data-theme='light'] .frame {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+:root[data-theme='light'] .frame-bar {
+  background-color: #F4F1EF;
+  border-bottom-color: #E4DDD9;
+}
+
+:root[data-theme='light'] .frame-dot:nth-child(1) {
+  background-color: #E06C75;
+}
+
+:root[data-theme='light'] .frame-dot:nth-child(2) {
+  background-color: #E5C07B;
+}
+
+:root[data-theme='light'] .frame-dot:nth-child(3) {
+  background-color: #98C379;
+}
+
+:root[data-theme='light'] .frame-host {
+  color: #55555C;
+}
+
+/* Archive table dividers: white hairlines on the wine glass (the dark-palette line read black). */
+:root[data-theme='light'] [data-testid='archive-row'],
+:root[data-theme='light'] [data-testid='archive-head'] {
+  border-color: rgba(255, 255, 255, 0.2);
+}
