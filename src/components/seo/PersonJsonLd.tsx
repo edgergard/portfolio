@@ -14,11 +14,17 @@ const PERSON = {
   'sameAs': [profile('github'), profile('linkedin')].filter(Boolean),
 };
 
-/** schema.org Person for the home page; `<` is escaped so the JSON cannot close the script. */
+/**
+ * JSON for a <script type="application/ld+json">. Every `<` becomes the JSON escape < (the
+ * six characters, hence '\\u003c'), so the payload cannot close the tag and still parses the same.
+ */
+export const toJsonLd = (value: unknown): string => JSON.stringify(value).replace(/</g, '\\u003c');
+
+/** schema.org Person for the home page. */
 const PersonJsonLd = () => (
   <script
     type="application/ld+json"
-    dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON).replace(/</g, '\u003c') }}
+    dangerouslySetInnerHTML={{ __html: toJsonLd(PERSON) }}
   />
 );
 
