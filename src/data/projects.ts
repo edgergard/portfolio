@@ -1,12 +1,19 @@
 import { Project } from '../types/Project';
 import {
   GadgetLuxe,
-  RickAndMorty,
   PokeAPI,
   BAndQ,
   Todo,
-  VueWeatherApp,
 } from '../images';
+
+/** Recorded loops (scripts/record-demo.mjs) live in public/videos, served under the site base. */
+const demo = (slug: string) => ({
+  poster: `${import.meta.env.BASE_URL}videos/${slug}.jpg`,
+  video: {
+    webm: `${import.meta.env.BASE_URL}videos/${slug}.webm`,
+    mp4: `${import.meta.env.BASE_URL}videos/${slug}.mp4`,
+  },
+});
 
 export const PROJECT_LIST: Project[] = [
   {
@@ -31,7 +38,7 @@ export const PROJECT_LIST: Project[] = [
     featured: true,
     order: 2,
     category: "Vue",
-    poster: VueWeatherApp,
+    ...demo('weather'),
     description: "project_desc_weather",
     stack: ["Vue3", "Typescript", "Tailwind", "Vue Router"],
     codelink: "https://github.com/edgergard/vue-weather-app?tab=readme-ov-file",
@@ -45,7 +52,7 @@ export const PROJECT_LIST: Project[] = [
     featured: true,
     order: 3,
     category: "GraphQL",
-    poster: RickAndMorty,
+    ...demo('rick-and-morty'),
     description: "project_desc_rick",
     stack: ["React", "Typescript", "Redux", "GraphQL", "MUI"],
     codelink: "https://github.com/edgergard/Rick-and-morty-fe",

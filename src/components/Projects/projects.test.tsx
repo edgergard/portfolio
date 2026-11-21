@@ -162,6 +162,25 @@ describe('Projects section', () => {
     });
   });
 
+  it('plays the recorded demo loops in the Weather and Rick and Morty rows', () => {
+    renderSection();
+    const rows = screen.getAllByTestId('project-row');
+    const sourcesOf = (row: HTMLElement) => [...row.querySelectorAll('video source')].map(s => s.getAttribute('src'));
+    const base = import.meta.env.BASE_URL;
+
+    expect(sourcesOf(rows[1])).toEqual([`${base}videos/weather.webm`, `${base}videos/weather.mp4`]);
+    expect(sourcesOf(rows[2])).toEqual([`${base}videos/rick-and-morty.webm`, `${base}videos/rick-and-morty.mp4`]);
+    expect(rows[1].querySelector('video')).toHaveAttribute('poster', `${base}videos/weather.jpg`);
+  });
+
+  it('keeps the poster for Gadget Luxe until its demo can be recorded', () => {
+    renderSection();
+    const [gadget] = screen.getAllByTestId('project-row');
+
+    expect(gadget.querySelector('video')).toBeNull();
+    expect(gadget.querySelector('img')).toHaveAttribute('src', featuredProjects()[0].poster);
+  });
+
   it('links to the archive with the total count', () => {
     renderSection();
     const link = screen.getByRole('link', { name: `All projects · Archive (${PROJECT_LIST.length})` });

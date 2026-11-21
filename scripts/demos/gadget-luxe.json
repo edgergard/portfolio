@@ -1,0 +1,18 @@
+{
+  "before": [{ "waitFor": "a[href='#/catalog/phones']" }],
+  "steps": [
+    { "wait": 400 },
+    { "click": "a[href='#/catalog/phones']", "ms": 500 },
+    { "waitFor": ".card", "timeout": 15000 },
+    { "wait": 600 },
+    { "scroll": 420, "ms": 1400 },
+    { "hover": ".card", "nth": 1, "ms": 450 },
+    { "click": ".card .card__name", "nth": 1, "ms": 350 },
+    { "waitFor": ".button-cart-add", "timeout": 15000 },
+    { "wait": 700 },
+    { "click": ".button-cart-add", "ms": 500 },
+    { "wait": 700 },
+    { "click": "a[href='#/cart']", "ms": 500 },
+    { "wait": 1200 }
+  ]
+}

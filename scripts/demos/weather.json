@@ -1,0 +1,16 @@
+{
+  "before": [{ "waitFor": "a[href*='forecast']" }],
+  "steps": [
+    { "wait": 500 },
+    { "hover": "a[href*='forecast']", "text": "Tokyo", "ms": 600 },
+    { "hover": "a[href*='forecast']", "text": "Lisbon", "ms": 400 },
+    { "click": "a[href*='forecast']", "text": "Kyiv", "ms": 400 },
+    { "waitFor": "section h2", "timeout": 8000 },
+    { "wait": 900 },
+    { "click": "button", "text": "Celsius", "ms": 500 },
+    { "wait": 700 },
+    { "scroll": 560, "ms": 1700 },
+    { "wait": 900 },
+    { "scroll": -560, "ms": 1400 }
+  ]
+}
