@@ -33,7 +33,7 @@ export type Certificate = {
   url: string;
 };
 
-/** Commercial projects worked on: 9 at Pecode (7 mobile, 2 web) + 3 products at HYS (see the job metrics). */
+/** Commercial projects: 9 at Pecode (7 mobile, 2 web) + 3 at HYS (mobile app, admin and B2B web) = 8 mobile, 4 web. */
 export const PROJECT_COUNT = '12';
 
 export const FACTS: Fact[] = [
