@@ -98,7 +98,7 @@ next.config.ts, vitest.config.ts, vercel.json, eslint.config.mjs
   - do not remove the Vite or router packages yet (Task 12).
 
   Then write the files:
-  - **`vercel.json`:** `ignoreCommand` set to `git show HEAD:package.json | grep -q '"next"' && exit 1 || exit 0`. This skips Vercel builds of any commit whose package.json has no Next.js, It does not skip `main`: `main` has no `vercel.json`, and Vercel reads the file from the commit being built. Skipping `main` is done in the Vercel project settings (Task 13 Step 1).
+  - **`vercel.json`:** `ignoreCommand` set to `git show HEAD:package.json | grep -q '"next"' && exit 1 || exit 0`. This skips Vercel builds of any commit whose package.json has no Next.js. It does not skip `main`: `main` has no `vercel.json`, and Vercel reads the file from the commit being built. Skipping `main` is done in the Vercel project settings (Task 13 Step 1).
   - **`.env.example`:** the three `NEXT_PUBLIC_EMAILJS_*` names and `NEXT_PUBLIC_SITE_URL=https://<project>.vercel.app`.
 - [ ] **Step 5:** Run `npx vitest run src/test/scaffold.test.ts`, then `npm run build`. Expected: PASS, and the build succeeds with the placeholder page.
 - [ ] **Step 6:** Run `npm test`. Expected: the old suite still passes, because old files are untouched and the Vite tests run under the new `vitest.config.ts`. Fix the config, not the tests, until it does.
