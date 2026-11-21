@@ -16,7 +16,7 @@ const Band = () => {
   return (
     <div
       data-testid="projects-band"
-      className="bg-wine-flow border-y border-white/10 py-12 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] min-[900px]:py-24"
+      className="bg-wine-flow border-y border-white/10 py-12 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none min-[900px]:py-24"
     >
       <WineSurface />
       <div className={`relative ${COLUMN}`}>

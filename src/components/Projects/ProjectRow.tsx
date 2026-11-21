@@ -18,11 +18,11 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
   const num = String(index + 1).padStart(2, '0');
 
   const links = [
-    { href: demolink, label: t('btn_live_demo') },
-    { href: codelink, label: t('btn_code') },
-    { href: appStore, label: t('btn_app_store') },
-    { href: googlePlay, label: t('btn_google_play') },
-  ].filter((l): l is { href: string; label: string } => Boolean(l.href));
+    { id: 'live', href: demolink, label: t('btn_live_demo') },
+    { id: 'code', href: codelink, label: t('btn_code') },
+    { id: 'appStore', href: appStore, label: t('btn_app_store') },
+    { id: 'googlePlay', href: googlePlay, label: t('btn_google_play') },
+  ].filter((l): l is { id: string; href: string; label: string } => Boolean(l.href));
 
   return (
     <article
@@ -56,9 +56,9 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
 
         {links.length > 0 && (
           <div className="mt-[22px] flex flex-wrap items-center gap-[18px] text-[15px] font-medium text-ink">
-            {links.map(({ href, label }) => (
+            {links.map(({ id, href, label }) => (
               <a
-                key={href}
+                key={id}
                 href={href}
                 aria-label={`${label} — ${name}`}
                 target="_blank"

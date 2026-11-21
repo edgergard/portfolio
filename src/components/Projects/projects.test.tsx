@@ -129,6 +129,8 @@ describe('Projects section', () => {
     const band = screen.getByTestId('projects-band');
 
     expect(band).toHaveClass('bg-wine-flow');
+    // .bg-wine-flow brightens on hover (written for buttons); a section-sized band must not flash.
+    expect(band).toHaveClass('hover:filter-none');
     expect(within(band).getByTestId('wine-surface')).toBeInTheDocument();
   });
 
@@ -186,6 +188,18 @@ describe('ProjectRow', () => {
     expect(within(row).queryByRole('link', { name: /Live demo/ })).toBeNull();
     expect(within(row).queryByRole('link', { name: /Code/ })).toBeNull();
     expect(within(row).getByText('01 — Mobile · 2023')).toBeInTheDocument();
+  });
+
+  it('keeps every link when two share a URL, without duplicate-key warnings', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const shared = { ...base, demolink: 'https://example.com/app', appStore: 'https://example.com/app' };
+
+    render(<ProjectRow project={shared} index={0} reverse={false} />);
+
+    expect(screen.getByRole('link', { name: `Live demo — ${base.name}` })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: `App Store — ${base.name}` })).toBeInTheDocument();
+    expect(error.mock.calls.flat().join(' ')).not.toMatch(/same key/);
+    error.mockRestore();
   });
 });
 
@@ -257,7 +271,37 @@ describe('ProjectMedia', () => {
     intersect(1);
 
     expect(play).not.toHaveBeenCalled();
+    expect(observers).toHaveLength(0);
     expect(container.querySelector('video')).not.toHaveAttribute('autoplay');
+  });
+
+  it('pauses and stops observing when reduced motion turns on while playing', () => {
+    const listeners: (() => void)[] = [];
+    let reduce = false;
+
+    vi.stubGlobal(
+      'matchMedia',
+      (query: string) =>
+        ({
+          get matches() {
+            return reduce && query === '(prefers-reduced-motion: reduce)';
+          },
+          media: query,
+          addEventListener: (_: string, cb: () => void) => listeners.push(cb),
+          removeEventListener: () => {},
+        }) as unknown as MediaQueryList,
+    );
+    render(<ProjectMedia project={withVideo} />);
+
+    intersect(1);
+    expect(play).toHaveBeenCalledTimes(1);
+    pause.mockClear();
+
+    reduce = true;
+    act(() => listeners.forEach(cb => cb()));
+    expect(pause).toHaveBeenCalled();
+
+    expect(observers).toHaveLength(1); // the effect re-ran without observing again
   });
 });
 
