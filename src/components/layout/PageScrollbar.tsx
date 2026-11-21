@@ -148,6 +148,8 @@ const PageScrollbar = () => {
       window.removeEventListener('resize', schedule);
       railEl.removeEventListener('pointerdown', onDown);
       endDrag();
+      // endDrag() wakes the rail and arms a fresh idle timer; clear it after, not before.
+      clearTimeout(idle);
     };
   }, [fine]);
 
@@ -161,7 +163,7 @@ const PageScrollbar = () => {
       aria-hidden
       data-scrollbar-rail
       className={
-        'group fixed bottom-2.5 right-1.5 top-2.5 z-50 w-2 touch-none select-none print:hidden '
+        'group fixed bottom-2.5 right-1.5 top-[82px] z-50 w-2 touch-none select-none print:hidden '
         // A wider invisible hit area out to the window edge; the visible track fades when idle.
         + "after:absolute after:-left-1 after:-right-1.5 after:inset-y-0 after:content-[''] "
         + "before:absolute before:inset-0 before:rounded-full before:bg-white/[.04] before:opacity-40 before:transition-opacity before:duration-500 before:content-[''] "
