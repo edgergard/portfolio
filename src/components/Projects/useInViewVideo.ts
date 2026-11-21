@@ -15,6 +15,10 @@ export const useInViewVideo = (ref: RefObject<HTMLVideoElement>, enabled: boolea
       return;
     }
 
+    // Browsers allow autoplay only when muted. A <video muted> hydrated from the prerendered HTML
+    // keeps just the attribute (React doesn't patch it), so set the property too.
+    video.muted = true;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && entry.intersectionRatio >= IN_VIEW_THRESHOLD) {

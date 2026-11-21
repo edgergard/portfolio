@@ -175,5 +175,7 @@
   "archive_col_project": "Проєкт",
   "archive_col_type": "Тип",
   "archive_col_stack": "Стек",
-  "archive_col_links": "Посилання"
+  "archive_col_links": "Посилання",
+  "chunk_failed": "Сторінка не завантажилась — мабуть, щойно вийшла нова версія сайту.",
+  "chunk_reload": "Перезавантажити"
 }

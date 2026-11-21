@@ -7,6 +7,9 @@ const VENDOR = /[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|re
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
+  },
   build: {
     rollupOptions: {
       output: {

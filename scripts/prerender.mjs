@@ -22,6 +22,6 @@ if (!html.includes(PLACEHOLDER)) {
 const { render } = await import(pathToFileURL(path.join(ssr, 'entry-server.js')).href);
 const app = render();
 
-await writeFile(htmlPath, html.replace(PLACEHOLDER, app));
+await writeFile(htmlPath, html.replace(PLACEHOLDER, () => app));
 await rm(ssr, { recursive: true, force: true });
 console.log(`prerender: inlined ${(app.length / 1024).toFixed(1)} KB of home page HTML`);

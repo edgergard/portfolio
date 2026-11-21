@@ -23,7 +23,9 @@ const ThemeButton = () => {
         + 'focus-visible:outline-offset-2 focus-visible:outline-ink'
       }
     >
-      {toLight ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
+      {/* Both icons are in the HTML (the home page is prerendered dark); CSS shows the right one. */}
+      <SunIcon data-theme-icon="sun" className="h-4 w-4 [:root[data-theme=light]_&]:hidden" />
+      <MoonIcon data-theme-icon="moon" className="hidden h-4 w-4 [:root[data-theme=light]_&]:block" />
     </button>
   );
 };

@@ -2,20 +2,17 @@ import { Component, lazy, Suspense, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 import { PROJECT_COUNT } from '../../data/content';
-import { useCurrentTheme } from '../../theme';
 import { useIdleWebGL, usePrefersReducedMotion } from './sceneSupport';
 
 // Lazy so three.js stays out of the main bundle and the text paints first.
 const HeroScene = lazy(() => import('./HeroScene'));
 
-/** CSS stand-in for the Wine shader (same palette per theme), shown while loading or without WebGL. */
-const WINE_GRADIENT = {
-  dark: 'radial-gradient(circle at 50% 50%, #B8233F 0%, #8B1426 28%, #3E0712 58%, #0A0A0B 88%)',
-  light: 'radial-gradient(circle at 50% 50%, #EC5874 0%, #CC2E4D 28%, #A51C36 58%, #7A1328 88%)',
-};
-
+/**
+ * CSS stand-in for the Wine shader, shown while loading or without WebGL. Its gradient (one per
+ * theme) lives in styles.css (.hero-wine-fallback), so the prerendered HTML is right for both.
+ */
 const WineFallback = (props: { 'data-testid'?: string }) => (
-  <div aria-hidden className="absolute inset-0" style={{ background: WINE_GRADIENT[useCurrentTheme()] }} {...props} />
+  <div aria-hidden className="hero-wine-fallback absolute inset-0" {...props} />
 );
 
 /**
@@ -111,7 +108,6 @@ const DocIcon = () => (
 const Hero = () => {
   const { t } = useTranslation();
   const reducedMotion = usePrefersReducedMotion();
-  const theme = useCurrentTheme();
   const [fps, setFps] = useState<number | null>(null);
   // Probed once, when idle (the gradient shows meanwhile).
   const webGL = useIdleWebGL();
@@ -174,7 +170,9 @@ const Hero = () => {
           <p className="hero-caption pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-white/50 min-[900px]:flex">
             <span>{t('hero_caption_figure')}</span>
             <span aria-hidden>·</span>
-            <span>{t(theme === 'light' ? 'hero_caption_material_light' : 'hero_caption_material')}</span>
+            {/* Both materials are in the HTML; CSS shows the one for the current theme. */}
+            <span className="[:root[data-theme=light]_&]:hidden">{t('hero_caption_material')}</span>
+            <span className="hidden [:root[data-theme=light]_&]:inline">{t('hero_caption_material_light')}</span>
             <span aria-hidden>·</span>
             <span>
               <b className="font-medium text-white">{fps === null ? '—' : fps}</b> {t('hero_caption_fps')}

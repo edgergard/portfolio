@@ -33,6 +33,9 @@ const Screen = ({ project }: Props) => {
       <video
         ref={video}
         muted
+        // React compares the muted property during hydration and always reports a mismatch for
+        // prerendered <video muted>; useInViewVideo sets the property, so the warning is noise.
+        suppressHydrationWarning
         loop
         playsInline
         preload="none"

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { EMAIL, PHONE, SOCIALS, type Social } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section, { GLASS } from '../layout/Section';
+import ChunkBoundary from '../ui/ChunkBoundary';
 import CopyButton from './CopyButton';
 import { ArrowDownIcon, ArrowUpRightIcon, BrandIcon, DocumentIcon, PhoneIcon, type Brand } from './icons';
 
@@ -48,9 +49,12 @@ const LazyForm = () => {
   return (
     <div ref={ref}>
       {near ? (
-        <Suspense fallback={<FormPlaceholder />}>
-          <ContactForm />
-        </Suspense>
+        // If the form's code is gone (a redeploy), keep the glass box; the rows offer Telegram/email.
+        <ChunkBoundary fallback={<FormPlaceholder />}>
+          <Suspense fallback={<FormPlaceholder />}>
+            <ContactForm />
+          </Suspense>
+        </ChunkBoundary>
       ) : <FormPlaceholder />}
     </div>
   );

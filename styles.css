@@ -417,6 +417,11 @@ body {
   }
 }
 
+/* The hero's CSS stand-in for the Wine shader (see Hero.tsx); the light gradient is below. */
+.hero-wine-fallback {
+  background: radial-gradient(circle at 50% 50%, #B8233F 0%, #8B1426 28%, #3E0712 58%, #0A0A0B 88%);
+}
+
 /*
  * Light theme polish (from a page-by-page colour and contrast audit). Every rule is scoped to
  * :root[data-theme='light'], so the dark theme is untouched. Wine areas got a brighter shader in
@@ -595,4 +600,8 @@ body {
 
 :root[data-theme='light'] .cv-contact:hover {
   border-color: #8B1426;
+}
+
+:root[data-theme='light'] .hero-wine-fallback {
+  background: radial-gradient(circle at 50% 50%, #EC5874 0%, #CC2E4D 28%, #A51C36 58%, #7A1328 88%);
 }

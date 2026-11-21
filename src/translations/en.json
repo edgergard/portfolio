@@ -175,5 +175,7 @@
   "archive_col_project": "Project",
   "archive_col_type": "Type",
   "archive_col_stack": "Stack",
-  "archive_col_links": "Links"
+  "archive_col_links": "Links",
+  "chunk_failed": "This page didn't load — a new version of the site was probably just published.",
+  "chunk_reload": "Reload"
 }
