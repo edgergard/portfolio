@@ -131,7 +131,7 @@ describe('wine button loop', () => {
     document.body.innerHTML = '';
   });
 
-  it('loads one shared renderer for any number of buttons and copies it into each', async () => {
+  it('loads one shared renderer for any number of buttons and copies a frame into each', async () => {
     const { clock, renderer, load, loop } = setup();
     const a = buttonCanvas();
     const b = buttonCanvas(160, 44);
@@ -142,13 +142,29 @@ describe('wine button loop', () => {
     clock.step();
 
     expect(load).toHaveBeenCalledTimes(1);
-    expect(renderer.render).toHaveBeenCalledTimes(1);
+    expect(renderer.render).toHaveBeenCalledTimes(2);
     const any = expect.any(Number);
 
     expect(a.ctx.drawImage).toHaveBeenCalledWith(
       renderer.source, any, any, any, any, 0, 0, a.canvas.width, a.canvas.height,
     );
     expect(b.ctx.drawImage).toHaveBeenCalledTimes(1);
+  });
+
+  it('animates each element at its own moment, never in lockstep with the others', async () => {
+    const { clock, renderer, loop } = setup();
+    const canvases = [buttonCanvas(), buttonCanvas(), buttonCanvas()];
+
+    canvases.forEach((c) => loop.register(c.canvas));
+    await flush();
+    clock.step();
+
+    const times = renderer.render.mock.calls.map(([t]) => t as number);
+
+    expect(times).toHaveLength(3);
+    expect(new Set(times.map((t) => t.toFixed(3))).size).toBe(3);
+    // Spread well apart: at least a few seconds of animation between any two.
+    times.forEach((a, i) => times.slice(i + 1).forEach((b) => expect(Math.abs(a - b)).toBeGreaterThan(5)));
   });
 
   it('sizes each button canvas to its box at device pixels (capped at 2x)', async () => {

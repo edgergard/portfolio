@@ -27,12 +27,16 @@ type Entry = {
   onScreen: boolean;
   /** 0-1: which band of the shared buffer this button shows, so buttons don't look cloned. */
   offset: number;
+  /** Seconds this element runs ahead of the shared clock, so each one moves on its own. */
+  phase: number;
 };
 
 type Status = 'idle' | 'loading' | 'ready' | 'failed';
 
 const MAX_DPR = 2;
 const GOLDEN = 0.618034;
+/** Spread of the per-element time offsets (seconds of animation): far enough apart that no two look alike. */
+export const PHASE_SPREAD = 90;
 
 export type Rect = { sx: number; sy: number; sw: number; sh: number };
 
@@ -113,8 +117,9 @@ const setState = (canvas: HTMLCanvasElement, state: 'loading' | 'live' | 'fallba
 
 /**
  * One shared WebGL renderer for every primary button. Each button registers a 2D canvas;
- * every frame the renderer draws the Wine shader once into its small buffer and the loop
- * copies that into each on-screen button (cover-fit, device pixels). The loop pauses when no
+ * every frame the renderer draws the Wine shader into its small buffer once per on-screen
+ * button, each at its own time offset (so every element animates independently), and the
+ * loop copies each frame into its button (cover-fit, device pixels). The loop pauses when no
  * button is on screen or the tab is hidden, and tears the renderer down with the last button.
  * A lost context is recovered once with a fresh renderer; a second loss keeps the CSS fill.
  */
@@ -209,6 +214,9 @@ export const createWineButtonLoop = ({
       canvas.height = h;
     }
 
+    // Each element gets its own frame of the shader (its own moment in the animation),
+    // copied out right after it is drawn, so no two tiles move in lockstep.
+    renderer.render(time + entry.phase);
     coverRect(renderer.width, renderer.height, w, h, entry.offset, rect);
     entry.ctx!.drawImage(renderer.source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, w, h);
 
@@ -232,7 +240,6 @@ export const createWineButtonLoop = ({
     time += dt * motionSpeed(reducedMotion());
 
     try {
-      renderer.render(time);
       dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
       entries.forEach(drawEntry);
     } catch (error) {
@@ -320,7 +327,8 @@ export const createWineButtonLoop = ({
       ctx: canvas.getContext('2d'),
       // Assume visible until the observer says otherwise (its first report is async).
       onScreen: true,
-      offset: (registered++ * GOLDEN) % 1,
+      offset: (registered * GOLDEN) % 1,
+      phase: ((registered++ * GOLDEN) % 1) * PHASE_SPREAD,
     };
 
     // No 2D context: nothing to draw into, so this button keeps its CSS fill.
