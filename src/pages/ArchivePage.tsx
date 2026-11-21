@@ -55,10 +55,10 @@ const Row = ({ project }: { project: Project }) => {
         <small className="mt-[3px] block text-[13px] font-normal text-muted-2">{t(description)}</small>
       </td>
       <td className={`${CELL} w-[120px] max-[899px]:order-3 max-[899px]:col-start-2`}>
+        {/* White on the wine glass so the type reads at a glance (Mobile and Web alike). */}
         <span
-          className={`${MONO} inline-block rounded-full border px-2.5 py-1 text-[11px] tracking-[.05em] ${
-            type === 'mobile' ? 'border-wine-3/50 text-rose' : 'border-chip text-soft-2'
-          }`}
+          data-testid="archive-type"
+          className={`${MONO} inline-block rounded-full border border-white px-2.5 py-1 text-[11px] tracking-[.05em] text-white`}
         >
           {t(`project_type_${type}`)}
         </span>

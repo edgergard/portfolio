@@ -102,6 +102,13 @@ describe('ArchivePage', () => {
     expect(within(screen.getByTestId('archive-glass')).getByRole('table')).toBeInTheDocument();
   });
 
+  it('shows the type pill in white text with a white border', () => {
+    renderPage();
+    screen.getAllByTestId('archive-type').forEach(pill => {
+      expect(pill).toHaveClass('text-white', 'border-white');
+    });
+  });
+
   it('scrolls to top on mount', () => {
     renderPage();
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
