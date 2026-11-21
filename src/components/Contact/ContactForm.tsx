@@ -2,11 +2,11 @@
 
 import emailjs from '@emailjs/browser';
 import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-// Ships with this lazy chunk: toasts only appear after a send, so the form is always loaded first.
+// react-toastify ships with this lazy chunk (not the first load): toasts only appear after a send.
+import { Slide, toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useT } from '@/lib/i18n-client';
@@ -182,6 +182,8 @@ const ContactForm = () => {
           </Button>
         </div>
       </form>
+      {/* In <body>, so no transformed ancestor (the Reveal wrapper) can offset the fixed toasts. */}
+      {createPortal(<ToastContainer />, document.body)}
     </div>
   );
 };

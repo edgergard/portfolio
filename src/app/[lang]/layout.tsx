@@ -2,7 +2,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { ToastContainer } from 'react-toastify';
 import Header from '@/components/Header';
 import Footer from '@/components/layout/Footer';
 import MotionRoot from '@/components/layout/MotionRoot';
@@ -62,7 +61,6 @@ export default async function RootLayout({
             <Header />
             <main className="min-h-screen bg-bg">{children}</main>
             <Footer />
-            <ToastContainer />
             <PageScrollbar />
           </MotionRoot>
         </I18nProvider>

@@ -9,6 +9,7 @@ import Contact from './Contact';
 import { SKILLS } from '../data/content';
 import type { Lang } from '../lib/locale';
 import { renderWithI18n } from '../test/renderWithI18n';
+import en from '../translations/en.json';
 
 vi.mock('@emailjs/browser', () => ({
   default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
@@ -367,6 +368,26 @@ describe('Contact', () => {
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  // The ToastContainer lives in the lazy form chunk (not the layout), so react-toastify stays off the first load.
+  it('toasts success after a send', async () => {
+    await renderContact();
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    expect(await screen.findByText(en.message_success)).toBeInTheDocument();
+  });
+
+  it('toasts an error when the send fails', async () => {
+    vi.mocked(emailjs.sendForm).mockRejectedValueOnce(new Error('down'));
+    await renderContact();
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    expect(await screen.findByText(en.message_error)).toBeInTheDocument();
   });
 
   it('sends with the NEXT_PUBLIC_EMAILJS_* service, template and key', async () => {
