@@ -168,34 +168,6 @@ describe('wine button loop', () => {
       .forEach((b) => expect(Math.abs(a - b)).toBeGreaterThan(5)));
   });
 
-  it('lets an element paint over its frame after the copy (the header name clips it to text)', async () => {
-    const { clock, loop } = setup();
-    const a = buttonCanvas();
-    const paint = vi.fn();
-
-    loop.register(a.canvas, { paint });
-    await flush();
-    clock.step();
-
-    expect(paint).toHaveBeenCalledWith(expect.anything(), a.canvas.width, a.canvas.height);
-    const [drawn] = a.ctx.drawImage.mock.invocationCallOrder;
-
-    expect(drawn).toBeLessThan(paint.mock.invocationCallOrder[0]);
-  });
-
-  it("squeezes the whole buffer into an element registered with fit 'fill'", async () => {
-    const { clock, renderer, loop } = setup();
-    const a = buttonCanvas(160, 16);
-
-    loop.register(a.canvas, { fit: 'fill' });
-    await flush();
-    clock.step();
-
-    expect(a.ctx.drawImage).toHaveBeenCalledWith(
-      renderer.source, 0, 0, 512, 256, 0, 0, a.canvas.width, a.canvas.height,
-    );
-  });
-
   it('sizes each button canvas to its box at device pixels (capped at 2x)', async () => {
     vi.stubGlobal('devicePixelRatio', 3);
     const { clock, loop } = setup();

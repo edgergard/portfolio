@@ -6,7 +6,6 @@ import BurgerMenu from './BurgerMenu';
 import NavLink from './NavLink';
 import LocaleButton from './LocaleButton';
 import ThemeButton from './ThemeButton';
-import WineText from '../ui/WineText';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -23,8 +22,8 @@ const Header = () => {
   return (
     <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
       <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
-        <HashLink smooth to="/#hero" data-testid="brand" className="font-medium">
-          <WineText text="Oleksandr Bryksin" />
+        <HashLink smooth to="/#hero" className="wine-text" data-testid="brand">
+          Oleksandr Bryksin
         </HashLink>
 
         <nav className="hidden items-center gap-x-8 min-[900px]:flex">

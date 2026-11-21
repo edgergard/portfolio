@@ -415,22 +415,6 @@ body {
     );
   }
 
-  /* Thin letters show only a sliver of the shader: lift its contrast so the swirls read, and
-     its brightness so the letters stay legible on the dark header (less on the light one). */
-  .wine-name > canvas {
-    filter: brightness(1.85) contrast(1.3);
-  }
-
-  :root[data-theme='light'] .wine-name > canvas {
-    filter: contrast(1.5) brightness(1.05);
-  }
-
-  /* Once the live shader canvas holds a frame (WineText), it paints the letters instead. */
-  .wine-name:has(> canvas[data-state='live']) > .wine-text {
-    background: none;
-    color: transparent;
-  }
-
   @keyframes wine-text {
     from { background-position: 0% 50%; }
     to { background-position: 100% 50%; }
