@@ -37,7 +37,8 @@ const LocaleLinks = ({ search }: { search: string }) => {
             href={switchLocaleHref(value, pathname, search, '')}
             onClick={e => handleClick(e, value)}
             aria-pressed={lang === value}
-            className={classNames('uppercase transition-colors hover:text-ink', {
+            // tracking-normal: the Vite site's <button>s did not inherit the nav letter-spacing.
+            className={classNames('uppercase tracking-normal transition-colors hover:text-ink', {
               'text-ink': lang === value,
               'text-muted-2': lang !== value,
             })}
