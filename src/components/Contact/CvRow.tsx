@@ -49,6 +49,7 @@ const CvRow = () => {
       </span>
       <Link
         href={localeHref(lang, '/cv/react-native')}
+        prefetch={false}
         aria-label={t('btn_view_cv')}
         className={`${CIRCLE} ${FOCUS} hover:border-white hover:bg-white/10`}
       >

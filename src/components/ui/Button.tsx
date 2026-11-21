@@ -70,7 +70,7 @@ const RouteLink = ({ to, className, children, ...rest }: RouteLinkProps) => {
   }
 
   return (
-    <Link href={localeHref(lang, path) + (hash === undefined ? '' : `#${hash}`)} className={className} {...rest}>
+    <Link href={localeHref(lang, path) + (hash === undefined ? '' : `#${hash}`)} prefetch={false} className={className} {...rest}>
       {children}
     </Link>
   );

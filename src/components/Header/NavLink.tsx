@@ -51,7 +51,14 @@ export const SectionLink = ({
   };
 
   return (
-    <Link href={href} onClick={handleClick} className={className} {...rest}>
+    // On the home page the link only scrolls, so there is nothing to prefetch.
+    <Link
+      href={href}
+      prefetch={onHome ? false : undefined}
+      onClick={handleClick}
+      className={className}
+      {...rest}
+    >
       {children}
     </Link>
   );
@@ -63,7 +70,7 @@ const NavLink = ({ path, title, onClick }: Props) => {
 
   if (path.startsWith('/')) {
     return (
-      <Link href={localeHref(lang, path)} onClick={onClick} className={CLASS}>
+      <Link href={localeHref(lang, path)} prefetch={false} onClick={onClick} className={CLASS}>
         {title}
       </Link>
     );

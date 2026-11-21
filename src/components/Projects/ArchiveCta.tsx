@@ -33,6 +33,7 @@ const ArchiveCta = () => {
   return (
     <Link
       href={localeHref(lang, '/projects')}
+      prefetch={false}
       aria-label={t('projects_archive_link', { count })}
       data-testid="archive-cta"
       className={

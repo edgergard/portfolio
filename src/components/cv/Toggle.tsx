@@ -79,7 +79,7 @@ const Toggle = <T extends string>({ options, value, onChange, groupLabel }: Prop
             {o.label}
           </button>
         ) : (
-          <Link key={o.value} href={o.href} replace scroll={false} {...shared}>
+          <Link key={o.value} href={o.href} prefetch={false} replace scroll={false} {...shared}>
             {o.label}
           </Link>
         );
