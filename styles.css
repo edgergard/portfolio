@@ -164,3 +164,91 @@ body {
     to { transform: scale(1.08) translateY(-3%); }
   }
 }
+
+/*
+ * Page scrollbar (PageScrollbar.tsx). Fine pointers get the custom wine rail instead of the
+ * native bar; touch devices keep their native scrolling. Keyboard, wheel and anchors still
+ * scroll the page natively.
+ */
+@media (pointer: fine) {
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar { display: none; }
+}
+
+/*
+ * .wine-thumb: the scrollbar's floating pill. A wine base (#8B1426, never the shader's dark
+ * #3E0712 / #0A0A0B) under two tiles of bright blobs (#B8233F, #D0213F, #FF4D63) that repeat
+ * down the thumb. Each tile drifts by exactly one period, translate only (no rotation, no
+ * scale), so the blobs never leave the thumb, and even between them it shows wine, never black.
+ */
+@layer components {
+  .wine-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    min-height: 40px;
+    border-radius: 9999px;
+    overflow: hidden;
+    isolation: isolate;
+    background-color: #8B1426;
+    box-shadow: 0 0 12px rgba(208, 33, 63, 0.45);
+    will-change: transform;
+    transition: filter 200ms ease, box-shadow 200ms ease;
+  }
+
+  /* Every blob ellipse stays inside its tile (centre +- radius within the period), so the
+     repeat has no seam. Gaps show the #8B1426 base. */
+  .wine-thumb::before,
+  .wine-thumb::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    will-change: translate;
+  }
+
+  /* Main layer: one bright pool of each blob colour per 160px, drifting down one period. */
+  .wine-thumb::before {
+    /* One tile period above and below, so the drift never shows an edge. */
+    top: -160px;
+    bottom: -160px;
+    background:
+      radial-gradient(ellipse 130% 24px at 35% 32px, #FF4D63 0, rgba(255, 77, 99, 0.55) 45%, rgba(255, 77, 99, 0) 100%),
+      radial-gradient(ellipse 160% 36px at 65% 92px, #D0213F 0, rgba(208, 33, 63, 0.6) 50%, rgba(208, 33, 63, 0) 100%),
+      radial-gradient(ellipse 150% 22px at 45% 134px, #B8233F 0, rgba(184, 35, 63, 0) 100%);
+    background-size: 100% 160px;
+    animation: wine-thumb-flow calc(7s * var(--wine-slow)) ease-in-out infinite alternate;
+  }
+
+  /* Veil layer: softer highlights on a shorter period drifting the other way, so the
+     pools cross and the fill marbles instead of sliding as one stripe. */
+  .wine-thumb::after {
+    top: -100px;
+    bottom: -100px;
+    opacity: 0.7;
+    background:
+      radial-gradient(ellipse 140% 18px at 60% 24px, #FF4D63 0, rgba(255, 77, 99, 0) 100%),
+      radial-gradient(ellipse 150% 26px at 40% 70px, #D0213F 0, rgba(208, 33, 63, 0) 100%);
+    background-size: 100% 100px;
+    animation: wine-thumb-veil calc(5s * var(--wine-slow)) ease-in-out infinite alternate;
+  }
+
+  .wine-thumb:is([data-scrollbar-rail]:hover *, [data-scrollbar-rail][data-dragging] *) {
+    filter: brightness(1.15) saturate(1.1);
+    box-shadow: 0 0 16px rgba(208, 33, 63, 0.6);
+  }
+
+  @keyframes wine-thumb-flow {
+    from { translate: 0 0; }
+    to { translate: 0 160px; }
+  }
+
+  @keyframes wine-thumb-veil {
+    from { translate: 0 0; }
+    to { translate: 0 -100px; }
+  }
+}
