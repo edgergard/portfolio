@@ -3,7 +3,7 @@ import { useClientValue } from './utils/clientValue';
 
 export type Theme = 'light' | 'dark';
 
-/** localStorage key for an explicit choice; index.html reads the same key before first paint. */
+/** localStorage key and cookie name for an explicit choice; the pre-paint script reads both. */
 export const THEME_KEY = 'theme';
 
 /** The site opens dark unless the visitor picked light earlier (the system setting is ignored). */
@@ -66,8 +66,11 @@ export const useTheme = () => {
     try {
       window.localStorage.setItem(THEME_KEY, next);
     } catch {
-      // Storage blocked: the choice lasts for this page view only.
+      // Storage blocked: the cookie below still keeps the choice.
     }
+
+    // The cookie lets the server-rendered page and the pre-paint script see the choice too.
+    document.cookie = `${THEME_KEY}=${next}; path=/; max-age=31536000; samesite=lax`;
   }, []);
 
   return { theme, toggle };

@@ -24,12 +24,14 @@ describe('theme', () => {
     systemLight = false;
     listeners = [];
     localStorage.clear();
+    document.cookie = 'theme=; path=/; max-age=0';
     delete document.documentElement.dataset.theme;
     stubMatchMedia();
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it('defaults to dark, even when the system prefers light', () => {
@@ -50,6 +52,16 @@ describe('theme', () => {
     expect(document.documentElement.dataset.theme).toBe('light');
     expect(localStorage.getItem(THEME_KEY)).toBe('light');
     expect(await screen.findByRole('button', { name: 'Switch to dark theme' })).toBeInTheDocument();
+  });
+
+  it('also saves the choice in a cookie so the server-rendered page can read it', async () => {
+    const setCookie = vi.spyOn(document, 'cookie', 'set');
+
+    render(<ThemeButton />);
+    await userEvent.click(screen.getByTestId('theme-toggle'));
+    expect(localStorage.getItem(THEME_KEY)).toBe('light');
+    expect(setCookie).toHaveBeenCalledWith('theme=light; path=/; max-age=31536000; samesite=lax');
+    expect(document.cookie).toContain('theme=light');
   });
 
   it('reports theme changes to readers like the 3D knot', async () => {
