@@ -7,22 +7,24 @@
  * applies with [data-theme="light"] on <html>, set before first paint (index.html) from the
  * visitor's saved choice; without one the site is dark.
  * The Wine bands, buttons and the hero's 3D panel keep their dark wine look in both themes.
+ * Every grey keeps at least 7:1 contrast on its page background (WCAG AAA for body text), from
+ * ink-2 (brightest secondary) down to muted (labels, captions).
  */
 :root {
   color-scheme: dark;
   --c-bg: 10 10 11;
   --c-ink: 255 255 255;
-  --c-ink-2: 163 163 169;
-  --c-muted: 110 110 116;
-  --c-muted-2: 140 140 146;
+  --c-ink-2: 190 190 196;
+  --c-muted: 154 154 162;
+  --c-muted-2: 171 171 178;
   --c-line: 30 30 33;
   --c-chip: 42 42 46;
   --c-rule: 58 58 64;
   --c-surface: 18 18 20;
   --c-surface-2: 20 20 22;
   --c-soft: 228 228 231;
-  --c-soft-2: 201 201 206;
-  --c-soft-3: 180 180 186;
+  --c-soft-2: 214 214 219;
+  --c-soft-3: 196 196 202;
   --c-rose: 255 138 155;
   --c-open: 231 251 239;
 }
@@ -31,17 +33,17 @@
   color-scheme: light;
   --c-bg: 250 247 245;
   --c-ink: 20 20 22;
-  --c-ink-2: 84 84 92;
-  --c-muted: 138 138 145;
-  --c-muted-2: 104 104 112;
+  --c-ink-2: 68 68 75;
+  --c-muted: 84 84 92;
+  --c-muted-2: 76 76 83;
   --c-line: 231 224 220;
   --c-chip: 222 214 209;
   --c-rule: 200 191 186;
   --c-surface: 255 255 255;
   --c-surface-2: 244 239 236;
   --c-soft: 38 38 42;
-  --c-soft-2: 58 58 64;
-  --c-soft-3: 92 92 99;
+  --c-soft-2: 50 50 55;
+  --c-soft-3: 74 74 81;
   --c-rose: 179 18 46;
   --c-open: 21 128 61;
 }
@@ -50,17 +52,17 @@
 :root[data-theme='light'] .on-wine {
   --c-bg: 10 10 11;
   --c-ink: 255 255 255;
-  --c-ink-2: 163 163 169;
-  --c-muted: 110 110 116;
-  --c-muted-2: 140 140 146;
+  --c-ink-2: 190 190 196;
+  --c-muted: 154 154 162;
+  --c-muted-2: 171 171 178;
   --c-line: 30 30 33;
   --c-chip: 42 42 46;
   --c-rule: 58 58 64;
   --c-surface: 18 18 20;
   --c-surface-2: 20 20 22;
   --c-soft: 228 228 231;
-  --c-soft-2: 201 201 206;
-  --c-soft-3: 180 180 186;
+  --c-soft-2: 214 214 219;
+  --c-soft-3: 196 196 202;
   --c-rose: 255 138 155;
   --c-open: 231 251 239;
 }
