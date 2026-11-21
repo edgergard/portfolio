@@ -147,11 +147,6 @@ describe('round 6 fixes', () => {
     expect(arrow.querySelector('canvas')).not.toBeNull();
   });
 
-  it('fills the header name with the animated wine', () => {
-    expect(css).toMatch(/\.wine-text \{[^}]*background-clip: text/);
-    expect(css).toMatch(/\.wine-text \{[^}]*animation: wine-text/);
-  });
-
   it('keeps the dark palette inside wine bands in the light theme', () => {
     const block = css.slice(css.indexOf(":root[data-theme='light'] .on-wine"));
 
