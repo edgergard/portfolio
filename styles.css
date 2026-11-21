@@ -429,6 +429,15 @@ body {
 }
 
 /*
+ * The global 404 (src/app/global-not-found.tsx) ships both languages' copy; a pre-paint script
+ * sets <html lang> from the URL, and these rules show only the matching block.
+ */
+html[lang='uk'] .nf-en,
+html:not([lang='uk']) .nf-uk {
+  display: none;
+}
+
+/*
  * Light theme polish (from a page-by-page colour and contrast audit). Every rule is scoped to
  * :root[data-theme='light'], so the dark theme is untouched. Wine areas got a brighter shader in
  * the light theme; these rules retint what sits on it (glass, small text, rings) to match.

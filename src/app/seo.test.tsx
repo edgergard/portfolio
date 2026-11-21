@@ -1,16 +1,23 @@
 import { readFileSync } from 'node:fs';
 import type { FC } from 'react';
 import { renderToString } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { SOCIALS } from '@/data/content';
 import { I18nProvider } from '@/lib/i18n-client';
 import type { Lang } from '@/lib/locale';
 import { SITE_URL } from '@/lib/site';
+import { NOT_FOUND_LANG_SCRIPT, THEME_SCRIPT } from '@/lib/theme-script';
+import { EN, UA } from '@/translations';
+import css from '../../styles.css?raw';
+import GlobalNotFound, { metadata as notFoundMetadata } from './global-not-found';
 import { dictFor } from '@/test/renderWithI18n';
 import HomePage from './[lang]/page';
 import NotFound from './[lang]/not-found';
 import robots from './robots';
 import sitemap from './sitemap';
+
+// global-not-found imports the stylesheet for Next; jsdom cannot parse Tailwind's output.
+vi.mock('../../styles.css', () => ({}));
 
 /** Server-renders a page the way the static HTML gets it (no effects run). */
 const prerender = (lang: Lang, Page: FC) =>
@@ -80,6 +87,61 @@ describe('not-found page', () => {
     expect(h1?.textContent).toBe(dictFor(lang).not_found_title);
     expect(h1?.className).toContain('tracking-[-0.045em]');
     expect(doc.querySelector(`a[href="${home}"]`)?.textContent).toBe(dictFor(lang).not_found_home);
+  });
+});
+
+describe('global 404 (unmatched URLs)', () => {
+  const html = renderToString(<GlobalNotFound />);
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  it('renders the English and Ukrainian copy, each with its own home link', () => {
+    const en = doc.querySelector('.nf-en');
+    const uk = doc.querySelector('.nf-uk');
+
+    expect(en?.querySelector('h1')?.textContent).toBe(EN.not_found_title);
+    expect(en?.querySelector('h1')?.className).toContain('tracking-[-0.045em]');
+    expect(en?.querySelector('a[href="/"]')?.textContent).toBe(EN.not_found_home);
+    expect(uk?.querySelector('h1')?.textContent).toBe(UA.not_found_title);
+    expect(uk?.querySelector('a[href="/uk"]')?.textContent).toBe(UA.not_found_home);
+  });
+
+  it('sets the language and theme before paint, in its own document', () => {
+    expect(html).toMatch(/^<html lang="en" data-theme="dark">/);
+    expect(html).toContain(NOT_FOUND_LANG_SCRIPT);
+    expect(html).toContain(THEME_SCRIPT);
+    expect(html.indexOf(NOT_FOUND_LANG_SCRIPT)).toBeLessThan(html.indexOf('<body'));
+  });
+
+  it.each([['/uk', 'uk'], ['/uk/foo', 'uk'], ['/ukraine', 'en'], ['/foo', 'en'], ['/de', 'en']])(
+    'picks the language from the path (%s -> %s)',
+    (pathname, lang) => {
+      const root = { lang: '' };
+
+      new Function('document', 'location', NOT_FOUND_LANG_SCRIPT)({ documentElement: root }, { pathname });
+      expect(root.lang).toBe(lang);
+    },
+  );
+
+  it('is titled and kept out of the index', () => {
+    expect(notFoundMetadata.title).toBe('Page not found — Oleksandr Bryksin');
+    expect(notFoundMetadata.robots).toEqual({ index: false });
+  });
+
+  it.each([['en', 'nf-uk'], ['uk', 'nf-en']])('hides the inactive copy (lang=%s hides .%s)', (lang, hidden) => {
+    const rules = css.match(/html\[lang='uk'\] \.nf-en,[^}]*\}/)?.[0];
+
+    expect(rules).toBeDefined();
+    document.head.innerHTML = `<style>${rules}</style>`;
+    document.documentElement.lang = lang;
+    document.body.innerHTML = '<div class="nf-en"></div><div class="nf-uk"></div>';
+
+    const shown = hidden === 'nf-en' ? 'nf-uk' : 'nf-en';
+
+    expect(getComputedStyle(document.querySelector(`.${hidden}`)!).display).toBe('none');
+    expect(getComputedStyle(document.querySelector(`.${shown}`)!).display).not.toBe('none');
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+    document.documentElement.lang = '';
   });
 });
 

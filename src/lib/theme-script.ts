@@ -11,3 +11,10 @@ export const THEME_SCRIPT = `(function () {
   }
   document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark';
 })();`;
+
+/**
+ * Runs in the global 404's <head> before first paint: Ukrainian under /uk, English elsewhere.
+ * styles.css shows only the matching copy (.nf-en / .nf-uk).
+ */
+export const NOT_FOUND_LANG_SCRIPT
+  = "document.documentElement.lang = location.pathname === '/uk' || location.pathname.startsWith('/uk/') ? 'uk' : 'en';";
