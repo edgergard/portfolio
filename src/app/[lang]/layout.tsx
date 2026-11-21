@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/layout/Footer';
-import MotionRoot from '@/components/layout/MotionRoot';
 import PageScrollbar from '@/components/layout/PageScrollbar';
 import { getDictionary } from '@/lib/dictionaries';
 import { I18nProvider } from '@/lib/i18n-client';
@@ -57,12 +56,10 @@ export default async function RootLayout({
       </head>
       <body>
         <I18nProvider lang={lang} dict={dict}>
-          <MotionRoot>
-            <Header />
-            <main className="min-h-screen bg-bg">{children}</main>
-            <Footer />
-            <PageScrollbar />
-          </MotionRoot>
+          <Header />
+          <main className="min-h-screen bg-bg">{children}</main>
+          <Footer />
+          <PageScrollbar />
         </I18nProvider>
         <SpeedInsights />
       </body>

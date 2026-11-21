@@ -152,6 +152,30 @@ body {
 }
 
 /*
+ * Reveal (src/components/layout/Reveal.tsx): fades and lifts content in once it scrolls into view.
+ * Same curve as the former motion version: 12px, 0.5s, ease-out (cubic-bezier(0, 0, 0.58, 1)).
+ * Reduced motion keeps the fade and drops the lift, as motion's reducedMotion="user" did.
+ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.5s cubic-bezier(0, 0, 0.58, 1),
+    transform 0.5s cubic-bezier(0, 0, 0.58, 1);
+}
+
+[data-reveal][data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transform: none;
+  }
+}
+
+/*
  * .bg-wine-flow: the hero's "Wine" shader approximated in CSS, for buttons and panels.
  * Two oversized layers of soft blobs in the shader palette (#0A0A0B, #3E0712, #8B1426,
  * #B8233F) drift, swell and turn on independent, staggered 8-14s loops, so the fill keeps

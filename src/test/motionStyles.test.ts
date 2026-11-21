@@ -74,7 +74,7 @@ describe('page scrollbar thumb', () => {
 /** Source text of a component, for checking its module directives and imports. */
 const sources = import.meta.glob(
   [
-    '../components/layout/{Reveal,Section,MotionRoot}.tsx',
+    '../components/layout/{Reveal,Section}.tsx',
     '../components/ui/{Button,WineBadge,WineCanvas,ChunkBoundary}.tsx',
     '../components/Wine/{WineSurface,WineCanvas}.tsx',
   ],
@@ -94,16 +94,19 @@ const source = (path: string) => {
 const isClient = (text: string) => /^\s*['"]use client['"];?/.test(text);
 
 describe('client islands', () => {
-  it('reveals with the lazy m components from motion, not framer-motion', () => {
-    expect(source('layout/Reveal.tsx')).toMatch(/from 'motion\/react-m'/);
-    expect(source('layout/Reveal.tsx')).not.toMatch(/framer-motion|\bmotion\./);
+  it('reveals with CSS and an IntersectionObserver, without an animation library', () => {
+    expect(source('layout/Reveal.tsx')).not.toMatch(/from '(motion|framer-motion)[^']*'/);
+    expect(source('layout/Reveal.tsx')).toMatch(/new IntersectionObserver/);
   });
 
-  it('loads the animation features lazily under a strict LazyMotion', () => {
-    const root = source('layout/MotionRoot.tsx');
+  it('keeps the reveal curve: 12px lift, 0.5s ease-out, fade only under reduced motion', () => {
+    const ease = String.raw`0\.5s cubic-bezier\(0, 0, 0\.58, 1\)`;
 
-    expect(root).toMatch(/<LazyMotion features=\{loadFeatures\} strict>/);
-    expect(root).toMatch(/import\('\.\/motionFeatures'\)/);
+    expect(css).toMatch(new RegExp(
+      String.raw`\[data-reveal\] \{\s*opacity: 0;\s*transform: translateY\(12px\);[^}]*opacity ${ease}[^}]*transform ${ease}`,
+    ));
+    expect(css).toMatch(/\[data-reveal\]\[data-shown\] \{\s*opacity: 1;\s*transform: none;/);
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*\[data-reveal\] \{\s*transform: none;/);
   });
 
   it('keeps Section and WineBadge as Server Components', () => {

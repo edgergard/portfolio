@@ -4,7 +4,6 @@ import { renderToString } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Header from '@/components/Header';
 import Footer from '@/components/layout/Footer';
-import MotionRoot from '@/components/layout/MotionRoot';
 import { I18nProvider } from '@/lib/i18n-client';
 import type { Lang } from '@/lib/locale';
 import { dictFor } from '@/test/renderWithI18n';
@@ -18,11 +17,9 @@ vi.mock('../../styles.css', () => ({}));
 /** The page inside the same providers and chrome as the [lang] layout. */
 const inLayout = (lang: Lang, page: ReactElement) => (
   <I18nProvider lang={lang} dict={dictFor(lang)}>
-    <MotionRoot>
-      <Header />
-      <main className="min-h-screen bg-bg">{page}</main>
-      <Footer />
-    </MotionRoot>
+    <Header />
+    <main className="min-h-screen bg-bg">{page}</main>
+    <Footer />
   </I18nProvider>
 );
 

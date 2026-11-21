@@ -15,15 +15,6 @@ vi.mock('@emailjs/browser', () => ({
   default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
 }));
 
-// jsdom never reports intersections, so render the reveal wrapper as a plain div.
-vi.mock('motion/react-m', () => ({
-  div: ({ children, className, ...rest }: Record<string, unknown>) => (
-    <div className={className as string} data-testid={rest['data-testid'] as string}>
-      {children as React.ReactNode}
-    </div>
-  ),
-}));
-
 describe('About', () => {
   const render = renderWithI18n;
 
