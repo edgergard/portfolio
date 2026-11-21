@@ -74,13 +74,13 @@ describe('CvPage', () => {
     expect(radio('PDF')).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('renders two segmented radiogroups: [React Native | Frontend] and [Web | PDF]', () => {
+  it('renders two segmented radiogroups: [React Native | Frontend] and [PDF | Web]', () => {
     renderAt();
     const version = screen.getByRole('radiogroup', { name: 'CV version' });
     const view = screen.getByRole('radiogroup', { name: 'CV view' });
 
     expect(within(version).getAllByRole('radio').map(r => r.textContent)).toEqual(['React Native', 'Frontend']);
-    expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['Web', 'PDF']);
+    expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['PDF', 'Web']);
     expect(version).toHaveClass('rounded-full', 'border-[#2A2A2E]', 'p-[3px]');
   });
 
@@ -89,9 +89,9 @@ describe('CvPage', () => {
     const view = screen.getByRole('radiogroup', { name: 'CV view' });
     const hl = within(view).getByTestId('toggle-highlight');
 
-    expect(hl).toHaveClass('border-wine-3', 'bg-wine/25', 'translate-x-full', 'transition-transform', 'motion-reduce:transition-none');
+    expect(hl).toHaveClass('border-wine-3', 'bg-wine/25', 'translate-x-0', 'transition-transform', 'motion-reduce:transition-none');
     fireEvent.click(radio('Web'));
-    expect(hl).toHaveClass('translate-x-0');
+    expect(hl).toHaveClass('translate-x-full');
     expect(radio('Web')).toHaveClass('text-ink');
     expect(radio('PDF')).toHaveClass('text-muted-2');
   });
@@ -137,11 +137,12 @@ describe('CvPage', () => {
     expect(loc()).toContain('v=react-native');
 
     radio('PDF').focus();
-    await user.keyboard('{Home}');
+    await user.keyboard('{End}');
     expect(radio('Web')).toHaveFocus();
     expect(loc()).toContain('view=web');
     expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
-    await user.keyboard('{End}');
+    await user.keyboard('{Home}');
+    expect(radio('PDF')).toHaveFocus();
     expect(loc()).toContain('view=pdf');
   });
 

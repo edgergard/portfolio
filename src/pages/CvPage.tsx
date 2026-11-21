@@ -35,8 +35,8 @@ const CvPage = () => {
             <Toggle
               groupLabel={t('cv_aria_view')}
               options={[
-                { value: 'web', label: t('cv_view_web') },
                 { value: 'pdf', label: `${t('cv_view_pdf')}${t('cv_pdf_note')}` },
+                { value: 'web', label: t('cv_view_web') },
               ]}
               value={view}
               onChange={setView}
