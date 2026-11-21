@@ -11,8 +11,10 @@ import Certifications from './Certifications';
 import Contact from './Contact';
 import { SKILLS } from '../data/content';
 import I18nextBridge from '../I18nextBridge';
+import { renderWithI18n } from '../test/renderWithI18n';
 
-// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+// Contact still reads i18next; the bridge feeds the Next.js I18nProvider from it for its migrated
+// children. About, Experience and Certifications render inside the I18nProvider alone.
 const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 vi.mock('@emailjs/browser', () => ({
@@ -31,6 +33,8 @@ vi.mock('motion/react', () => ({
 }));
 
 describe('About', () => {
+  const render = renderWithI18n;
+
   it('renders the four facts with C1 visible', () => {
     render(<About />);
     expect(screen.getAllByTestId('fact')).toHaveLength(4);
@@ -84,6 +88,8 @@ describe('About', () => {
 });
 
 describe('Experience', () => {
+  const render = renderWithI18n;
+
   it('renders three detailed education cards', () => {
     render(<Experience />);
     const cards = screen.getAllByTestId('edu-card');
@@ -119,6 +125,8 @@ describe('Experience', () => {
 });
 
 describe('Certifications', () => {
+  const render = renderWithI18n;
+
   it('renders the EF SET level, score, bars and award date', () => {
     render(<Certifications />);
     expect(screen.getByText('C2')).toBeInTheDocument();
@@ -152,6 +160,31 @@ describe('Certifications', () => {
     render(<Certifications />);
     expect(screen.getAllByTestId('cert-card')).toHaveLength(1);
     expect(screen.getByTestId('cert-card')).toHaveClass('wine-edge');
+  });
+});
+
+describe('home sections in Ukrainian (I18nProvider, no i18next)', () => {
+  it('renders About from the uk dictionary', () => {
+    renderWithI18n(<About />, 'uk');
+    expect(screen.getByRole('heading', { level: 2, name: /Про мене/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Ключовий стек' })).toBeInTheDocument();
+    expect(screen.getByText(/React Native та frontend-розробник/)).toBeInTheDocument();
+    expect(screen.getByText('Просунутий')).toBeInTheDocument();
+    expect(screen.getByText('Web')).toBeInTheDocument();
+  });
+
+  it('renders the education cards from the uk dictionary', () => {
+    renderWithI18n(<Experience />, 'uk');
+    expect(screen.getByRole('heading', { level: 3, name: 'Освіта' })).toBeInTheDocument();
+    expect(within(screen.getAllByTestId('edu-card')[2]).getByText('Курс')).toBeInTheDocument();
+    expect(screen.getAllByText('Програма')).toHaveLength(3);
+  });
+
+  it('renders Certifications from the uk dictionary', () => {
+    renderWithI18n(<Certifications />, 'uk');
+    expect(screen.getByText('Результат')).toBeInTheDocument();
+    expect(screen.getByText('Видано 18 лист. 2026')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Переглянути сертифікат/ })).toBeInTheDocument();
   });
 });
 

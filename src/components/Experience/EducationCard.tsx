@@ -1,12 +1,14 @@
+import type { ReactNode } from 'react';
+
 /** The .wine-edge frame classes for an education card wrapper (the frame paints the 1px edge). */
 export const EDU_CARD_FRAME = 'wine-edge flex';
 
 type Props = {
-  kind: string;
-  period: string;
-  institution: string;
-  programme: string;
-  programmeLabel: string;
+  kind: ReactNode;
+  period: ReactNode;
+  institution: ReactNode;
+  programme: ReactNode;
+  programmeLabel: ReactNode;
 };
 
 /**

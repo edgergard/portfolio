@@ -1,7 +1,16 @@
+'use client';
+
 import { useRef, type ReactNode } from 'react';
 import { useMagnify } from './useMagnify';
 
-export type SkillRow = { group: string; items: string[] };
+/**
+ * One group of chips. A plain string label is its own React key; a rendered label (e.g. a
+ * translated <T> from a Server Component) needs a stable `id`.
+ */
+export type SkillRow = { items: string[] } & (
+  | { group: string; id?: string }
+  | { group: ReactNode; id: string }
+);
 
 const LABEL = 'font-mono text-xs uppercase tracking-[.06em]';
 
@@ -44,7 +53,7 @@ const SkillsList = ({ rows, itemTestId, magnify = false, ...rest }: Props) => {
   return (
     <dl ref={root} className="grid gap-4" {...rest}>
       {rows.map(s => (
-        <div key={s.group} className="grid grid-cols-1 gap-1.5 min-[900px]:grid-cols-[200px_1fr] min-[900px]:gap-8">
+        <div key={s.id ?? String(s.group)} className="grid grid-cols-1 gap-1.5 min-[900px]:grid-cols-[200px_1fr] min-[900px]:gap-8">
           <dt className={`${LABEL} pt-1 text-white/75`}>{s.group}</dt>
           <dd className="flex flex-wrap gap-1.5">
             {s.items.map(i => (

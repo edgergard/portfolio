@@ -11,8 +11,10 @@ import Certifications from './Certifications';
 import Contact from './Contact';
 import ArchiveCta from './Projects/ArchiveCta';
 import I18nextBridge from '../I18nextBridge';
+import { renderWithI18n } from '../test/renderWithI18n';
 
-// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+// Contact and ArchiveCta still read i18next; the bridge feeds the Next.js I18nProvider from it.
+// SkillsList and Certifications render inside the I18nProvider alone.
 const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 const finePointer = () =>
@@ -27,6 +29,8 @@ const frames: FrameRequestCallback[] = [];
 const flushFrames = () => frames.splice(0).forEach(cb => cb(0));
 
 describe('Core stack lens', () => {
+  const render = renderWithI18n;
+
   beforeEach(() => {
     finePointer();
     frames.length = 0;
@@ -112,7 +116,7 @@ describe('Core stack lens', () => {
 
 describe('round 6 fixes', () => {
   it('fills the certificate bars with the live wine', () => {
-    render(<Certifications />);
+    renderWithI18n(<Certifications />);
     const fills = screen.getAllByTestId('cert-bar-fill');
 
     expect(fills.length).toBeGreaterThan(0);

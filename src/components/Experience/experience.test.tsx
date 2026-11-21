@@ -1,12 +1,7 @@
-import { render as rtlRender, screen, within } from '@testing-library/react';
-import type { ReactElement } from 'react';
+import { screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import i18n from '../../i18n';
+import { renderWithI18n as render } from '../../test/renderWithI18n';
 import Experience from './Experience';
-import I18nextBridge from '../../I18nextBridge';
-
-// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
-const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 const loop = vi.hoisted(() => ({ unregister: vi.fn(), register: vi.fn() }));
 
@@ -24,8 +19,7 @@ vi.mock('motion/react', () => ({
   },
 }));
 
-afterEach(async () => {
-  await i18n.changeLanguage('en');
+afterEach(() => {
   loop.register.mockClear();
 });
 
@@ -124,9 +118,8 @@ describe('Experience job cards', () => {
     expect(items).toContain('Migrated a site from Vue to React. Teams of 6–9, international clients, English.');
   });
 
-  it('renders in Ukrainian', async () => {
-    await i18n.changeLanguage('ua');
-    render(<Experience />);
+  it('renders in Ukrainian', () => {
+    render(<Experience />, 'uk');
     const [pecode, hys] = cards();
 
     expect(within(pecode).getByText('Pecode · Аутсорс · Київ')).toBeInTheDocument();
