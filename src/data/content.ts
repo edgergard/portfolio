@@ -40,22 +40,41 @@ export const FACTS: Fact[] = [
   { labelKey: 'fact_english_label', value: 'C1', unitKey: 'fact_english_unit' },
 ];
 
+/** Home page skills: everything on either CV, grouped for the portfolio (the CVs keep their own lists). */
 export const SKILLS: SkillGroup[] = [
   {
     titleKey: 'skills_web',
-    items: ['TypeScript', 'React', 'Next.js', 'Vue', 'Pinia', 'Tailwind CSS', 'shadcn/ui'],
+    items: ['TypeScript', 'JavaScript', 'React', 'Next.js', 'Vue', 'HTML5', 'CSS3', 'Tailwind CSS', 'SCSS', 'shadcn/ui'],
   },
   {
     titleKey: 'skills_mobile',
-    items: ['React Native', 'Expo', 'BLE', 'NFC', 'Mesh', 'Mapbox', 'Offline maps', 'Background geo & audio'],
+    items: [
+      'React Native', 'React Native CLI', 'Expo', 'Expo Router', 'React Navigation', 'Reanimated', 'NativeWind',
+      'BLE', 'NFC', 'Mesh', 'Mapbox', 'Offline maps', 'Background geo & audio', 'Push notifications',
+      'Deep linking', 'AsyncStorage',
+    ],
   },
   {
     titleKey: 'skills_data',
-    items: ['Redux Toolkit', 'Zustand', 'TanStack Query', 'Supabase', 'Firebase', 'RevenueCat', 'REST'],
+    items: [
+      'Redux Toolkit', 'Zustand', 'Pinia', 'TanStack Query', 'React Hook Form', 'VeeValidate', 'Supabase',
+      'Firebase', 'RevenueCat', 'Stripe API', 'REST',
+    ],
+  },
+  {
+    titleKey: 'skills_quality',
+    items: ['Responsive design', 'Accessibility', 'Technical SEO', 'Lighthouse', 'Image optimization', 'i18n / RTL'],
+  },
+  {
+    titleKey: 'skills_testing',
+    items: ['Jest', 'React Testing Library', 'Playwright'],
   },
   {
     titleKey: 'skills_ship',
-    items: ['EAS', 'GitHub Actions', 'TestFlight', 'Play Console', 'PostHog', 'Lighthouse', 'Three.js', 'OpenAI API'],
+    items: [
+      'EAS', 'GitHub Actions', 'App Store Connect', 'TestFlight', 'Play Console', 'Xcode', 'Android Studio',
+      'Vercel', 'Git', 'PostHog', 'Three.js', 'OpenAI API', 'Claude Code & Codex',
+    ],
   },
 ];
 

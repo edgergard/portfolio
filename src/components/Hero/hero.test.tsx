@@ -4,6 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '../../i18n';
 import Hero from './Hero';
 
+/**
+ * The scene is a lazy chunk mounted when idle; under a loaded full-suite run its import can take
+ * well over findBy's 1s default, which made these tests flaky. Correctness doesn't depend on speed.
+ */
+const SCENE_WAIT = { timeout: 8000 };
+
 const scene = vi.hoisted(() => ({ fail: false }));
 
 vi.mock('@react-three/fiber', () => ({
@@ -84,7 +90,7 @@ describe('Hero', () => {
 
   it('renders a live scene by default', async () => {
     renderHero();
-    expect(await screen.findByTestId('canvas')).not.toHaveAttribute('data-frameloop', 'never');
+    expect(await screen.findByTestId('canvas', {}, SCENE_WAIT)).not.toHaveAttribute('data-frameloop', 'never');
   });
 
   it('mounts the scene only after the page is idle', async () => {
@@ -92,13 +98,13 @@ describe('Hero', () => {
     expect(screen.queryByTestId('canvas')).not.toBeInTheDocument();
     // The WebGL probe (a blocking context creation) waits for idle too.
     expect(HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled();
-    expect(await screen.findByTestId('canvas')).toBeInTheDocument();
+    expect(await screen.findByTestId('canvas', {}, SCENE_WAIT)).toBeInTheDocument();
   });
 
   it('keeps the scene animating (calmly) when reduced motion is preferred', async () => {
     stubReducedMotion(true);
     renderHero();
-    expect(await screen.findByTestId('canvas')).toHaveAttribute('data-frameloop', 'always');
+    expect(await screen.findByTestId('canvas', {}, SCENE_WAIT)).toHaveAttribute('data-frameloop', 'always');
   });
 
   it('gives View experience the wine-flow fill and View CV the animated wine edge', () => {

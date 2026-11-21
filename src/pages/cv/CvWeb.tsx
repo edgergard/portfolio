@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import SkillsBand from '../../components/About/SkillsBand';
+import SkillsList, { SkillsHeading } from '../../components/About/SkillsList';
 import EducationCard, { EDU_CARD_FRAME } from '../../components/Experience/EducationCard';
 import { BrandIcon, type Brand } from '../../components/Contact/icons';
 import WineCanvas from '../../components/ui/WineCanvas';
@@ -11,9 +12,7 @@ export const CV_COLUMN = 'mx-auto max-w-[1280px] px-6 min-[900px]:px-10';
 
 const label = 'font-mono text-xs uppercase tracking-[.06em]';
 
-const Heading = ({ children }: { children: ReactNode }) => (
-  <h2 className={`${label} mb-5 flex items-center gap-2.5 text-muted before:h-px before:w-4 before:bg-wine-3 before:content-['']`}>{children}</h2>
-);
+const Heading = SkillsHeading;
 
 const Block = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="mt-14">
@@ -120,23 +119,7 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
           <Heading>{t('cv_skills')}</Heading>
         </div>
         <SkillsBand column={CV_COLUMN}>
-          <dl data-testid="cv-skills" className="grid gap-4">
-            {doc.skills.map(s => (
-              <div key={s.group} className="grid grid-cols-1 gap-1.5 min-[900px]:grid-cols-[200px_1fr] min-[900px]:gap-8">
-                <dt className={`${label} pt-1 text-white/75`}>{s.group}</dt>
-                <dd className="flex flex-wrap gap-1.5">
-                  {s.items.map(i => (
-                    <span
-                      key={i}
-                      className="rounded-full border border-white/20 bg-[rgba(10,10,11,.4)] px-2.5 py-[5px] font-mono text-[11px] tracking-[.02em] text-white/90"
-                    >
-                      {i}
-                    </span>
-                  ))}
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <SkillsList rows={doc.skills} data-testid="cv-skills" />
         </SkillsBand>
       </section>
 

@@ -1,18 +1,25 @@
 import { useTranslation } from 'react-i18next';
 import { FACTS, SKILLS } from '../../data/content';
 import Reveal from '../layout/Reveal';
-import Section from '../layout/Section';
+import Section, { COLUMN } from '../layout/Section';
 import SkillsBand from './SkillsBand';
+import SkillsList, { SkillsHeading } from './SkillsList';
 
 const Skills = () => {
   const { t } = useTranslation();
 
   return (
     <Reveal className="mt-14">
-      <SkillsBand
-        heading={t('about_skills_heading')}
-        groups={SKILLS.map(g => ({ title: t(g.titleKey), items: g.items }))}
-      />
+      <div className={COLUMN}>
+        <SkillsHeading as="h3">{t('about_skills_heading')}</SkillsHeading>
+      </div>
+      <SkillsBand>
+        <SkillsList
+          rows={SKILLS.map(g => ({ group: t(g.titleKey), items: g.items }))}
+          data-testid="home-skills"
+          itemTestId="skill-pill"
+        />
+      </SkillsBand>
     </Reveal>
   );
 };
