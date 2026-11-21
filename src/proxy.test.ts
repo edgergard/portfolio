@@ -7,7 +7,11 @@ import { proxy } from './proxy';
 // it back from the source and unescape the string literal the way JS would.
 function readMatcher(): string {
   const literal = /matcher:\s*\[\s*'((?:[^'\\]|\\.)*)'/.exec(proxySource)?.[1];
-  if (!literal) throw new Error('matcher literal not found in proxy.ts');
+
+  if (!literal) {
+    throw new Error('matcher literal not found in proxy.ts');
+  }
+
   return literal.replace(/\\(.)/g, '$1');
 }
 
@@ -38,16 +42,19 @@ describe('proxy()', () => {
 
   it('rewrites prefix-less paths to /en and keeps the query', () => {
     const res = proxy(req('/projects?a=1'));
+
     expect(res.headers.get('x-middleware-rewrite')).toBe('http://localhost/en/projects?a=1');
   });
 
   it('redirects to /uk when the cookie says uk, keeping the query', () => {
     const res = proxy(req('/cv/frontend?view=pdf', 'lang=uk'));
+
     expect(res.headers.get('location')).toBe('http://localhost/uk/cv/frontend?view=pdf');
   });
 
   it('passes /uk paths through', () => {
     const res = proxy(req('/uk/projects'));
+
     expect(res.headers.get('x-middleware-next')).toBe('1');
   });
 });

@@ -22,7 +22,11 @@ export function I18nProvider({
   const t = useCallback<TFunction>(
     (key, vars) => {
       const template = dict[key] ?? key;
-      if (!vars) return template;
+
+      if (!vars) {
+        return template;
+      }
+
       return template.replace(/\{\{(\w+)\}\}/g, (match, name: string) =>
         name in vars ? String(vars[name]) : match,
       );
@@ -30,12 +34,17 @@ export function I18nProvider({
     [dict],
   );
   const value = useMemo(() => ({ lang, t }), [lang, t]);
+
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
 function useI18n(): I18nValue {
   const ctx = useContext(I18nContext);
-  if (!ctx) throw new Error('useT/useLang must be used inside <I18nProvider>');
+
+  if (!ctx) {
+    throw new Error('useT/useLang must be used inside <I18nProvider>');
+  }
+
   return ctx;
 }
 

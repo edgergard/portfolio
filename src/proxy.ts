@@ -5,11 +5,15 @@ export function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
   const { action, url } = resolveLocale(pathname, req.cookies.get(LANG_COOKIE)?.value);
 
-  if (action === 'next') return NextResponse.next();
+  if (action === 'next') {
+    return NextResponse.next();
+  }
 
   const target = req.nextUrl.clone();
+
   target.pathname = url;
   target.search = search;
+
   return action === 'rewrite' ? NextResponse.rewrite(target) : NextResponse.redirect(target);
 }
 

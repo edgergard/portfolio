@@ -6,6 +6,7 @@ import { I18nProvider, useLang, useT } from './i18n-client';
 function Probe() {
   const t = useT();
   const lang = useLang();
+
   return (
     <>
       <p data-testid="archive">{t('projects_archive_title', { count: 6 })}</p>

@@ -1,54 +1,42 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const layoutPath = resolve(__dirname, '../app/[lang]/layout.tsx');
-const layout = readFileSync(layoutPath, 'utf8');
+const layout = readFileSync(resolve(__dirname, '../app/[lang]/layout.tsx'), 'utf8');
 const css = readFileSync(resolve(__dirname, '../../styles.css'), 'utf8');
+const faces = css.match(/@font-face\s*\{[^}]*\}/g) ?? [];
 
-/** The `localFont({...})` call that loads the given file, as source text. */
-const fontCall = (file: string) => {
-  const calls = layout.match(/localFont\(\{[\s\S]*?\n\}\)/g) ?? [];
+const face = (family: string, file: string) =>
+  faces.find(f => f.includes(`font-family: '${family}';`) && f.includes(`url('/fonts/${file}.woff2')`)) ?? '';
 
-  return calls.find(c => c.includes(file)) ?? '';
-};
+describe('self-hosted fonts', () => {
+  it.each([
+    ['Geist', 'geist', '300 700'],
+    ['Geist Mono', 'geist-mono', '400 500'],
+  ])('declares %s for each subset with unicode-range and swap', (family, prefix, weight) => {
+    for (const subset of ['cyrillic', 'latin-ext', 'latin']) {
+      const f = face(family, `${prefix}-${subset}`);
 
-describe('self-hosted fonts via next/font', () => {
-  it('loads the fonts with next/font/local', () => {
-    expect(layout).toContain("from 'next/font/local'");
-  });
-
-  it('loads Geist (latin first, then latin-ext and cyrillic) at weights 300-700 with swap', () => {
-    const geist = fontCall('geist-latin.woff2');
-
-    expect(geist).toMatch(/path: '\.\.\/\.\.\/\.\.\/public\/fonts\/geist-latin\.woff2'/);
-    expect(geist).toContain('geist-latin-ext.woff2');
-    expect(geist).toContain('geist-cyrillic.woff2');
-    expect(geist).toContain("weight: '300 700'");
-    expect(geist).toContain("display: 'swap'");
-    expect(geist).toContain("variable: '--font-geist'");
-  });
-
-  it('loads Geist Mono at weights 400-500 with swap', () => {
-    const mono = fontCall('geist-mono-latin.woff2');
-
-    expect(mono).toContain('geist-mono-latin-ext.woff2');
-    expect(mono).toContain('geist-mono-cyrillic.woff2');
-    expect(mono).toContain("weight: '400 500'");
-    expect(mono).toContain("display: 'swap'");
-    expect(mono).toContain("variable: '--font-geist-mono'");
-  });
-
-  it('points at font files that exist', () => {
-    const paths = [...layout.matchAll(/path: '([^']+\.woff2)'/g)].map(m => m[1]);
-
-    expect(paths).toHaveLength(6);
-    for (const p of paths) {
-      expect(existsSync(resolve(dirname(layoutPath), p))).toBe(true);
+      expect(f, `${prefix}-${subset}`).toMatch(/unicode-range: U\+/);
+      expect(f).toContain('font-display: swap;');
+      expect(f).toContain(`font-weight: ${weight};`);
     }
   });
 
-  it('no longer declares @font-face in styles.css', () => {
-    expect(css).not.toMatch(/@font-face/);
+  it('exposes the families as the CSS variables Tailwind reads', () => {
+    expect(css).toContain("--font-geist: 'Geist';");
+    expect(css).toContain("--font-geist-mono: 'Geist Mono';");
+  });
+
+  it('preloads exactly the two latin files', () => {
+    const preloads = [...layout.matchAll(/<link\s+rel="preload"\s+href="([^"]+)"\s+as="font"\s+type="font\/woff2"\s+crossOrigin=""/g)]
+      .map(m => m[1]);
+
+    expect(preloads).toEqual(['/fonts/geist-latin.woff2', '/fonts/geist-mono-latin.woff2']);
+    expect(layout.match(/rel="preload"/g)).toHaveLength(2);
+  });
+
+  it('does not use next/font', () => {
+    expect(layout).not.toContain('next/font');
   });
 });

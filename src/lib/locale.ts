@@ -9,16 +9,28 @@ export function isLang(v: unknown): v is Lang {
 
 /** English lives at the site root; every other locale gets a `/<lang>` prefix. */
 export function localeHref(lang: Lang, path: string): string {
-  if (lang === DEFAULT_LANG) return path;
+  if (lang === DEFAULT_LANG) {
+    return path;
+  }
+
   return path === '/' ? `/${lang}` : `/${lang}${path}`;
 }
 
 function stripLocalePrefix(pathname: string): string {
   for (const lang of LOCALES) {
-    if (lang === DEFAULT_LANG) continue;
-    if (pathname === `/${lang}`) return '/';
-    if (pathname.startsWith(`/${lang}/`)) return pathname.slice(lang.length + 1);
+    if (lang === DEFAULT_LANG) {
+      continue;
+    }
+
+    if (pathname === `/${lang}`) {
+      return '/';
+    }
+
+    if (pathname.startsWith(`/${lang}/`)) {
+      return pathname.slice(lang.length + 1);
+    }
   }
+
   return pathname || '/';
 }
 
@@ -36,13 +48,19 @@ export type LocaleResolution = { action: 'rewrite' | 'redirect' | 'next'; url: s
 export function resolveLocale(pathname: string, cookie: string | undefined): LocaleResolution {
   const first = pathname.split('/')[1];
 
-  if (first === 'uk') return { action: 'next', url: pathname };
+  if (first === 'uk') {
+    return { action: 'next', url: pathname };
+  }
 
   if (first === 'en') {
     const rest = pathname.slice('/en'.length);
+
     return { action: 'redirect', url: rest === '' ? '/' : rest };
   }
 
-  if (cookie === 'uk') return { action: 'redirect', url: localeHref('uk', pathname) };
+  if (cookie === 'uk') {
+    return { action: 'redirect', url: localeHref('uk', pathname) };
+  }
+
   return { action: 'rewrite', url: pathname === '/' ? '/en' : `/en${pathname}` };
 }
