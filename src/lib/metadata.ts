@@ -5,6 +5,12 @@ import { localeHref, type Lang } from './locale';
 
 export const SITE_NAME = 'Oleksandr Bryksin';
 
+/** The OB favicon and the apple touch icon from public/, shared by the [lang] layout and the global 404. */
+export const SITE_ICONS: NonNullable<Metadata['icons']> = {
+  icon: { url: '/favicon.svg', type: 'image/svg+xml' },
+  apple: { url: '/apple-touch-icon.png', sizes: '180x180' },
+};
+
 /** The home page keeps the <title> and description the Vite site shipped with. */
 export const HOME_TITLE = 'Oleksandr Bryksin — React Native & Frontend Developer';
 export const HOME_DESCRIPTION

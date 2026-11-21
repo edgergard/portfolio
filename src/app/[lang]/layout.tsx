@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import PageScrollbar from '@/components/layout/PageScrollbar';
 import { getDictionary } from '@/lib/dictionaries';
 import { I18nProvider } from '@/lib/i18n-client';
+import { SITE_ICONS } from '@/lib/metadata';
 import { isLang, LOCALES } from '@/lib/locale';
 import { SITE_URL } from '@/lib/site';
 import { THEME_SCRIPT } from '@/lib/theme-script';
@@ -20,10 +21,7 @@ export const dynamicParams = false;
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  icons: {
-    icon: { url: '/favicon.svg', type: 'image/svg+xml' },
-    apple: { url: '/apple-touch-icon.png', sizes: '180x180' },
-  },
+  icons: SITE_ICONS,
 };
 
 export function generateStaticParams() {

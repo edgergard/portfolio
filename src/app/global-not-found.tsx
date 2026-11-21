@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import NotFoundView from '@/components/layout/NotFoundView';
 import Button from '@/components/ui/Button';
-import { SITE_NAME } from '@/lib/metadata';
+import { SITE_ICONS, SITE_NAME } from '@/lib/metadata';
 import { NOT_FOUND_LANG_SCRIPT, THEME_SCRIPT } from '@/lib/theme-script';
 import { EN, UA } from '@/translations';
 import '../../styles.css';
 
 export const metadata: Metadata = {
   title: `${EN.not_found_title} — ${SITE_NAME}`,
+  icons: SITE_ICONS,
   robots: { index: false },
 };
 
