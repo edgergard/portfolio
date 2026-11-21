@@ -18,6 +18,7 @@ const Skills = () => {
           rows={SKILLS.map(g => ({ group: t(g.titleKey), items: g.items }))}
           data-testid="home-skills"
           itemTestId="skill-pill"
+          magnify
         />
       </SkillsBand>
     </Reveal>

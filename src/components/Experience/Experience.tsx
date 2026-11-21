@@ -4,6 +4,7 @@ import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
 import WineCanvas from '../ui/WineCanvas';
 import WineBadge from '../ui/WineBadge';
+import { SkillsHeading } from '../About/SkillsList';
 import EducationCard, { EDU_CARD_FRAME } from './EducationCard';
 
 /** Metric tile surface: the live Wine shader over the CSS wine-flow fill (no hover lift: not interactive). */
@@ -13,7 +14,7 @@ const WINE_FILL = 'bg-wine-flow hover:filter-none border';
  * One job inside the .wine-edge frame: monogram, role and company line, period and duration;
  * three metric tiles; the bullets in a native "What I did" disclosure; the stack as badges.
  */
-const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
+const JobCard = ({ job }: { job: Job }) => {
   const { t } = useTranslation();
 
   return (
@@ -48,7 +49,7 @@ const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
         ))}
       </div>
 
-      <details open={open} className="group">
+      <details open className="group">
         <summary className="mb-3.5 mt-1.5 inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs uppercase tracking-[.07em] text-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
           {t('xp_details_summary')}
           <span aria-hidden className="text-[#D0213F] transition-transform duration-200 group-open:rotate-180">↓</span>
@@ -80,17 +81,16 @@ const Experience = () => {
   return (
     <Section id="experience" index={2} labelKey="section_experience">
       <div className="grid gap-[22px]">
-        {JOBS.map((job, i) => (
+        {JOBS.map(job => (
           <Reveal key={job.id} testId="xp-card" className="wine-edge">
-            <JobCard job={job} open={i === 0} />
+            <JobCard job={job} />
           </Reveal>
         ))}
       </div>
 
-      <h3 className="mb-6 mt-16 flex items-center gap-3 font-mono text-[13px] font-normal uppercase tracking-[.08em] text-ink-2">
-        <i aria-hidden className="inline-block h-px w-6 bg-rule" />
-        {t('edu_heading')}
-      </h3>
+      <div className="mt-16">
+        <SkillsHeading as="h3">{t('edu_heading')}</SkillsHeading>
+      </div>
       <div className="grid grid-cols-1 gap-5 min-[860px]:grid-cols-3">
         {EDUCATION.map(edu => (
           <Reveal key={edu.id} testId="edu-card" className={EDU_CARD_FRAME}>

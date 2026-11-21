@@ -28,11 +28,12 @@ const TOP = 'pt-20 min-[900px]:pt-[112px]';
 const BOTTOM = 'pb-20 min-[900px]:pb-[112px]';
 
 /**
- * The chrome of every full-bleed Wine band. It pins --c-ink to white inside the band, so anything
- * that uses the theme's ink (focus rings, hover borders) stays light on the wine in both themes.
+ * The chrome of every full-bleed Wine band. `.on-wine` (styles.css) keeps the dark theme's palette
+ * inside the band in both themes, so ink-based focus rings, hover borders and dark pill surfaces
+ * (the edge button) look the same on the wine whatever the page theme.
  */
 export const BAND
-  = '[--c-ink:255_255_255] bg-wine-flow border-y border-white/10 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none';
+  = 'on-wine bg-wine-flow border-y border-white/10 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none';
 
 /** Dark glass panel that keeps text readable over a Wine band. */
 export const GLASS = 'rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] backdrop-blur-[14px]';

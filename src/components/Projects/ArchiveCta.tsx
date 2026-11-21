@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PROJECT_LIST } from '../../data/projects';
 import { GLASS } from '../layout/Section';
+import WineCanvas from '../ui/WineCanvas';
 
 const years = PROJECT_LIST.map(p => p.year);
 const FROM = Math.min(...years);
@@ -16,8 +17,8 @@ const previews = () => {
 
 /**
  * The link to the archive, as one more glass card under the featured rows: a mono kicker with
- * the year range, a large "See all N projects", a stack of other projects' posters and a white
- * arrow disc that nudges right on hover.
+ * the year range, a large "See all N projects", a stack of other projects' posters and an arrow
+ * disc on the live wine that nudges right on hover.
  */
 const ArchiveCta = () => {
   const { t } = useTranslation();
@@ -55,11 +56,14 @@ const ArchiveCta = () => {
       </span>
       <span
         aria-hidden
+        data-testid="archive-cta-arrow"
         className={
-          'ml-auto grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full bg-white text-xl text-[#0A0A0B] '
-          + 'transition-transform duration-200 group-hover:translate-x-[3px] min-[640px]:ml-0'
+          'bg-wine-flow ml-auto grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full border border-white/25 '
+          + 'text-xl text-white shadow-[0_8px_28px_-10px_rgba(184,35,63,.7)] transition-transform duration-200 '
+          + 'group-hover:translate-x-[3px] min-[640px]:ml-0'
         }
       >
+        <WineCanvas />
         →
       </span>
     </Link>

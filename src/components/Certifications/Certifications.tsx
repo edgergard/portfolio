@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { CERTIFICATES } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
+import WineCanvas from '../ui/WineCanvas';
 
 const Certifications = () => {
   const { t } = useTranslation();
@@ -38,11 +39,15 @@ const Certifications = () => {
                     className="grid grid-cols-[90px_1fr_36px] items-center gap-3.5 text-sm leading-[normal] text-ink-2"
                   >
                     <span>{t(part.labelKey)}</span>
-                    <i
-                      data-testid="cert-bar"
-                      style={{ '--w': `${(part.value / cert.max) * 100}%` } as CSSProperties}
-                      className="relative h-1 overflow-hidden rounded bg-line after:absolute after:inset-0 after:w-[var(--w)] after:rounded after:bg-wine-2 after:content-['']"
-                    />
+                    <i data-testid="cert-bar" className="relative block h-1.5 overflow-hidden rounded-full bg-line">
+                      <span
+                        data-testid="cert-bar-fill"
+                        style={{ width: `${(part.value / cert.max) * 100}%` } as CSSProperties}
+                        className="bg-wine-flow absolute inset-y-0 left-0 block rounded-full hover:filter-none"
+                      >
+                        <WineCanvas />
+                      </span>
+                    </i>
                     <em className="text-right font-mono text-xs not-italic text-ink">{part.value}</em>
                   </div>
                 ))}

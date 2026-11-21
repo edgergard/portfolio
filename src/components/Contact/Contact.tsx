@@ -110,7 +110,8 @@ const Contact = () => {
               <ProfileRow id="linkedin" />
               <ProfileRow id="github" />
               <ProfileRow id="github-alt" />
-              <li className={ROW}>
+              {/* Not one link (two downloads and the page link), so no row-wide hover on the arrow. */}
+              <li className={ROW.replace('group ', '')}>
                 <Tile><DocumentIcon /></Tile>
                 <span className="grid min-w-0 flex-1 gap-1.5">
                   <span className="text-[17px] leading-snug text-white">{t('contact_cv_name')}</span>

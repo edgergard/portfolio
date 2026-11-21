@@ -127,10 +127,10 @@ describe('Certifications', () => {
 
   it('sizes bars by value over max', () => {
     render(<Certifications />);
-    const bars = screen.getAllByTestId('cert-bar');
+    const fills = screen.getAllByTestId('cert-bar-fill');
 
-    expect(bars[0]).toHaveStyle('--w: 72%');
-    expect(bars[1]).toHaveStyle('--w: 76%');
+    expect(fills[0].style.width).toBe('72%');
+    expect(fills[1].style.width).toBe('76%');
   });
 
   it('links to the certificate in a new tab', () => {
