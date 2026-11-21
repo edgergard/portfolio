@@ -16,7 +16,7 @@ const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="rounded-[19px] bg-[linear-gradient(160deg,#121214,#0A0A0B_70%)] p-5 min-[640px]:p-[30px]">
+    <div className="rounded-[19px] bg-[linear-gradient(160deg,rgb(var(--c-surface)),rgb(var(--c-bg))_70%)] p-5 min-[640px]:p-[30px]">
       <div className="mb-[22px] grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 min-[640px]:grid-cols-[auto_1fr_auto] min-[640px]:gap-x-5">
         <div
           aria-hidden
@@ -48,11 +48,11 @@ const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
       </div>
 
       <details open={open} className="group">
-        <summary className="mb-3.5 mt-1.5 inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs uppercase tracking-[.07em] text-[#E4E4E7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
+        <summary className="mb-3.5 mt-1.5 inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs uppercase tracking-[.07em] text-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
           {t('xp_details_summary')}
           <span aria-hidden className="text-[#D0213F] transition-transform duration-200 group-open:rotate-180">↓</span>
         </summary>
-        <ul className="grid max-w-[72ch] list-none gap-[9px] text-[15.5px] leading-6 text-[#C9C9CE]">
+        <ul className="grid max-w-[72ch] list-none gap-[9px] text-[15.5px] leading-6 text-soft-2">
           {job.bulletKeys.map(key => (
             <li
               key={key}
@@ -94,7 +94,7 @@ const Experience = () => {
       </div>
 
       <h3 className="mb-6 mt-16 flex items-center gap-3 font-mono text-[13px] font-normal uppercase tracking-[.08em] text-ink-2">
-        <i aria-hidden className="inline-block h-px w-6 bg-[#3A3A40]" />
+        <i aria-hidden className="inline-block h-px w-6 bg-rule" />
         {t('edu_heading')}
       </h3>
       <div className="grid grid-cols-1 gap-5 min-[860px]:grid-cols-3">

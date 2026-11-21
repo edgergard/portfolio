@@ -102,6 +102,8 @@
   "contact_cv_fe": "CV · Frontend",
   "send_sending": "Надсилання…",
   "nav_cv": "CV",
+  "theme_to_light": "Увімкнути світлу тему",
+  "theme_to_dark": "Увімкнути темну тему",
   "nav_menu_open": "Відкрити меню",
   "nav_menu_close": "Закрити меню",
   "footer_top": "Нагору ↑",

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BurgerMenu from './BurgerMenu';
 import NavLink from './NavLink';
 import LocaleButton from './LocaleButton';
+import ThemeButton from './ThemeButton';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -34,21 +35,25 @@ const Header = () => {
             ))}
           </ul>
           <LocaleButton />
+          <ThemeButton />
         </nav>
 
-        <button
-          type="button"
-          className="min-[900px]:hidden"
-          aria-label={isMenuOpen ? t('nav_menu_close') : t('nav_menu_open')}
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((open) => !open)}
-        >
-          {isMenuOpen ? (
-            <XMarkIcon className="h-6 w-6 text-ink" />
-          ) : (
-            <Bars3Icon className="h-6 w-6 text-ink" />
-          )}
-        </button>
+        <div className="flex items-center gap-4 min-[900px]:hidden">
+          <ThemeButton />
+          <button
+            type="button"
+            className="min-[900px]:hidden"
+            aria-label={isMenuOpen ? t('nav_menu_close') : t('nav_menu_open')}
+            aria-expanded={isMenuOpen}
+            onClick={() => setIsMenuOpen((open) => !open)}
+          >
+            {isMenuOpen ? (
+              <XMarkIcon className="h-6 w-6 text-ink" />
+            ) : (
+              <Bars3Icon className="h-6 w-6 text-ink" />
+            )}
+          </button>
+        </div>
       </div>
 
       {isMenuOpen && (

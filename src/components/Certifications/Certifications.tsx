@@ -12,7 +12,7 @@ const Certifications = () => {
       <div className="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2">
         {CERTIFICATES.map(cert => (
           <Reveal key={cert.id} testId="cert-card" className="wine-edge flex">
-            <div className="grid flex-1 gap-7 rounded-[19px] bg-[linear-gradient(160deg,#121214_0%,#0A0A0B_60%)] p-8">
+            <div className="grid flex-1 gap-7 rounded-[19px] bg-[linear-gradient(160deg,rgb(var(--c-surface))_0%,rgb(var(--c-bg))_60%)] p-8">
               <div className="flex items-start justify-between gap-4">
                 <h3 className="font-mono text-xs font-normal uppercase tracking-[.08em] text-muted">
                   {cert.issuer} · {t('cert_title')}

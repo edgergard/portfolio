@@ -53,7 +53,7 @@ const OpenToWork = () => {
   const { t } = useTranslation();
 
   return (
-    <span className="inline-flex w-max items-center gap-2.5 rounded-full border border-[rgba(34,197,94,.35)] bg-[rgba(34,197,94,.08)] px-3.5 py-2 text-[15px] leading-none text-[#E7FBEF]">
+    <span className="inline-flex w-max items-center gap-2.5 rounded-full border border-[rgba(34,197,94,.35)] bg-[rgba(34,197,94,.08)] px-3.5 py-2 text-[15px] leading-none text-open">
       <OpenDot />
       {t('hero_open')}
     </span>
@@ -78,13 +78,13 @@ const Facts = () => {
           <tr key={label} className="border-y border-line">
             <th
               scope="row"
-              className="py-3.5 pr-4 min-[900px]:w-[45%] text-left leading-tight align-baseline font-mono text-xs font-normal uppercase tracking-[.08em] text-[#A3A3A9]"
+              className="py-3.5 pr-4 min-[900px]:w-[45%] text-left leading-tight align-baseline font-mono text-xs font-normal uppercase tracking-[.08em] text-ink-2"
             >
               {t(label)}
             </th>
             <td className="whitespace-nowrap py-3.5 text-right align-baseline leading-tight text-[20px] font-medium tracking-[-.02em] text-ink min-[900px]:text-[22px]">
               {figure}
-              <small className="ml-1.5 text-[13px] min-[400px]:text-[15px] font-normal tracking-normal text-[#A3A3A9]">{t(unit)}</small>
+              <small className="ml-1.5 text-[13px] min-[400px]:text-[15px] font-normal tracking-normal text-ink-2">{t(unit)}</small>
             </td>
           </tr>
         ))}
@@ -128,7 +128,7 @@ const Hero = () => {
       <div className="grid min-h-0 flex-1 grid-cols-1 min-[900px]:grid-cols-[1.05fr_1fr]">
         <div className="flex flex-col justify-center px-6 pb-10 pt-8 min-[900px]:py-8 min-[900px]:pl-10 min-[900px]:pr-12">
           <div className="mb-7 flex flex-wrap items-center justify-between gap-x-4 gap-y-4 min-[900px]:mb-[34px]">
-            <p className="flex items-center gap-3 font-mono text-[13px] uppercase tracking-[.06em] text-[#E4E4E7]">
+            <p className="flex items-center gap-3 font-mono text-[13px] uppercase tracking-[.06em] text-soft">
               <i aria-hidden className="inline-block h-0.5 w-8 shrink-0 bg-wine-3" />
               {t('hero_eyebrow')}
             </p>
@@ -140,7 +140,7 @@ const Hero = () => {
             <span className="block pb-[.06em]">Bryksin</span>
           </h1>
 
-          <p className="mb-8 max-w-[640px] text-lg leading-[1.35] text-[#E4E4E7] min-[900px]:mb-[34px] min-[900px]:text-[20px]">
+          <p className="mb-8 max-w-[640px] text-lg leading-[1.35] text-soft min-[900px]:mb-[34px] min-[900px]:text-[20px]">
             {t('hero_lede')}
           </p>
 
@@ -178,13 +178,13 @@ const Hero = () => {
           <Cross className="-left-1.5 -top-1.5 z-[51]" />
           <Cross className="-bottom-1.5 -left-1.5 z-[2]" />
 
-          <p className="pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-muted min-[900px]:flex">
+          <p className="pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-white/50 min-[900px]:flex">
             <span>{t('hero_caption_figure')}</span>
             <span aria-hidden>·</span>
             <span>{t('hero_caption_material')}</span>
             <span aria-hidden>·</span>
             <span>
-              <b className="font-medium text-ink">{fps === null ? '—' : fps}</b> {t('hero_caption_fps')}
+              <b className="font-medium text-white">{fps === null ? '—' : fps}</b> {t('hero_caption_fps')}
             </span>
           </p>
         </div>

@@ -81,7 +81,7 @@ describe('CvPage', () => {
 
     expect(within(version).getAllByRole('radio').map(r => r.textContent)).toEqual(['React Native', 'Frontend']);
     expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['PDF', 'Web']);
-    expect(version).toHaveClass('rounded-full', 'border-[#2A2A2E]', 'p-[3px]');
+    expect(version).toHaveClass('rounded-full', 'border-chip', 'p-[3px]');
   });
 
   it('the wine highlight slides under the active option (instant under reduced motion)', () => {
@@ -209,7 +209,7 @@ describe('CvPage', () => {
 
     expect(h4.className).not.toMatch(/FFC2CC/i);
     expect(h4).toHaveClass('text-ink');
-    expect(screen.getAllByText(/· Pecode/)[0].className).toMatch(/FF8A9B/);
+    expect(screen.getAllByText(/· Pecode/)[0].className).toMatch(/text-rose/);
   });
 
   it('keeps the CV skills dl layout (label left, mono chips right) on a full-bleed Wine band', () => {

@@ -40,7 +40,7 @@ const Row = ({ project }: { project: Project }) => {
       className="border-b border-line transition-[background-color] hover:bg-[linear-gradient(90deg,rgba(139,20,38,.12),transparent_70%)] max-[899px]:grid max-[899px]:grid-cols-[76px_1fr] max-[899px]:gap-x-4 max-[899px]:gap-y-2 max-[899px]:py-5"
     >
       <td className={`${CELL} w-[76px] max-[899px]:row-span-4`}>
-        <div className="h-10 w-[60px] overflow-hidden rounded-lg border border-[#232327]">
+        <div className="h-10 w-[60px] overflow-hidden rounded-lg border border-chip">
           <img src={poster} alt="" loading="lazy" className="h-full w-full object-cover" />
         </div>
       </td>
@@ -54,7 +54,7 @@ const Row = ({ project }: { project: Project }) => {
       <td className={`${CELL} w-[120px] max-[899px]:order-3 max-[899px]:col-start-2`}>
         <span
           className={`${MONO} inline-block rounded-full border px-2.5 py-1 text-[11px] tracking-[.05em] ${
-            type === 'mobile' ? 'border-wine-3/50 text-[#F2B8C2]' : 'border-chip text-[#C9C9CE]'
+            type === 'mobile' ? 'border-wine-3/50 text-rose' : 'border-chip text-soft-2'
           }`}
         >
           {t(`project_type_${type}`)}
@@ -65,7 +65,7 @@ const Row = ({ project }: { project: Project }) => {
           {stack.map(tech => (
             <li
               key={tech}
-              className={`${MONO} rounded-full border border-chip px-2.5 py-[5px] text-[11px] leading-[normal] tracking-[.04em] text-[#C9C9CE]`}
+              className={`${MONO} rounded-full border border-chip px-2.5 py-[5px] text-[11px] leading-[normal] tracking-[.04em] text-soft-2`}
             >
               {tech}
             </li>

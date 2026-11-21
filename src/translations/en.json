@@ -102,6 +102,8 @@
   "contact_cv_fe": "CV · Frontend",
   "send_sending": "Sending…",
   "nav_cv": "CV",
+  "theme_to_light": "Switch to light theme",
+  "theme_to_dark": "Switch to dark theme",
   "nav_menu_open": "Open menu",
   "nav_menu_close": "Close menu",
   "footer_top": "Back to top ↑",

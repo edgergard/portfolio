@@ -73,12 +73,12 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
                 <a
                   href={c.href}
                   aria-label={`${name}: ${value}`}
-                  className="inline-flex items-center gap-3 rounded-[14px] border border-[#1E1E21] bg-[#111113] py-2 pl-2 pr-[18px] transition-colors hover:border-wine focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="inline-flex items-center gap-3 rounded-[14px] border border-line bg-surface py-2 pl-2 pr-[18px] transition-colors hover:border-wine focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                 >
                   <ContactTile brand={brand} />
                   <span className="flex flex-col">
-                    <span className="mb-0.5 font-mono text-[10px] uppercase leading-none tracking-[.08em] text-[#8C8C92]">{name}</span>
-                    <span className="text-sm text-white">{value}</span>
+                    <span className="mb-0.5 font-mono text-[10px] uppercase leading-none tracking-[.08em] text-muted-2">{name}</span>
+                    <span className="text-sm text-ink">{value}</span>
                   </span>
                 </a>
               </li>
@@ -96,7 +96,7 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
                 <div className={`${label} pt-2 text-muted-2`}>{job.period}</div>
                 <div>
                   <h3 className="text-[26px] font-medium tracking-[-0.025em]">
-                    {job.role} <span className="font-normal text-[#FF8A9B]">· {job.company}</span>
+                    {job.role} <span className="font-normal text-rose">· {job.company}</span>
                   </h3>
                   <Bullets items={job.bullets} className="mt-4" />
                   {job.projects?.map(p => (
@@ -128,7 +128,7 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
                   {s.items.map(i => (
                     <span
                       key={i}
-                      className="rounded-full border border-white/20 bg-[rgba(10,10,11,.4)] px-2.5 py-[5px] font-mono text-[11px] tracking-[.02em] text-[#E4E4E7]"
+                      className="rounded-full border border-white/20 bg-[rgba(10,10,11,.4)] px-2.5 py-[5px] font-mono text-[11px] tracking-[.02em] text-white/90"
                     >
                       {i}
                     </span>
@@ -161,12 +161,12 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
           <ul className="grid list-none grid-cols-1 gap-5 min-[620px]:grid-cols-2 min-[1100px]:max-w-[66%]">
             {doc.languages.map(l => (
               <li key={l.name} data-testid="lang-card" className="wine-edge flex">
-                <div className="flex flex-1 flex-col gap-5 rounded-[19px] bg-[linear-gradient(200deg,#141416_0%,#0A0A0B_65%)] p-7">
-                  <span className="font-mono text-[13px] uppercase tracking-[.08em] text-[#B4B4BA]">{l.name}</span>
+                <div className="flex flex-1 flex-col gap-5 rounded-[19px] bg-[linear-gradient(200deg,rgb(var(--c-surface-2))_0%,rgb(var(--c-bg))_65%)] p-7">
+                  <span className="font-mono text-[13px] uppercase tracking-[.08em] text-soft-3">{l.name}</span>
                   <span className="text-[48px] font-medium leading-none tracking-[-0.045em] text-ink min-[900px]:text-[60px]">
                     {l.level}
                   </span>
-                  {l.note && <span className="text-[17px] leading-tight text-[#D4D4D8]">{l.note}</span>}
+                  {l.note && <span className="text-[17px] leading-tight text-soft-2">{l.note}</span>}
                 </div>
               </li>
             ))}
