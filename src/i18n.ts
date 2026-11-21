@@ -17,9 +17,15 @@ const resources = {
   },
 };
 
-const locale = localStorage.getItem(LOCALE_STORAGES.LOCALE) || Locales.EN;
+// No storage while the home page is prerendered at build: that HTML is always English.
+const locale = (typeof localStorage === 'undefined' ? null : localStorage.getItem(LOCALE_STORAGES.LOCALE))
+  || Locales.EN;
 
 const syncHtmlLang = (lng: string) => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
   document.documentElement.lang = lng === Locales.UA ? 'uk' : 'en';
 };
 

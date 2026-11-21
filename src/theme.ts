@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useClientValue } from './utils/clientValue';
 
 export type Theme = 'light' | 'dark';
 
@@ -35,23 +36,20 @@ export const currentTheme = (): Theme => {
   return isTheme(value) ? value : resolveTheme();
 };
 
+const subscribeTheme = (onChange: () => void) => {
+  const observer = new MutationObserver(onChange);
+
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  return () => observer.disconnect();
+};
+
 /**
  * The theme on <html>, kept in sync when it changes (for parts that can't read CSS variables,
- * like the hero's 3D material). Read-only: use useTheme() to switch.
+ * like the hero's 3D material). Read-only: use useTheme() to switch. Dark while the prerendered
+ * home page hydrates (the HTML is built dark), then the real theme.
  */
-export const useCurrentTheme = () => {
-  const [theme, setTheme] = useState<Theme>(currentTheme);
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => setTheme(currentTheme()));
-
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-    return () => observer.disconnect();
-  }, []);
-
-  return theme;
-};
+export const useCurrentTheme = () => useClientValue(subscribeTheme, currentTheme, DEFAULT_THEME);
 
 /**
  * The current theme and a toggle; the visitor's choice is saved. Every instance reads the theme
