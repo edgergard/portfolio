@@ -45,4 +45,11 @@ describe('switchLocaleHref', () => {
     expect(switchLocaleHref('en', '/uk', '', '#contact')).toBe('/#contact');
     expect(switchLocaleHref('en', '/uk/projects', '', '')).toBe('/projects');
   });
+
+  it('reads the internal /en path that English pages are prerendered under', () => {
+    expect(switchLocaleHref('uk', '/en', '', '')).toBe('/uk');
+    expect(switchLocaleHref('uk', '/en/cv/frontend', '', '')).toBe('/uk/cv/frontend');
+    expect(switchLocaleHref('en', '/en/projects', '', '')).toBe('/projects');
+    expect(switchLocaleHref('uk', '/entries', '', '')).toBe('/uk/entries');
+  });
 });

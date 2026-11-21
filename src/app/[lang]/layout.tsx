@@ -1,6 +1,13 @@
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { ToastContainer } from 'react-toastify';
+import Header from '@/components/Header';
+import Footer from '@/components/layout/Footer';
+import MotionRoot from '@/components/layout/MotionRoot';
+import PageScrollbar from '@/components/layout/PageScrollbar';
+import { getDictionary } from '@/lib/dictionaries';
+import { I18nProvider } from '@/lib/i18n-client';
 import { isLang, LOCALES } from '@/lib/locale';
 import { THEME_SCRIPT } from '@/lib/theme-script';
 import '../../../styles.css';
@@ -24,6 +31,8 @@ export default async function RootLayout({
     notFound();
   }
 
+  const dict = await getDictionary(lang);
+
   return (
     <html lang={lang === 'uk' ? 'uk' : 'en'} data-theme="dark" suppressHydrationWarning>
       <head>
@@ -34,7 +43,15 @@ export default async function RootLayout({
         <link rel="preload" href="/fonts/geist-mono-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>
       <body>
-        {children}
+        <I18nProvider lang={lang} dict={dict}>
+          <MotionRoot>
+            <Header />
+            <main className="min-h-screen bg-bg">{children}</main>
+            <Footer />
+            <ToastContainer />
+            <PageScrollbar />
+          </MotionRoot>
+        </I18nProvider>
         <SpeedInsights />
       </body>
     </html>

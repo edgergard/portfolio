@@ -31,7 +31,8 @@ describe('prerendered home page', () => {
 });
 
 describe('prerendered home page: links and theme', () => {
-  it('writes router links as hash URLs inside the site, like HashRouter', () => {
+  // removed in Task 12: the header now writes Next.js path links (/cv, /#contact), not HashRouter URLs.
+  it.skip('writes router links as hash URLs inside the site, like HashRouter', () => {
     const html = render();
 
     expect(html).toContain('href="#/cv"');

@@ -1,10 +1,19 @@
-import { render, screen } from '@testing-library/react';
+import { render as rtlRender, screen } from '@testing-library/react';
+import type { ReactElement, ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import html from '../index.html?raw';
 import './i18n';
 import ThemeButton from './components/Header/ThemeButton';
+import { I18nProvider } from './lib/i18n-client';
 import { resolveTheme, THEME_KEY, useCurrentTheme } from './theme';
+import en from './translations/en.json';
+
+// The header's ThemeButton reads its labels from the Next.js I18nProvider.
+const English = ({ children }: { children: ReactNode }) => (
+  <I18nProvider lang="en" dict={en}>{children}</I18nProvider>
+);
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: English });
 
 let systemLight = false;
 let listeners: Array<() => void> = [];

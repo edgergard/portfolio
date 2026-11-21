@@ -16,12 +16,12 @@ export function localeHref(lang: Lang, path: string): string {
   return path === '/' ? `/${lang}` : `/${lang}${path}`;
 }
 
+/**
+ * The path without any locale prefix. English pages are prerendered under an internal `/en`
+ * path (the proxy rewrites to it), so on the server usePathname() can report `/en/...` too.
+ */
 function stripLocalePrefix(pathname: string): string {
   for (const lang of LOCALES) {
-    if (lang === DEFAULT_LANG) {
-      continue;
-    }
-
     if (pathname === `/${lang}`) {
       return '/';
     }

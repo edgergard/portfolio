@@ -7,10 +7,6 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
-  define: {
-    // Still read by the Vite-era footer until it moves to Next.js.
-    __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
-  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],

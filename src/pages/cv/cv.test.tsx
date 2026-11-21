@@ -10,6 +10,8 @@ import { CVS_UA } from '../../data/cv.ua';
 import { getCv } from '../../data/cvs';
 import Footer from '../../components/layout/Footer';
 import Header from '../../components/Header';
+import { I18nProvider } from '../../lib/i18n-client';
+import en from '../../translations/en.json';
 import CvPage from '../CvPage';
 
 const Probe = () => <span data-testid="loc">{useLocation().search}</span>;
@@ -291,9 +293,11 @@ describe('CvPage', () => {
   it('keeps the CV name outside elements the print rule hides', () => {
     const { container } = render(
       <MemoryRouter initialEntries={['/cv']}>
-        <Header />
-        <CvPage />
-        <Footer />
+        <I18nProvider lang="en" dict={en}>
+          <Header />
+          <CvPage />
+          <Footer />
+        </I18nProvider>
       </MemoryRouter>,
     );
     const hidden = Array.from(container.querySelectorAll('.site-chrome, .cv-no-print'));

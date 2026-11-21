@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { mediaQuery, useClientValue } from '../../utils/clientValue';
 import { dragScrollTop, thumbMetrics, type ScrollDims } from './scrollbarMetrics';

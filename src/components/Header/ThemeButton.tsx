@@ -1,10 +1,12 @@
+'use client';
+
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { useT } from '@/lib/i18n-client';
 import { useTheme } from '../../theme';
 
 /** Switches between the light and dark themes; the icon shows the theme it switches to. */
 const ThemeButton = () => {
-  const { t } = useTranslation();
+  const t = useT();
   const { theme, toggle } = useTheme();
   const toLight = theme === 'dark';
 

@@ -1,14 +1,15 @@
+'use client';
+
 import { useState } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid';
-import { HashLink } from 'react-router-hash-link';
-import { useTranslation } from 'react-i18next';
+import { useT } from '@/lib/i18n-client';
 import BurgerMenu from './BurgerMenu';
-import NavLink from './NavLink';
+import NavLink, { SectionLink } from './NavLink';
 import LocaleButton from './LocaleButton';
 import ThemeButton from './ThemeButton';
 
 const Header = () => {
-  const { t } = useTranslation();
+  const t = useT();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const NAV_LINKS = [
@@ -22,9 +23,9 @@ const Header = () => {
   return (
     <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
       <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
-        <HashLink smooth to="/#hero" className="text-ink" data-testid="brand">
+        <SectionLink section="hero" className="text-ink" data-testid="brand">
           Oleksandr Bryksin
-        </HashLink>
+        </SectionLink>
 
         <nav className="hidden items-center gap-x-8 min-[900px]:flex">
           <ul className="flex gap-x-8">

@@ -1,6 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
+import { I18nProvider } from '@/lib/i18n-client';
+import en from '@/translations/en.json';
 import i18n from '../../i18n';
 import Header from '../Header';
 import Section from './Section';
@@ -9,14 +11,12 @@ import Footer from './Footer';
 afterEach(async () => {
   await i18n.changeLanguage('en');
   localStorage.clear();
+  document.cookie = 'lang=; path=/; max-age=0';
 });
 
-const renderHeader = () =>
-  render(
-    <MemoryRouter>
-      <Header />
-    </MemoryRouter>,
-  );
+const inEnglish = (ui: ReactNode) => <I18nProvider lang="en" dict={en}>{ui}</I18nProvider>;
+
+const renderHeader = () => render(inEnglish(<Header />));
 
 describe('Header', () => {
   it('renders the nav links and CV points at the /cv route', () => {
@@ -30,8 +30,16 @@ describe('Header', () => {
 
   it('switches language to UA', () => {
     renderHeader();
-    fireEvent.click(screen.getByRole('button', { name: 'UA' }));
-    expect(i18n.language).toBe('ua');
+    const toUa = screen.getByRole('link', { name: 'UA' });
+
+    expect(toUa).toHaveAttribute('href', '/uk');
+    // Stop the followed link before jsdom tries (and fails) to load the page.
+    const stop = (e: Event) => e.preventDefault();
+
+    window.addEventListener('click', stop);
+    fireEvent.click(toUa);
+    window.removeEventListener('click', stop);
+    expect(document.cookie).toContain('lang=uk');
   });
 });
 
@@ -119,17 +127,17 @@ describe('document language', () => {
 
 describe('Footer', () => {
   it('shows the current year', () => {
-    render(<Footer />);
+    render(inEnglish(<Footer />));
     expect(screen.getByText(new RegExp(String(new Date().getFullYear())))).toBeInTheDocument();
   });
 
   it('no longer credits React & Three.js', () => {
-    render(<Footer />);
+    render(inEnglish(<Footer />));
     expect(screen.queryByText(/Three.js/)).not.toBeInTheDocument();
   });
 
   it('contains Back to top', () => {
-    render(<Footer />);
+    render(inEnglish(<Footer />));
     expect(screen.getByText(/Back to top/)).toBeInTheDocument();
   });
 });
