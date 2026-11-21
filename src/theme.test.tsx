@@ -2,10 +2,9 @@ import { render as rtlRender, screen } from '@testing-library/react';
 import type { ReactElement, ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import html from '../index.html?raw';
-import './i18n';
 import ThemeButton from './components/Header/ThemeButton';
 import { I18nProvider } from './lib/i18n-client';
+import { THEME_SCRIPT } from './lib/theme-script';
 import { resolveTheme, THEME_KEY, useCurrentTheme } from './theme';
 import en from './translations/en.json';
 
@@ -94,10 +93,8 @@ describe('theme', () => {
   });
 
   it('sets the theme before first paint from the saved choice, dark otherwise', () => {
-    const head = html.slice(0, html.indexOf('</head>'));
-
-    expect(head).toMatch(/localStorage\.getItem\('theme'\)/);
-    expect(head).not.toMatch(/prefers-color-scheme/);
-    expect(head).toMatch(/t === 'light' \? 'light' : 'dark'/);
+    expect(THEME_SCRIPT).toMatch(/localStorage\.getItem\('theme'\)/);
+    expect(THEME_SCRIPT).not.toMatch(/prefers-color-scheme/);
+    expect(THEME_SCRIPT).toMatch(/t === 'light' \? 'light' : 'dark'/);
   });
 });

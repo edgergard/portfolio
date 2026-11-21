@@ -2,7 +2,7 @@
 /**
  * Dev-only tool: renders the link-preview image (public/og-image.jpg, 1200×630).
  *
- *   node scripts/og-image.mjs [url]     (default http://localhost:4173/portfolio/, `npm run preview`)
+ *   node scripts/og-image.mjs [url]     (default http://localhost:3000/: `npm run build`, then `npm start`)
  *
  * Left half: black panel with the name, role, a short line, key facts and skills (HTML below,
  * Geist from public/fonts). Right half: a real frame of the site's hero panel (the live Wine
@@ -14,7 +14,7 @@ import os from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 
-const url = process.argv[2] || 'http://localhost:4173/portfolio/';
+const url = process.argv[2] || 'http://localhost:3000/';
 const OUT = path.resolve('public/og-image.jpg');
 const W = 1200;
 const H = 630;

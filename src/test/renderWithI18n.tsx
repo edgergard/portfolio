@@ -6,7 +6,7 @@ import { EN, UA } from '../translations';
 
 export const dictFor = (lang: Lang) => (lang === 'uk' ? UA : EN);
 
-/** Renders a migrated component inside the Next.js I18nProvider (no i18next involved). */
+/** Renders a component inside the Next.js I18nProvider, in the given language. */
 export const renderWithI18n = (ui: ReactElement, lang: Lang = 'en') =>
   render(ui, {
     wrapper: ({ children }: { children: ReactNode }) => (

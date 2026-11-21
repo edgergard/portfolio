@@ -11,11 +11,11 @@ import CvView, { type CvViewMode } from './CvView';
 const CvViewSwitch = ({ doc }: { doc: CvDoc }) => {
   const params = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname() ?? '';
-  const view: CvViewMode = params?.get('view') === 'pdf' ? 'pdf' : 'web';
+  const pathname = usePathname();
+  const view: CvViewMode = params.get('view') === 'pdf' ? 'pdf' : 'web';
 
   const setView = (next: CvViewMode) => {
-    const query = new URLSearchParams(params?.toString());
+    const query = new URLSearchParams(params.toString());
 
     if (next === 'pdf') {
       query.set('view', 'pdf');

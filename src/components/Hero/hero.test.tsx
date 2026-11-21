@@ -1,16 +1,11 @@
-import { render as rtlRender, screen, within } from '@testing-library/react';
-import type { ReactElement } from 'react';
+import { screen, within } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
-import { HashRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import i18n from '../../i18n';
 import Hero from './Hero';
-import I18nextBridge from '../../I18nextBridge';
 import { I18nProvider } from '../../lib/i18n-client';
+import type { Lang } from '../../lib/locale';
+import { renderWithI18n } from '../../test/renderWithI18n';
 import { EN, UA } from '../../translations';
-
-// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
-const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 /**
  * The scene is a lazy chunk mounted when idle; under a loaded full-suite run its import can take
@@ -51,12 +46,7 @@ const stubReducedMotion = (reduce: boolean) =>
       }) as MediaQueryList,
   );
 
-const renderHero = () =>
-  render(
-    <HashRouter>
-      <Hero />
-    </HashRouter>,
-  );
+const renderHero = (lang: Lang = 'en') => renderWithI18n(<Hero />, lang);
 
 describe('Hero', () => {
   beforeEach(() => {
@@ -68,8 +58,7 @@ describe('Hero', () => {
     stubReducedMotion(false);
   });
 
-  afterEach(async () => {
-    await i18n.changeLanguage('en');
+  afterEach(() => {
     scene.fail = false;
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -99,9 +88,8 @@ describe('Hero', () => {
     expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '/cv/react-native');
   });
 
-  it('links View CV to the Ukrainian CV route in UA', async () => {
-    await i18n.changeLanguage('ua');
-    renderHero();
+  it('links View CV to the Ukrainian CV route in UA', () => {
+    renderHero('uk');
     expect(screen.getByRole('link', { name: 'Переглянути CV' })).toHaveAttribute('href', '/uk/cv/react-native');
   });
 
@@ -148,9 +136,8 @@ describe('Hero', () => {
     expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Experience');
   });
 
-  it('summarises the facts in a table (UA)', async () => {
-    await i18n.changeLanguage('ua');
-    renderHero();
+  it('summarises the facts in a table (UA)', () => {
+    renderHero('uk');
     const rows = within(screen.getByTestId('hero-facts')).getAllByRole('row');
 
     expect(rows.map(row => row.textContent)).toEqual([

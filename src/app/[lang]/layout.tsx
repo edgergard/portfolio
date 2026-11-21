@@ -16,8 +16,17 @@ import '../../../styles.css';
 
 export const dynamicParams = false;
 
-/** Makes the relative canonical, hreflang and og:image URLs in page metadata absolute. */
-export const metadata: Metadata = { metadataBase: new URL(SITE_URL) };
+/**
+ * metadataBase makes the relative canonical, hreflang and og:image URLs in page metadata
+ * absolute; the icons are the OB favicon and the apple touch icon from public/.
+ */
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: { url: '/favicon.svg', type: 'image/svg+xml' },
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180' },
+  },
+};
 
 export function generateStaticParams() {
   return LOCALES.map(lang => ({ lang }));

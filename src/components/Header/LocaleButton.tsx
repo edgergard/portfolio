@@ -17,8 +17,7 @@ const OPTIONS: { value: Lang; label: string }[] = [
  */
 const LocaleLinks = ({ search }: { search: string }) => {
   const lang = useLang();
-  // Typed nullable while src/pages exists (Next's pages-router compat types, until Task 12).
-  const pathname = usePathname() ?? '/';
+  const pathname = usePathname();
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>, to: Lang) => {
     // The proxy reads the cookie for prefix-less URLs, so it must be set before navigating.
@@ -32,6 +31,8 @@ const LocaleLinks = ({ search }: { search: string }) => {
       {OPTIONS.map(({ value, label }, i) => (
         <span key={value} className="flex items-center gap-x-2">
           {i > 0 && <span className="text-rule">/</span>}
+          {/* aria-pressed marks the active language, as on the Vite site (tests pin it). */}
+          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
           <a
             href={switchLocaleHref(value, pathname, search, '')}
             onClick={e => handleClick(e, value)}
@@ -50,7 +51,7 @@ const LocaleLinks = ({ search }: { search: string }) => {
 };
 
 const LocaleLinksWithSearch = () => {
-  const params = useSearchParams()?.toString();
+  const params = useSearchParams().toString();
 
   return <LocaleLinks search={params ? `?${params}` : ''} />;
 };

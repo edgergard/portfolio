@@ -1,32 +1,53 @@
 # Oleksandr Bryksin — portfolio
 
 Personal site of a React Native & frontend developer: a dark single page (hero with a
-real-time three.js torus knot, About, Experience, Certifications, Selected work, Contact)
-and a `#/cv` page with React Native / Frontend versions in web and PDF views. English and
-Ukrainian via i18next.
-
-Live: https://edgergard.github.io/portfolio
+real-time three.js torus knot, About, Experience, Certifications, Selected work, Contact),
+a projects archive at `/projects`, and CV pages at `/cv/react-native` and `/cv/frontend`
+(web view by default, PDF with `?view=pdf`). English at `/`, Ukrainian under `/uk`.
 
 ## Stack
 
-Vite, React 18, TypeScript, Tailwind CSS, React Router (hash routing for GitHub Pages),
-three.js with @react-three/fiber, react-hook-form + zod, EmailJS. Tests: Vitest and
-Testing Library on jsdom.
+Next.js 16 (App Router, every page prerendered), React 19, TypeScript, Tailwind CSS 3,
+motion, three.js with @react-three/fiber, react-hook-form + zod, EmailJS, Vercel Speed
+Insights. Tests: Vitest and Testing Library on jsdom.
+
+## Setup
+
+```sh
+npm install
+cp .env.example .env.local   # then fill in the values
+```
+
+| Variable                          | Used for                                          |
+| --------------------------------- | ------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`            | Canonical links, hreflang, sitemap, Open Graph    |
+| `NEXT_PUBLIC_EMAILJS_SERVICE_ID`  | Contact form (EmailJS)                            |
+| `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` | Contact form (EmailJS)                            |
+| `NEXT_PUBLIC_EMAILJS_KEY`         | Contact form (EmailJS public key)                 |
 
 ## Scripts
 
-| Command           | What it does                                                     |
-| ----------------- | ---------------------------------------------------------------- |
-| `npm run dev`     | Dev server at http://localhost:5173/                              |
-| `npm run build`   | Type-check and build to `dist/` with the `/portfolio/` base       |
-| `npm run preview` | Serve the build at http://localhost:4173/portfolio/               |
-| `npm test`        | Run the Vitest suite once                                         |
-| `npm run lint`    | ESLint over `.ts` / `.tsx`, zero warnings allowed                 |
-| `npm run deploy`  | Build and publish `dist/` to the `gh-pages` branch                |
+| Command         | What it does                                                   |
+| --------------- | -------------------------------------------------------------- |
+| `npm run dev`   | Dev server at http://localhost:3000/                           |
+| `npm run build` | Type-check and build the production site into `.next/`         |
+| `npm start`     | Serve the production build at http://localhost:3000/           |
+| `npm test`      | Run the Vitest suite once                                      |
+| `npm run lint`  | ESLint (flat config, `eslint.config.mjs`), zero warnings       |
+
+## Deploy
+
+The site is hosted on Vercel. Import the repository as a Next.js project, set the variables
+above in the project's environment settings, and every push builds and deploys
+(`vercel.json` skips commits without Next.js).
 
 ## Notes
 
+- The language is chosen by the URL; the `lang` cookie remembers a switch, so a visitor who
+  picked Ukrainian is redirected from `/` to `/uk` (`src/proxy.ts`).
 - The 3D scene is lazy-loaded and mounted once the page is idle; without WebGL a CSS
   gradient is shown instead. With `prefers-reduced-motion` the scene and the wine fills keep
   moving at a gentler pace (pointer tilt still works); nothing freezes.
 - CV PDFs live in `public/cv/`; the contact form sends through EmailJS.
+- Dev tools in `scripts/`: `og-image.mjs` (link-preview image, from a running
+  `npm start`), `record-demo.mjs` (project demo videos), `optimize-images.mjs`.

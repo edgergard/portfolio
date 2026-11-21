@@ -1,37 +1,22 @@
-import archiveCss from '../../../styles.css?raw';
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import archiveCss from '../../../../styles.css?raw';
+import { cleanup, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import i18n from '../../i18n';
-import en from '../../translations/en.json';
-import ua from '../../translations/ua.json';
-import { PROJECT_LIST } from '../../data/projects';
-import type { Lang } from '../../lib/locale';
-import { renderWithI18n } from '../../test/renderWithI18n';
-import { Root } from '../../Root';
-import ArchivePage, { generateMetadata } from '../../app/[lang]/projects/page';
-import { generateStaticParams } from '../../app/[lang]/layout';
+import en from '@/translations/en.json';
+import ua from '@/translations/ua.json';
+import { PROJECT_LIST } from '@/data/projects';
+import type { Lang } from '@/lib/locale';
+import { renderWithI18n } from '@/test/renderWithI18n';
+import ArchivePage, { generateMetadata } from './page';
+import { generateStaticParams } from '../layout';
 
-// Header/Footer pull in the shader and router internals; the page is tested on its own.
-// The bridge stands in for the Vite shell's I18nProvider (removed in Task 12).
-vi.mock('../../App', async () => {
-  const { Outlet } = await import('react-router');
-  const { default: I18nextBridge } = await import('../../I18nextBridge');
-
-  return { default: () => <I18nextBridge><Outlet /></I18nextBridge> };
-});
-vi.mock('../Home', () => ({ default: () => <div>home</div> }));
 // The [lang] layout (imported for its static params) imports the global stylesheet, which jsdom
 // cannot parse; the ?raw import above still reads it as text.
-vi.mock('../../../styles.css', () => ({}));
+vi.mock('../../../../styles.css', () => ({}));
 
 const renderPage = (lang: Lang = 'en') => renderWithI18n(<ArchivePage />, lang);
 
-beforeEach(async () => {
+beforeEach(() => {
   window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
-  await act(async () => {
-    await i18n.changeLanguage('en');
-  });
 });
 afterEach(cleanup);
 
@@ -141,26 +126,6 @@ describe('route', () => {
 
     expect(meta.title).toBe(ua.meta_projects_title);
     expect(meta.alternates?.canonical).toBe('/uk/projects');
-  });
-
-  it('Root registers /projects (a lazy route)', async () => {
-    window.location.hash = '#/projects';
-    render(<Root />);
-    expect(
-      await screen.findByRole('heading', { level: 1, name: 'All projects' }, { timeout: 8000 }),
-    ).toBeInTheDocument();
-    window.location.hash = '';
-  });
-
-  it('a MemoryRouter /projects route renders the page', () => {
-    renderWithI18n(
-      <MemoryRouter initialEntries={['/projects']}>
-        <Routes>
-          <Route path="/projects" element={<ArchivePage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
   });
 });
 

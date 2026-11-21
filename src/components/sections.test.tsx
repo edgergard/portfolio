@@ -156,7 +156,7 @@ describe('Certifications', () => {
   });
 });
 
-describe('home sections in Ukrainian (I18nProvider, no i18next)', () => {
+describe('home sections in Ukrainian', () => {
   it('renders About from the uk dictionary', () => {
     renderWithI18n(<About />, 'uk');
     expect(screen.getByRole('heading', { level: 2, name: /Про мене/ })).toBeInTheDocument();

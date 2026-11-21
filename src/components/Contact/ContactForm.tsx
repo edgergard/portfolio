@@ -85,7 +85,7 @@ const ContactForm = () => {
         );
         showToast(true);
         reset();
-      } catch (error) {
+      } catch {
         showToast(false); 
       }
 

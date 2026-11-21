@@ -5,13 +5,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { I18nProvider } from '@/lib/i18n-client';
 import en from '@/translations/en.json';
 import ua from '@/translations/ua.json';
-import i18n from '../../i18n';
 import Header from '../Header';
 import Section from './Section';
 import Footer from './Footer';
 
-afterEach(async () => {
-  await i18n.changeLanguage('en');
+afterEach(() => {
   localStorage.clear();
   document.cookie = 'lang=; path=/; max-age=0';
 });
@@ -123,15 +121,6 @@ describe('Section', () => {
 
     expect(renderToString(inEnglish(section))).toMatch(/<span>Experience<\/span>/);
     expect(renderToString(<I18nProvider lang="uk" dict={ua}>{section}</I18nProvider>)).toMatch(/<span>Досвід<\/span>/);
-  });
-});
-
-describe('document language', () => {
-  it('follows the active locale', async () => {
-    await i18n.changeLanguage('ua');
-    expect(document.documentElement.lang).toBe('uk');
-    await i18n.changeLanguage('en');
-    expect(document.documentElement.lang).toBe('en');
   });
 });
 
