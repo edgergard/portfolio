@@ -1,0 +1,16 @@
+{
+  "before": [{ "waitFor": "a[href^='#/character/']" }],
+  "steps": [
+    { "wait": 400 },
+    { "click": "input[placeholder^='Search']", "ms": 500 },
+    { "type": "Rick", "delay": 120 },
+    { "wait": 1100 },
+    { "hover": "a[href^='#/character/']", "nth": 0, "ms": 450 },
+    { "hover": "a[href^='#/character/']", "nth": 1, "ms": 450 },
+    { "click": "a[href^='#/character/']", "nth": 2, "ms": 450 },
+    { "waitFor": "section h2", "timeout": 5000 },
+    { "wait": 900 },
+    { "scroll": 520, "ms": 1600 },
+    { "wait": 800 }
+  ]
+}

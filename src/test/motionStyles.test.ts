@@ -49,3 +49,24 @@ describe('wine motion styles', () => {
     expect(css).not.toMatch(/animation-play-state:\s*paused/);
   });
 });
+
+describe('page scrollbar thumb', () => {
+  it('sits on a wine base, never the dark shader colours', () => {
+    const thumb = block('.wine-thumb');
+    const fill = block('.wine-thumb::before') + block('.wine-thumb::after');
+
+    expect(thumb).toMatch(/background(-color)?:\s*#8B1426/i);
+    expect(fill + thumb).not.toMatch(/#0A0A0B|#3E0712|rgba\(\s*(10|30|62),/i);
+    expect(fill).toMatch(/#FF4D63/i);
+  });
+
+  it('keeps drifting (slower under reduced motion) without rotating the blobs away', () => {
+    expect(durations(block('.wine-thumb::before')).length).toBeGreaterThanOrEqual(1);
+    expect(durations(block('.wine-thumb::after')).length).toBeGreaterThanOrEqual(1);
+    expect(css).not.toMatch(/@keyframes wine-thumb[\w-]*\s*{[^@]*rotate/);
+  });
+
+  it('hides the native page scrollbar for fine pointers only', () => {
+    expect(css).toMatch(/@media \(pointer: fine\)\s*{\s*html\s*{\s*scrollbar-width:\s*none;?\s*}\s*html::-webkit-scrollbar\s*{\s*display:\s*none;?\s*}/);
+  });
+});

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Project } from '../../types/Project';
+import ProjectMedia from './ProjectMedia';
 
 type Props = {
   project: Project;
@@ -7,68 +8,68 @@ type Props = {
   reverse: boolean;
 };
 
+const LINK = 'inline-flex items-center gap-2 border-b border-white pb-[3px] transition-colors hover:border-wine-3';
+
+/** A featured project in a dark glass panel over the wine band: media one side, text the other. */
 const ProjectRow = ({ project, index, reverse }: Props) => {
   const { t } = useTranslation();
-  const { name, image, description, stack, codelink, demolink, category } = project;
+  const { name, description, stack, codelink, demolink, appStore, googlePlay, type, year }
+    = project;
   const num = String(index + 1).padStart(2, '0');
+
+  const links = [
+    { id: 'live', href: demolink, label: t('btn_live_demo') },
+    { id: 'code', href: codelink, label: t('btn_code') },
+    { id: 'appStore', href: appStore, label: t('btn_app_store') },
+    { id: 'googlePlay', href: googlePlay, label: t('btn_google_play') },
+  ].filter((l): l is { id: string; href: string; label: string } => Boolean(l.href));
 
   return (
     <article
       data-testid="project-row"
       data-reverse={reverse}
-      className="group grid grid-cols-1 items-center gap-8 min-[900px]:grid-cols-[1.35fr_1fr] min-[900px]:gap-12"
+      className="grid grid-cols-1 items-center gap-6 rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] p-5 backdrop-blur-[14px] min-[900px]:grid-cols-[1.35fr_1fr] min-[900px]:gap-14 min-[900px]:p-9"
     >
-      <div
-        className={`relative aspect-[16/10] overflow-hidden rounded-2xl border border-line bg-[#111] ${
-          reverse ? 'min-[900px]:order-2' : ''
-        }`}
-      >
-        <img
-          src={image}
-          alt=""
-          loading="lazy"
-          className="block h-full w-full object-cover transition-transform duration-[600ms] ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.035]"
-        />
+      <div className={reverse ? 'min-[900px]:order-2' : ''}>
+        <ProjectMedia project={project} />
       </div>
 
       <div>
-        <div className="font-mono text-xs tracking-[.08em] text-wine-2">
-          {num} — {category}
+        <div className="font-mono text-xs uppercase tracking-[.07em] text-wine-3">
+          {num} — {t(`project_type_${type}`)} · {year}
         </div>
-        <h3 className="my-3 text-[30px] font-medium tracking-[-.03em] text-ink">{name}</h3>
-        <p className="max-w-[44ch] text-base leading-[1.6] text-ink-2">{t(description)}</p>
+        <h3 className="my-3 text-[28px] font-medium leading-tight tracking-[-.03em] text-ink min-[900px]:text-[34px]">
+          {name}
+        </h3>
+        <p className="mb-[18px] max-w-[42ch] text-base leading-[1.6] text-white/[.82]">{t(description)}</p>
 
-        <ul className="mt-5 flex flex-wrap gap-1.5">
+        <ul className="flex flex-wrap gap-1.5">
           {stack.map((tech) => (
             <li
               key={tech}
-              className="rounded-full border border-chip px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-[#C9C9CE]"
+              className="rounded-full border border-white/25 bg-[rgba(10,10,11,0.25)] px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-white"
             >
               {tech}
             </li>
           ))}
         </ul>
 
-        <div className="mt-6 flex gap-5 text-sm font-medium text-ink">
-          <a
-            href={demolink}
-            aria-label={`${t('btn_live_demo')} — ${name}`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 border-b border-wine pb-[3px] transition-colors hover:border-ink"
-          >
-            {t('btn_live_demo')} <span aria-hidden="true">↗</span>
-          </a>
-          <a
-            href={codelink}
-            aria-label={`${t('btn_code')} — ${name}`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 border-b border-[#3A3A40] pb-[3px] transition-colors hover:border-ink"
-          >
-            {t('btn_code')} <span aria-hidden="true">↗</span>
-          </a>
-        </div>
+        {links.length > 0 && (
+          <div className="mt-[22px] flex flex-wrap items-center gap-[18px] text-[15px] font-medium text-ink">
+            {links.map(({ id, href, label }) => (
+              <a
+                key={id}
+                href={href}
+                aria-label={`${label} — ${name}`}
+                target="_blank"
+                rel="noreferrer"
+                className={LINK}
+              >
+                {label} <span aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </article>
   );

@@ -1,50 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { FACTS, SKILLS } from '../../data/content';
 import Reveal from '../layout/Reveal';
-import Section, { COLUMN } from '../layout/Section';
-import WineSurface from '../Wine/WineSurface';
+import Section from '../layout/Section';
+import SkillsBand from './SkillsBand';
 
 const Skills = () => {
   const { t } = useTranslation();
 
   return (
     <Reveal className="mt-14">
-      {/*
-        Full-bleed band with the hero's live Wine shader; the CSS wine-flow fill shows underneath
-        while it loads or without WebGL. The inner column keeps labels and pills on the section's grid.
-      */}
-      <div
-        data-testid="skills-panel"
-        className="bg-wine-flow border-y border-white/10 py-10 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none min-[900px]:py-14"
-      >
-        <WineSurface />
-        <div data-testid="skills-column" className={`relative ${COLUMN}`}>
-          <h3 className="font-mono text-[13px] font-normal uppercase tracking-[.08em] text-white/85">
-            {t('about_skills_heading')}
-          </h3>
-          <div className="mt-7 grid grid-cols-1 gap-x-10 gap-y-8 min-[900px]:grid-cols-2">
-            {SKILLS.map(group => (
-              <div key={group.titleKey}>
-                <div className="flex items-center gap-2.5 font-mono text-xs uppercase tracking-[.08em] text-white/75">
-                  <i aria-hidden className="inline-block h-px w-4 bg-white/40" />
-                  {t(group.titleKey)}
-                </div>
-                <ul className="mt-3.5 flex list-none flex-wrap gap-2">
-                  {group.items.map(item => (
-                    <li
-                      key={item}
-                      data-testid="skill-pill"
-                      className="rounded-full border border-white/15 bg-[rgba(10,10,11,0.42)] px-4 py-2 text-[15px] font-medium leading-tight text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-colors duration-200 hover:border-white/35 hover:bg-[rgba(10,10,11,0.6)] min-[900px]:text-base"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <SkillsBand
+        heading={t('about_skills_heading')}
+        groups={SKILLS.map(g => ({ title: t(g.titleKey), items: g.items }))}
+      />
     </Reveal>
   );
 };

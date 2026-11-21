@@ -13,7 +13,7 @@ import {
 
 describe('content data', () => {
   it('lists the jobs in order', () => {
-    expect(JOBS.map(j => j.id)).toEqual(['pecode', 'hys', 'self']);
+    expect(JOBS.map(j => j.id)).toEqual(['pecode', 'hys']);
   });
 
   it('describes the EF SET certificate', () => {
@@ -74,8 +74,10 @@ describe('content data', () => {
       ...JOBS.flatMap(j => [
         j.roleKey,
         j.periodKey,
-        ...(j.companyKey ? [j.companyKey] : []),
+        j.companyLineKey,
+        j.durationKey,
         ...j.bulletKeys,
+        ...j.metrics.flatMap(m => [m.valueKey, m.labelKey]),
       ]),
       ...EDUCATION.flatMap(e => [e.institutionKey, e.programmeKey, e.periodKey, `edu_kind_${e.kind}`]),
       ...CERTIFICATES.flatMap(c => [

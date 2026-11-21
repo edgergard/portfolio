@@ -1,19 +1,30 @@
 import { Project } from '../types/Project';
 import {
   GadgetLuxe,
-  RickAndMorty,
   PokeAPI,
   BAndQ,
   Todo,
-  VueWeatherApp,
 } from '../images';
+
+/** Recorded loops (scripts/record-demo.mjs) live in public/videos, served under the site base. */
+const demo = (slug: string) => ({
+  poster: `${import.meta.env.BASE_URL}videos/${slug}.jpg`,
+  video: {
+    webm: `${import.meta.env.BASE_URL}videos/${slug}.webm`,
+    mp4: `${import.meta.env.BASE_URL}videos/${slug}.mp4`,
+  },
+});
 
 export const PROJECT_LIST: Project[] = [
   {
     id: 1,
     name: "Gadget Luxe",
+    type: 'web',
+    year: 2023,
+    featured: true,
+    order: 1,
     category: "E-commerce",
-    image: GadgetLuxe,
+    poster: GadgetLuxe,
     description: "project_desc_gadget",
     stack: ["React", "Typescript", "SCSS", "Node.js"],
     codelink: "https://github.com/fe-jul23-CodeDynasty/product_catalog",
@@ -22,8 +33,12 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 2,
     name: "Vue Weather App",
+    type: 'web',
+    year: 2024,
+    featured: true,
+    order: 2,
     category: "Vue",
-    image: VueWeatherApp,
+    ...demo('weather'),
     description: "project_desc_weather",
     stack: ["Vue3", "Typescript", "Tailwind", "Vue Router"],
     codelink: "https://github.com/edgergard/vue-weather-app?tab=readme-ov-file",
@@ -32,8 +47,12 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 3,
     name: "Rick and Morty API app",
+    type: 'web',
+    year: 2024,
+    featured: true,
+    order: 3,
     category: "GraphQL",
-    image: RickAndMorty,
+    ...demo('rick-and-morty'),
     description: "project_desc_rick",
     stack: ["React", "Typescript", "Redux", "GraphQL", "MUI"],
     codelink: "https://github.com/edgergard/Rick-and-morty-fe",
@@ -42,8 +61,10 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 4,
     name: "PokeAPI task",
+    type: 'web',
+    year: 2024,
     category: "API",
-    image: PokeAPI,
+    poster: PokeAPI,
     description: "project_desc_pokeapi",
     stack: ["React", "Typescript", "Tailwind", "Axios"],
     codelink: "https://github.com/edgergard/pokeAPI",
@@ -52,8 +73,10 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 5,
     name: "Landing page for B&Q",
+    type: 'web',
+    year: 2023,
     category: "Landing",
-    image: BAndQ,
+    poster: BAndQ,
     description: "project_desc_bandq",
     stack: ["HTML5", "SCSS", "BEM"],
     codelink: "https://github.com/edgergard/B-Q-Landing",
@@ -62,11 +85,18 @@ export const PROJECT_LIST: Project[] = [
   {
     id: 6,
     name: "React Todo app",
+    type: 'web',
+    year: 2023,
     category: "Todo",
-    image: Todo,
+    poster: Todo,
     description: "project_desc_todo",
     stack: ["React", "Typescript", "SCSS"],
     codelink: "https://github.com/edgergard/react-todo-app",
     demolink: "https://edgergard.github.io/react_todo-app-with-api/",
   },
 ];
+
+export const featuredProjects = (): Project[] =>
+  PROJECT_LIST.filter((p) => p.featured)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .slice(0, 3);

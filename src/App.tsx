@@ -2,6 +2,7 @@ import { MotionConfig } from 'framer-motion';
 import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import Footer from './components/layout/Footer';
+import PageScrollbar from './components/layout/PageScrollbar';
 import Header from './components/Header';
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
       </main>
       <Footer />
       <ToastContainer />
+      <PageScrollbar />
     </MotionConfig>
   );
 };

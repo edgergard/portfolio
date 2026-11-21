@@ -84,6 +84,28 @@ describe('Section', () => {
     expect(screen.getByText('body').closest('[class*="max-w-[1120px]"]')).not.toBeNull();
     expect(screen.getByText('body').compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
+
+  it('ends flush with a bleed band: no bottom padding after it', () => {
+    render(
+      <Section id="about" index={1} labelKey="section_about" bleed={<div data-testid="band" />}>
+        <p>body</p>
+      </Section>,
+    );
+    const section = document.getElementById('about')!;
+    const padded = [section, ...section.querySelectorAll('*')].filter(el => /(^|\s)(min-\[900px\]:)?pb-/.test(el.className));
+
+    expect(padded).toEqual([]);
+    expect(section.lastElementChild).toBe(screen.getByTestId('band'));
+  });
+
+  it('keeps the bottom padding when there is no bleed band', () => {
+    render(
+      <Section id="experience" index={2} labelKey="section_experience">
+        <p>body</p>
+      </Section>,
+    );
+    expect(screen.getByText('body').closest('[class*="max-w-[1120px]"]')).toHaveClass('pb-20');
+  });
 });
 
 describe('document language', () => {

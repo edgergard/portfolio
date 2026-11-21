@@ -15,8 +15,8 @@ export type CvDoc = {
     projects?: { title: string; stack?: string; bullets: string[] }[];
   }[];
   skills: { group: string; items: string[] }[];
-  education: { title: string; period: string }[];
-  languages: string[];
+  education: { institution: string; programme: string; kind: 'university' | 'course'; period: string }[];
+  languages: { name: string; level: string; note?: string }[];
 };
 
 // The phone number printed in the PDFs is intentionally omitted from the web CV.
@@ -31,12 +31,25 @@ const CONTACTS: CvDoc['contacts'] = [
 ];
 
 const EDUCATION: CvDoc['education'] = [
-  { title: 'National University of Food Technologies, B.Sc. in Software Engineering (in progress)', period: '2026 – present' },
-  { title: 'Mate Academy, Fullstack Development course (certificate)', period: '2023' },
-  { title: 'Igor Sikorsky Kyiv Polytechnic Institute, Automation and Computer-Integrated Technologies', period: '2019 – 2022' },
+  {
+    institution: 'National University of Food Technologies',
+    programme: 'B.Sc. in Software Engineering (in progress)',
+    kind: 'university',
+    period: '2026 – present',
+  },
+  { institution: 'Mate Academy', programme: 'Fullstack Development course (certificate)', kind: 'course', period: '2023' },
+  {
+    institution: 'Igor Sikorsky Kyiv Polytechnic Institute',
+    programme: 'Automation and Computer-Integrated Technologies',
+    kind: 'university',
+    period: '2019 – 2022',
+  },
 ];
 
-const LANGUAGES = ['Ukrainian: native', 'English: C1 (Advanced)'];
+const LANGUAGES: CvDoc['languages'] = [
+  { name: 'Ukrainian', level: 'Native' },
+  { name: 'English', level: 'C1', note: 'Advanced · EF SET C2' },
+];
 
 export const CVS: Record<CvVariant, CvDoc> = {
   'react-native': {

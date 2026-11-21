@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import '../../i18n';
@@ -45,31 +46,122 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks());
 
 describe('CvPage', () => {
-  it('defaults to React Native and the Web view', () => {
-    renderAt();
-    expect(screen.getByRole('button', { name: 'React Native' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'Frontend' })).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByRole('button', { name: 'Web' })).toHaveAttribute('aria-pressed', 'true');
+  const radio = (name: string) => screen.getByRole('radio', { name });
+  const loc = () => screen.getByTestId('loc').textContent;
+
+  it('defaults to React Native and the PDF view', () => {
+    mockNarrow(false);
+    const { container } = renderAt();
+
+    expect(radio('React Native')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('PDF')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'false');
+    expect(radio('Web')).toHaveAttribute('aria-checked', 'false');
+    expect(container.querySelector('object[type="application/pdf"]')).not.toBeNull();
     expect(screen.getByText(CVS['react-native'].title)).toBeInTheDocument();
   });
 
-  it('reads ?v=frontend&view=pdf', () => {
-    renderAt('?v=frontend&view=pdf');
-    expect(screen.getByRole('button', { name: 'Frontend' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'PDF' })).toHaveAttribute('aria-pressed', 'true');
+  it('reads ?v=frontend&view=web', () => {
+    renderAt('?v=frontend&view=web');
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('Web')).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByText(CVS.frontend.summary)).toBeInTheDocument();
   });
 
-  it('falls back to defaults for invalid params', () => {
+  it('falls back to React Native and PDF for invalid params', () => {
     renderAt('?v=bogus&view=x');
-    expect(screen.getByRole('button', { name: 'React Native' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'Web' })).toHaveAttribute('aria-pressed', 'true');
+    expect(radio('React Native')).toHaveAttribute('aria-checked', 'true');
+    expect(radio('PDF')).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('clicking Frontend writes v=frontend to the URL', () => {
+  it('renders two segmented radiogroups: [React Native | Frontend] and [PDF | Web]', () => {
     renderAt();
-    fireEvent.click(screen.getByRole('button', { name: 'Frontend' }));
-    expect(screen.getByTestId('loc').textContent).toContain('v=frontend');
+    const version = screen.getByRole('radiogroup', { name: 'CV version' });
+    const view = screen.getByRole('radiogroup', { name: 'CV view' });
+
+    expect(within(version).getAllByRole('radio').map(r => r.textContent)).toEqual(['React Native', 'Frontend']);
+    expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['PDF', 'Web']);
+    expect(version).toHaveClass('rounded-full', 'border-[#2A2A2E]', 'p-[3px]');
+  });
+
+  it('the wine highlight slides under the active option (instant under reduced motion)', () => {
+    renderAt();
+    const view = screen.getByRole('radiogroup', { name: 'CV view' });
+    const hl = within(view).getByTestId('toggle-highlight');
+
+    expect(hl).toHaveClass('border-wine-3', 'bg-wine/25', 'translate-x-0', 'transition-transform', 'motion-reduce:transition-none');
+    fireEvent.click(radio('Web'));
+    expect(hl).toHaveClass('translate-x-full');
+    expect(radio('Web')).toHaveClass('text-ink');
+    expect(radio('PDF')).toHaveClass('text-muted-2');
+  });
+
+  it('clicking an option writes v= to the URL and back', () => {
+    renderAt('?view=web');
+    fireEvent.click(radio('Frontend'));
+    expect(loc()).toContain('v=frontend');
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByText(CVS.frontend.title)).toBeInTheDocument();
+    fireEvent.click(radio('React Native'));
+    expect(loc()).toContain('v=react-native');
+  });
+
+  it('web view shows the four contact mini cards with platform in the accessible name', () => {
+    renderAt('?view=web');
+    for (const name of [/^Email: oleksandrbryksin@gmail.com/, /^Telegram: @oleksandrbryksin/, /^LinkedIn: oleksandr-bryksin/, /^GitHub: edgergard/]) {
+      expect(screen.getByRole('link', { name })).toBeInTheDocument();
+    }
+  });
+
+  it('each contact tile holds a hidden live Wine canvas over its wine-flow fill', () => {
+    renderAt('?view=web');
+    const link = screen.getByRole('link', { name: /^GitHub: edgergard/ });
+    const tile = link.querySelector('.bg-wine-flow')!;
+    const canvas = tile.querySelector('canvas')!;
+
+    expect(tile).toHaveAttribute('aria-hidden', 'true');
+    expect(canvas).toHaveClass('absolute', 'inset-0', '-z-[1]', 'opacity-0');
+    expect(canvas.dataset.state).toBeDefined();
+  });
+
+  it('clicking Web writes view=web and shows the web CV', () => {
+    renderAt();
+    fireEvent.click(radio('Web'));
+    expect(loc()).toContain('view=web');
+    expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
+  });
+
+  it('only the selected option is in the tab order, with a visible focus ring', () => {
+    renderAt();
+    expect(radio('PDF')).toHaveAttribute('tabindex', '0');
+    expect(radio('Web')).toHaveAttribute('tabindex', '-1');
+    expect(radio('PDF').tagName).toBe('BUTTON');
+    expect(radio('PDF').className).toMatch(/focus-visible:outline/);
+  });
+
+  it('arrow keys, Home and End move the selection and focus, and update the URL', async () => {
+    const user = userEvent.setup();
+
+    renderAt();
+
+    await user.tab();
+    expect(radio('React Native')).toHaveFocus();
+    await user.keyboard('{ArrowRight}');
+    expect(radio('Frontend')).toHaveFocus();
+    expect(radio('Frontend')).toHaveAttribute('aria-checked', 'true');
+    expect(loc()).toContain('v=frontend');
+    await user.keyboard('{ArrowLeft}');
+    expect(radio('React Native')).toHaveAttribute('aria-checked', 'true');
+    expect(loc()).toContain('v=react-native');
+
+    radio('PDF').focus();
+    await user.keyboard('{End}');
+    expect(radio('Web')).toHaveFocus();
+    expect(loc()).toContain('view=web');
+    expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
+    await user.keyboard('{Home}');
+    expect(radio('PDF')).toHaveFocus();
+    expect(loc()).toContain('view=pdf');
   });
 
   it('Download PDF links to the selected PDF with the download attribute', () => {
@@ -99,7 +191,7 @@ describe('CvPage', () => {
   });
 
   it('shows the location and the grouped Pecode projects with titles', () => {
-    renderAt();
+    renderAt('?view=web');
     expect(screen.getByText(CVS['react-native'].location)).toBeInTheDocument();
     const titles = CVS['react-native'].experience[0].projects!.map(p => p.title);
 
@@ -109,6 +201,91 @@ describe('CvPage', () => {
     }
 
     expect(screen.getAllByTestId('cv-project')).toHaveLength(titles.length);
+  });
+
+  it('project titles in experience are white, company keeps the coral tint', () => {
+    renderAt('?view=web');
+    const h4 = screen.getAllByTestId('cv-project')[0].querySelector('h4')!;
+
+    expect(h4.className).not.toMatch(/FFC2CC/i);
+    expect(h4).toHaveClass('text-ink');
+    expect(screen.getAllByText(/· Pecode/)[0].className).toMatch(/FF8A9B/);
+  });
+
+  it('keeps the CV skills dl layout (label left, mono chips right) on a full-bleed Wine band', () => {
+    renderAt('?view=web');
+    const panel = screen.getByTestId('skills-panel');
+    const doc = CVS['react-native'];
+
+    expect(panel).toHaveClass('bg-wine-flow');
+    expect(within(panel).getByTestId('wine-surface')).toBeInTheDocument();
+    expect(panel.closest('[class*="max-w-"]')).toBeNull();
+    expect(within(panel).getByTestId('skills-column')).toHaveClass('relative', 'mx-auto');
+
+    const dl = within(panel).getByTestId('cv-skills');
+
+    expect(dl.tagName).toBe('DL');
+    const dts = dl.querySelectorAll('dt');
+    const dds = dl.querySelectorAll('dd');
+
+    expect([...dts].map(d => d.textContent)).toEqual(doc.skills.map(g => g.group));
+    expect(dts[0]).toHaveClass('font-mono', 'uppercase');
+    expect(dts[0].parentElement).toHaveClass('min-[900px]:grid-cols-[200px_1fr]');
+    doc.skills.forEach((g, i) => {
+      const chips = [...dds[i].children];
+
+      expect(chips.map(c => c.textContent)).toEqual(g.items);
+      expect(chips[0]).toHaveClass('rounded-full', 'font-mono', 'text-[11px]', 'border-white/20', 'bg-[rgba(10,10,11,.4)]');
+    });
+    expect(within(panel).queryByTestId('skill-pill')).toBeNull();
+  });
+
+  it('shows the education as wine-edge cards with kind, period, institution and programme', () => {
+    renderAt('?view=web');
+    const cards = screen.getAllByTestId('edu-card');
+    const doc = CVS['react-native'];
+
+    expect(cards).toHaveLength(doc.education.length);
+    cards.forEach(c => expect(c).toHaveClass('wine-edge'));
+    const nuft = cards[0];
+
+    expect(within(nuft).getByText('University')).toBeInTheDocument();
+    expect(within(nuft).getByText('2026 – present')).toBeInTheDocument();
+    expect(within(nuft).getByRole('heading', { level: 4 })).toHaveTextContent('National University of Food Technologies');
+    expect(within(nuft).getByText(/B\.Sc\. in Software Engineering/)).toBeInTheDocument();
+    const mate = cards.find(c => within(c).queryByText('Mate Academy'))!;
+
+    expect(within(mate).getByText('Course')).toBeInTheDocument();
+  });
+
+  it('shows the languages as wine-edge cards with a large level and sublabel', () => {
+    renderAt('?view=web');
+    const cards = screen.getAllByTestId('lang-card');
+
+    expect(cards).toHaveLength(2);
+    cards.forEach(c => expect(c).toHaveClass('wine-edge'));
+    expect(within(cards[0]).getByText('Ukrainian')).toBeInTheDocument();
+    expect(within(cards[0]).getByText('Native')).toBeInTheDocument();
+    expect(within(cards[1]).getByText('English')).toBeInTheDocument();
+    expect(within(cards[1]).getByText('C1')).toBeInTheDocument();
+    expect(within(cards[1]).getByText('Advanced · EF SET C2')).toBeInTheDocument();
+  });
+
+  it('localises the education kind and languages in UA', async () => {
+    await act(async () => {
+      await i18n.changeLanguage('ua');
+    });
+    renderAt('?view=web');
+    const edu = screen.getAllByTestId('edu-card');
+    const langs = screen.getAllByTestId('lang-card');
+
+    expect(within(edu[0]).getByText('Університет')).toBeInTheDocument();
+    expect(within(langs[0]).getByText('Українська')).toBeInTheDocument();
+    expect(within(langs[0]).getByText('Рідна')).toBeInTheDocument();
+    expect(within(langs[1]).getByText('Просунутий · EF SET C2')).toBeInTheDocument();
+    await act(async () => {
+      await i18n.changeLanguage('en');
+    });
   });
 
   it('keeps the CV name outside elements the print rule hides', () => {
@@ -134,7 +311,7 @@ describe('CvPage', () => {
   });
 
   it('does not show a phone number', () => {
-    renderAt();
+    renderAt('?view=web');
     expect(document.body.textContent).not.toMatch(/\+380|tel:/);
   });
 });
@@ -156,7 +333,7 @@ describe('CvPage localisation', () => {
   });
 
   it('shows the Ukrainian title and summary in UA, and English again after switching back', async () => {
-    renderAt();
+    renderAt('?view=web');
     expect(screen.getByText(CVS['react-native'].title)).toBeInTheDocument();
     expect(screen.getByText(CVS['react-native'].summary)).toBeInTheDocument();
 
@@ -203,7 +380,7 @@ describe('CvPage localisation', () => {
     await act(async () => {
       await i18n.changeLanguage('ua');
     });
-    renderAt();
+    renderAt('?view=web');
     const hys = CVS_UA['react-native'].experience.find(j => j.company === 'HYS Enterprise');
 
     expect(hys?.role).toBe('Frontend-розробник');

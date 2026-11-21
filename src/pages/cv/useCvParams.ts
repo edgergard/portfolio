@@ -4,13 +4,13 @@ import type { CvVariant } from '../../data/cv';
 export type CvView = 'web' | 'pdf';
 
 const VARIANTS: CvVariant[] = ['react-native', 'frontend'];
-const VIEWS: CvView[] = ['web', 'pdf'];
+const VIEWS: CvView[] = ['pdf', 'web'];
 
 export const useCvParams = () => {
   const [params, setParams] = useSearchParams();
 
   const variant = VARIANTS.find(v => v === params.get('v')) ?? 'react-native';
-  const view = VIEWS.find(v => v === params.get('view')) ?? 'web';
+  const view = VIEWS.find(v => v === params.get('view')) ?? 'pdf';
 
   const update = (key: 'v' | 'view', value: string) => {
     const next = new URLSearchParams(params);
