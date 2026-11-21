@@ -1,4 +1,5 @@
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
@@ -9,10 +10,14 @@ import PageScrollbar from '@/components/layout/PageScrollbar';
 import { getDictionary } from '@/lib/dictionaries';
 import { I18nProvider } from '@/lib/i18n-client';
 import { isLang, LOCALES } from '@/lib/locale';
+import { SITE_URL } from '@/lib/site';
 import { THEME_SCRIPT } from '@/lib/theme-script';
 import '../../../styles.css';
 
 export const dynamicParams = false;
+
+/** Makes the relative canonical, hreflang and og:image URLs in page metadata absolute. */
+export const metadata: Metadata = { metadataBase: new URL(SITE_URL) };
 
 export function generateStaticParams() {
   return LOCALES.map(lang => ({ lang }));

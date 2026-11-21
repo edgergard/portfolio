@@ -177,5 +177,13 @@
   "archive_col_stack": "Стек",
   "archive_col_links": "Посилання",
   "chunk_failed": "Сторінка не завантажилась — мабуть, щойно вийшла нова версія сайту.",
-  "chunk_reload": "Перезавантажити"
+  "chunk_reload": "Перезавантажити",
+  "meta_projects_title": "Усі проєкти — Oleksandr Bryksin",
+  "meta_projects_description": "Усі проєкти Oleksandr Bryksin, React Native та frontend-розробника з Києва: мобільні застосунки й вебпродукти зі стеком, роком і посиланнями.",
+  "meta_cv_title": "Резюме {{role}}-розробника — Oleksandr Bryksin",
+  "meta_cv_description": "Резюме Oleksandr Bryksin, {{role}}-розробника з Києва: досвід, навички та проєкти, з PDF для завантаження.",
+  "not_found_label": "Не знайдено",
+  "not_found_title": "Сторінку не знайдено",
+  "not_found_text": "Такої сторінки немає — можливо, посилання застаріле або з помилкою.",
+  "not_found_home": "На головну"
 }

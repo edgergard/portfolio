@@ -135,9 +135,12 @@ describe('ArchivePage', () => {
 });
 
 describe('route', () => {
-  it('is prerendered for en and uk (static params from [lang]) with metadata left to Task 11', async () => {
+  it('is prerendered for en and uk (static params from [lang]) with per-locale metadata', async () => {
     expect(generateStaticParams()).toEqual([{ lang: 'en' }, { lang: 'uk' }]);
-    expect(await generateMetadata()).toEqual({});
+    const meta = await generateMetadata({ params: Promise.resolve({ lang: 'uk' }) });
+
+    expect(meta.title).toBe(ua.meta_projects_title);
+    expect(meta.alternates?.canonical).toBe('/uk/projects');
   });
 
   it('Root registers /projects (a lazy route)', async () => {

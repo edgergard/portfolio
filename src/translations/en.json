@@ -177,5 +177,13 @@
   "archive_col_stack": "Stack",
   "archive_col_links": "Links",
   "chunk_failed": "This page didn't load — a new version of the site was probably just published.",
-  "chunk_reload": "Reload"
+  "chunk_reload": "Reload",
+  "meta_projects_title": "All projects — Oleksandr Bryksin",
+  "meta_projects_description": "Every project by Oleksandr Bryksin, React Native & frontend developer in Kyiv: mobile apps and web products, with stack, year and links.",
+  "meta_cv_title": "{{role}} Developer CV — Oleksandr Bryksin",
+  "meta_cv_description": "CV of Oleksandr Bryksin, {{role}} developer in Kyiv: experience, skills and projects, with a downloadable PDF.",
+  "not_found_label": "Not found",
+  "not_found_title": "Page not found",
+  "not_found_text": "This page doesn’t exist — the link may be outdated or mistyped.",
+  "not_found_home": "Back to home"
 }

@@ -1,13 +1,20 @@
 import type { Metadata } from 'next';
 import WineSurface from '@/components/Wine/WineSurface';
 import { PROJECT_LIST } from '@/data/projects';
+import { getDictionary } from '@/lib/dictionaries';
 import { T } from '@/lib/i18n-client';
+import { DEFAULT_LANG, isLang } from '@/lib/locale';
+import { pageMetadata } from '@/lib/metadata';
 import ArchiveBreadcrumb from './ArchiveBreadcrumb';
 import ArchiveFilters from './ArchiveFilters';
 
-// Filled in by Task 11 (titles, descriptions, alternates).
-export async function generateMetadata(): Promise<Metadata> {
-  return {};
+type Props = { params: Promise<{ lang: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang: raw } = await params;
+  const lang = isLang(raw) ? raw : DEFAULT_LANG;
+
+  return pageMetadata(lang, 'projects', await getDictionary(lang));
 }
 
 const years = PROJECT_LIST.map(p => p.year);
