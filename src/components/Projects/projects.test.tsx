@@ -200,8 +200,11 @@ describe('Projects section', () => {
     renderSection();
     const bar = screen.getAllByTestId('frame-bar')[0];
 
-    expect(bar).toHaveClass('frame-bar');
-    expect(css).toMatch(/:root\[data-theme='light'\] \.frame-bar \{/);
+    // Dark look stays on the element itself.
+    expect(bar).toHaveClass('frame-bar', 'bg-[#161618]', 'border-[#232327]');
+    // Light theme: a light bar, and no unscoped rule touches the dark frame.
+    expect(css).toMatch(/:root\[data-theme='light'\] \.frame-bar \{[^}]*background-color: #F4F1EF/);
+    expect(css).not.toMatch(/^\.frame(-bar|-dot|-host)?\b[^{]*\{/m);
   });
 
   it('links to the archive with the total count', () => {
