@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { PROJECT_LIST } from '../data/projects';
 import type { Project } from '../types/Project';
 import WineBadge from '../components/ui/WineBadge';
+import WineSurface from '../components/Wine/WineSurface';
+import { GLASS } from '../components/layout/Section';
 
 type Filter = 'all' | 'mobile' | 'web' | 'commercial';
 
@@ -130,56 +132,66 @@ const ArchivePage = () => {
   });
 
   return (
-    <div className="mx-auto max-w-[1120px] bg-bg px-6 pb-20 pt-28 text-ink min-[900px]:px-10 min-[900px]:pb-[112px] min-[900px]:pt-[140px]">
-      <nav aria-label={t('archive_breadcrumb_label')} className={`${MONO} mb-7 text-xs tracking-[.06em] text-muted-2`}>
-        <Link to="/" className="transition-colors hover:text-ink">{t('archive_crumb_home')}</Link>
-        {' / '}
-        <b className="font-medium text-ink" aria-current="page">{t('archive_crumb_archive')}</b>
-      </nav>
+    // The whole page sits on the live Wine shader: a viewport-fixed layer (one screen-sized
+    // canvas, however long the list) behind everything in this isolated wrapper. .on-wine keeps
+    // the dark palette on the wine in both themes; the list sits in a glass panel to stay legible.
+    <div data-testid="archive-page" className="on-wine relative isolate text-ink">
+      <div aria-hidden data-testid="archive-wine" className="bg-wine-flow fixed inset-0 -z-10 hover:filter-none">
+        <WineSurface />
+      </div>
+      <div className="mx-auto max-w-[1120px] px-6 pb-20 pt-28 min-[900px]:px-10 min-[900px]:pb-[112px] min-[900px]:pt-[140px]">
+        <nav aria-label={t('archive_breadcrumb_label')} className={`${MONO} mb-7 text-xs tracking-[.06em] text-white/75`}>
+          <Link to="/" className="transition-colors hover:text-ink">{t('archive_crumb_home')}</Link>
+          {' / '}
+          <b className="font-medium text-ink" aria-current="page">{t('archive_crumb_archive')}</b>
+        </nav>
 
-      <div className="mb-9 flex flex-col gap-6 min-[900px]:flex-row min-[900px]:items-end min-[900px]:justify-between">
-        <div>
-          <h1 className="text-[clamp(44px,6vw,64px)] font-medium leading-none tracking-[-0.045em]">
-            {t('archive_title')}
-          </h1>
-          <p className="mt-3 text-base text-ink-2">
-            {t('archive_summary', { count: PROJECT_LIST.length, from, to })}
-          </p>
+        <div className="mb-9 flex flex-col gap-6 min-[900px]:flex-row min-[900px]:items-end min-[900px]:justify-between">
+          <div>
+            <h1 className="text-[clamp(44px,6vw,64px)] font-medium leading-none tracking-[-0.045em] [text-shadow:0_2px_24px_rgba(10,10,11,0.35)]">
+              {t('archive_title')}
+            </h1>
+            <p className="mt-3 text-base text-white/85">
+              {t('archive_summary', { count: PROJECT_LIST.length, from, to })}
+            </p>
+          </div>
+          <div role="group" aria-label={t('archive_filters_label')} className="flex flex-wrap gap-1.5">
+            {filters.map(f => (
+              <button
+                key={f.value}
+                type="button"
+                aria-pressed={f.value === filter}
+                onClick={() => setFilter(f.value)}
+                className={filterClass(f.value === filter)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div role="group" aria-label={t('archive_filters_label')} className="flex flex-wrap gap-1.5">
-          {filters.map(f => (
-            <button
-              key={f.value}
-              type="button"
-              aria-pressed={f.value === filter}
-              onClick={() => setFilter(f.value)}
-              className={filterClass(f.value === filter)}
-            >
-              {f.label}
-            </button>
-          ))}
+
+        <div data-testid="archive-glass" className={`${GLASS} px-5 py-4 min-[900px]:px-8 min-[900px]:py-6`}>
+          {visible.length === 0 ? (
+            <p className="py-16 text-center text-muted-2">{t('archive_empty')}</p>
+          ) : (
+            <table className="w-full border-collapse max-[899px]:block">
+              <thead className="max-[899px]:hidden">
+                <tr className="border-b border-line">
+                  <th className={TH}><span className="sr-only">{t('archive_col_project')}</span></th>
+                  <th scope="col" className={TH}>{t('archive_col_year')}</th>
+                  <th scope="col" className={TH}>{t('archive_col_project')}</th>
+                  <th scope="col" className={TH}>{t('archive_col_type')}</th>
+                  <th scope="col" className={TH}>{t('archive_col_stack')}</th>
+                  <th scope="col" className={`${TH} text-right`}>{t('archive_col_links')}</th>
+                </tr>
+              </thead>
+              <tbody className="max-[899px]:block">
+                {visible.map(p => <Row key={p.id} project={p} />)}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
-
-      {visible.length === 0 ? (
-        <p className="border-y border-line py-16 text-center text-muted-2">{t('archive_empty')}</p>
-      ) : (
-        <table className="w-full border-collapse max-[899px]:block">
-          <thead className="max-[899px]:hidden">
-            <tr className="border-b border-line">
-              <th className={TH}><span className="sr-only">{t('archive_col_project')}</span></th>
-              <th scope="col" className={TH}>{t('archive_col_year')}</th>
-              <th scope="col" className={TH}>{t('archive_col_project')}</th>
-              <th scope="col" className={TH}>{t('archive_col_type')}</th>
-              <th scope="col" className={TH}>{t('archive_col_stack')}</th>
-              <th scope="col" className={`${TH} text-right`}>{t('archive_col_links')}</th>
-            </tr>
-          </thead>
-          <tbody className="max-[899px]:block">
-            {visible.map(p => <Row key={p.id} project={p} />)}
-          </tbody>
-        </table>
-      )}
     </div>
   );
 };

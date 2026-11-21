@@ -1,6 +1,7 @@
 import { Component, lazy, Suspense, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import { PROJECT_COUNT } from '../../data/content';
 import { useCurrentTheme } from '../../theme';
 import { useIdleWebGL, usePrefersReducedMotion } from './sceneSupport';
 
@@ -55,6 +56,7 @@ const OpenToWork = () => {
 const FACTS = [
   ['hero_fact_experience', '2.5+', 'fact_experience_unit'],
   ['fact_apps_label', '5', 'fact_apps_unit'],
+  ['fact_projects_label', PROJECT_COUNT, 'fact_projects_unit'],
   ['fact_english_label', 'C1', 'hero_fact_english_unit'],
 ] as const;
 

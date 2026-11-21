@@ -33,10 +33,13 @@ export type Certificate = {
   url: string;
 };
 
+/** Commercial projects worked on: 9 at Pecode (7 mobile, 2 web) + 3 products at HYS (see the job metrics). */
+export const PROJECT_COUNT = '12';
+
 export const FACTS: Fact[] = [
   { labelKey: 'fact_experience_label', value: '2.5+', unitKey: 'fact_experience_unit' },
   { labelKey: 'fact_apps_label', value: '5', unitKey: 'fact_apps_unit' },
-  { labelKey: 'fact_performance_label', value: '95–100', unitKey: 'fact_performance_unit' },
+  { labelKey: 'fact_projects_label', value: PROJECT_COUNT, unitKey: 'fact_projects_unit' },
   { labelKey: 'fact_english_label', value: 'C1', unitKey: 'fact_english_unit' },
 ];
 

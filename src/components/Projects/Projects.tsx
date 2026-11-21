@@ -11,9 +11,10 @@ import ArchiveCta from './ArchiveCta';
 const Projects = () => {
   return (
     <Section id="projects" index={3} labelKey="section_work" band>
-      <div className="grid gap-7">
+      {/* auto-rows-fr: every card as tall as the tallest, all full column width. */}
+      <div data-testid="project-rows" className="grid auto-rows-fr gap-7">
         {featuredProjects().map((project, i) => (
-          <Reveal key={project.id}>
+          <Reveal key={project.id} className="h-full">
             <ProjectRow project={project} index={i} reverse={i % 2 === 1} />
           </Reveal>
         ))}

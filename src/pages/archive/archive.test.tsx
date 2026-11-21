@@ -92,6 +92,16 @@ describe('ArchivePage', () => {
     });
   });
 
+  it('sits on the live wine shader with the list in a glass panel', () => {
+    renderPage();
+    const wine = screen.getByTestId('archive-wine');
+
+    expect(wine).toHaveClass('bg-wine-flow', 'fixed', 'inset-0');
+    expect(within(wine).getByTestId('wine-surface')).toBeInTheDocument();
+    expect(screen.getByTestId('archive-page')).toHaveClass('on-wine', 'isolate');
+    expect(within(screen.getByTestId('archive-glass')).getByRole('table')).toBeInTheDocument();
+  });
+
   it('scrolls to top on mount', () => {
     renderPage();
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);

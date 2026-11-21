@@ -348,37 +348,3 @@ body {
       backdrop-filter 240ms ease;
   }
 }
-
-/*
- * .wine-ring: the .wine-edge--bright frame as a 1px ring only (masked to the border box minus
- * the content box), so the element's inside stays transparent. Used by the ring button.
- */
-@layer components {
-  .wine-ring {
-    position: relative;
-    isolation: isolate;
-    background: transparent;
-  }
-
-  .wine-ring::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    padding: 1px;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(
-      140deg,
-      rgba(208, 33, 63, 1),
-      rgba(139, 20, 38, 0.45) 40%,
-      rgba(184, 35, 63, 0.95) 75%,
-      rgba(208, 33, 63, 0.45)
-    );
-    background-size: 220% 220%;
-    animation: wine-edge calc(6s * var(--wine-slow)) ease-in-out infinite alternate;
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-}

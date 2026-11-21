@@ -30,7 +30,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
     <article
       data-testid="project-row"
       data-reverse={reverse}
-      className={`${GLASS} grid grid-cols-1 items-center gap-6 p-5 min-[900px]:grid-cols-[1.35fr_1fr] min-[900px]:gap-14 min-[900px]:p-9`}
+      className={`${GLASS} grid h-full grid-cols-1 items-center gap-6 p-5 min-[900px]:grid-cols-[1.35fr_1fr] min-[900px]:gap-14 min-[900px]:p-9`}
     >
       <div className={reverse ? 'min-[900px]:order-2' : ''}>
         <ProjectMedia project={project} />

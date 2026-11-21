@@ -117,14 +117,13 @@ describe('round 6 fixes', () => {
     });
   });
 
-  it('styles Send message with the View CV frame over a transparent inside', () => {
+  it('styles Send message like View experience (the live wine fill)', () => {
     render(<MemoryRouter><Contact /></MemoryRouter>);
     const send = screen.getByRole('button', { name: /Send message/ });
 
-    // The View CV frame as a ring over a transparent inside.
-    expect(send).toHaveClass('wine-ring');
-    expect(send).not.toHaveClass('bg-wine-flow');
-    expect(send.className).not.toMatch(/before:bg-/);
+    // The primary button, like View experience in the hero: the live wine fill.
+    expect(send).toHaveClass('bg-wine-flow');
+    expect(send.querySelector('canvas')).not.toBeNull();
   });
 
   it('does not light the CV arrow when the rest of the CV row is hovered', () => {

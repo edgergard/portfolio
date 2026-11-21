@@ -125,6 +125,7 @@ describe('Hero', () => {
     expect(rows.map(row => row.textContent)).toEqual([
       'Experience2.5+years',
       'Apps shipped5iOS & Android',
+      'Projects12commercial',
       'EnglishC1Advanced · EF SET C2',
     ]);
     expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Experience');
@@ -138,6 +139,7 @@ describe('Hero', () => {
     expect(rows.map(row => row.textContent)).toEqual([
       'Досвід2.5+років',
       'Випущено застосунків5iOS і Android',
+      'Проєкти12комерційних',
       'АнглійськаC1Просунутий · EF SET C2',
     ]);
     expect(screen.getByText('Відкритий до роботи')).toBeInTheDocument();
