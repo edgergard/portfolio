@@ -1,11 +1,13 @@
+'use client';
+
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import SkillsBand from '../../components/About/SkillsBand';
-import SkillsList, { SkillsHeading } from '../../components/About/SkillsList';
-import EducationCard, { EDU_CARD_FRAME } from '../../components/Experience/EducationCard';
-import { BrandIcon, type Brand } from '../../components/Contact/icons';
-import WineCanvas from '../../components/ui/WineCanvas';
-import type { CvDoc } from '../../data/cv';
+import { useT } from '@/lib/i18n-client';
+import SkillsBand from '@/components/About/SkillsBand';
+import SkillsList, { SkillsHeading } from '@/components/About/SkillsList';
+import EducationCard, { EDU_CARD_FRAME } from '@/components/Experience/EducationCard';
+import { BrandIcon, type Brand } from '@/components/Contact/icons';
+import WineCanvas from '@/components/ui/WineCanvas';
+import type { CvDoc } from '@/data/cv';
 
 /** The CV page's content column (width and side gutters); the skills band spans past it. */
 export const CV_COLUMN = 'mx-auto max-w-[1280px] px-6 min-[900px]:px-10';
@@ -56,7 +58,7 @@ const ContactTile = ({ brand }: { brand: Brand }) => (
 );
 
 const CvWeb = ({ doc }: { doc: CvDoc }) => {
-  const { t } = useTranslation();
+  const t = useT();
 
   return (
     <article>
