@@ -1,11 +1,16 @@
 export type Fact = { labelKey: string; value: string; unitKey: string };
 export type SkillGroup = { titleKey: string; items: string[] };
+export type JobMetric = { valueKey: string; labelKey: string };
+/** A job on the home Experience section (the web CV keeps its own data, mirroring the PDF). */
 export type Job = {
-  id: 'pecode' | 'hys' | 'self';
+  id: 'pecode' | 'hys';
   company: string;
-  companyKey?: string;
+  /** Company line under the role, e.g. "Pecode · Outsourcing · Kyiv". */
+  companyLineKey: string;
   roleKey: string;
   periodKey: string;
+  durationKey: string;
+  metrics: JobMetric[];
   bulletKeys: string[];
   stack: string[];
 };
@@ -54,31 +59,31 @@ export const SKILLS: SkillGroup[] = [
   },
 ];
 
+const metrics = (job: Job['id']) =>
+  [1, 2, 3].map(n => ({ valueKey: `job_${job}_m${n}_value`, labelKey: `job_${job}_m${n}_label` }));
+
 export const JOBS: Job[] = [
   {
     id: 'pecode',
     company: 'Pecode',
+    companyLineKey: 'job_pecode_company_line',
     roleKey: 'job_pecode_role',
     periodKey: 'job_pecode_period',
+    durationKey: 'job_pecode_duration',
+    metrics: metrics('pecode'),
     bulletKeys: [1, 2, 3, 4, 5].map(n => `job_pecode_b${n}`),
     stack: ['React Native', 'Expo', 'TypeScript', 'BLE', 'NFC', 'Mapbox', 'Next.js', 'Supabase', 'RevenueCat', 'EAS'],
   },
   {
     id: 'hys',
     company: 'HYS Enterprise',
+    companyLineKey: 'job_hys_company_line',
     roleKey: 'job_hys_role',
     periodKey: 'job_hys_period',
-    bulletKeys: [1, 2, 3, 4].map(n => `job_hys_b${n}`),
+    durationKey: 'job_hys_duration',
+    metrics: metrics('hys'),
+    bulletKeys: [1, 2, 3, 4, 5].map(n => `job_hys_b${n}`),
     stack: ['React Native', 'Next.js', 'TanStack Query', 'Vue', 'Pinia', 'PostHog'],
-  },
-  {
-    id: 'self',
-    company: 'Self-employed',
-    companyKey: 'job_self_company',
-    roleKey: 'job_self_role',
-    periodKey: 'job_self_period',
-    bulletKeys: ['job_self_b1'],
-    stack: ['React', 'JavaScript', 'TypeScript', 'Bulma', 'Git'],
   },
 ];
 

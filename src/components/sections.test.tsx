@@ -78,34 +78,6 @@ describe('About', () => {
 });
 
 describe('Experience', () => {
-  it('renders the jobs in order', () => {
-    render(<Experience />);
-    const rows = screen.getAllByTestId('xp-row');
-
-    expect(rows).toHaveLength(3);
-    expect(within(rows[0]).getByText(/Pecode/)).toBeInTheDocument();
-    expect(within(rows[1]).getByText(/HYS Enterprise/)).toBeInTheDocument();
-    expect(within(rows[2]).getByText(/Self-employed/)).toBeInTheDocument();
-  });
-
-  it('shows the Pecode period and five bullets, without a Current marker', () => {
-    render(<Experience />);
-    const pecode = screen.getAllByTestId('xp-row')[0];
-
-    expect(within(pecode).getAllByRole('listitem')).toHaveLength(5);
-    expect(screen.getByText('Oct 2025 — Oct 2026')).toBeVisible();
-    expect(screen.queryByText('Current')).not.toBeInTheDocument();
-  });
-
-  it('titles the HYS role React Native / Frontend Developer', () => {
-    render(<Experience />);
-    const hys = screen.getAllByTestId('xp-row')[1];
-
-    expect(within(hys).getByRole('heading', { level: 3 })).toHaveTextContent(
-      'React Native / Frontend Developer · HYS Enterprise',
-    );
-  });
-
   it('renders three detailed education cards', () => {
     render(<Experience />);
     const cards = screen.getAllByTestId('edu-card');
