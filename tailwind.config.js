@@ -1,6 +1,6 @@
 const v = (name) => `rgb(var(--c-${name}) / <alpha-value>)`;
 
-module.exports = {
+export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {

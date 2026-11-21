@@ -93,7 +93,7 @@ export const useIdleWebGL = () => {
 };
 
 /** True while the element intersects the viewport and the tab is visible. */
-export const useOnScreen = (ref: RefObject<HTMLElement>) => {
+export const useOnScreen = (ref: RefObject<HTMLElement | null>) => {
   const [intersecting, setIntersecting] = useState(true);
   const pageVisible = useClientValue(subscribeVisibility, isPageVisible, true);
 

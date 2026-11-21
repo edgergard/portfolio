@@ -7,7 +7,7 @@ export const IN_VIEW_THRESHOLD = 0.25;
  * Plays the video while at least a quarter of it is in the viewport and pauses it otherwise.
  * With `enabled` false (reduced motion, no video) it never observes, so play() is never called.
  */
-export const useInViewVideo = (ref: RefObject<HTMLVideoElement>, enabled: boolean) => {
+export const useInViewVideo = (ref: RefObject<HTMLVideoElement | null>, enabled: boolean) => {
   useEffect(() => {
     const video = ref.current;
 

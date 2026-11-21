@@ -6,7 +6,7 @@ import type { ScenePointer } from './motion';
  * so the knot reacts while the visitor reads the text column too.
  * Active under reduced motion as well: the tilt follows the visitor's own hand.
  */
-export const useHeroPointer = (ref: RefObject<HTMLElement>) => {
+export const useHeroPointer = (ref: RefObject<HTMLElement | null>) => {
   const pointer = useRef<ScenePointer>({ x: 0, y: 0, hovering: false });
 
   useEffect(() => {

@@ -78,7 +78,7 @@ const reset = (el: HTMLElement) => {
  * (glass strength) per chip; styles.css (.glass-chip) animates them. Positions are measured on
  * entry, before anything moves, so the targets don't drift while chips change size.
  */
-export const useMagnify = (root: RefObject<HTMLElement>, enabled: boolean) => {
+export const useMagnify = (root: RefObject<HTMLElement | null>, enabled: boolean) => {
   useEffect(() => {
     const host = root.current;
 
