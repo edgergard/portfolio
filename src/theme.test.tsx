@@ -1,5 +1,6 @@
 import { render as rtlRender, screen } from '@testing-library/react';
 import type { ReactElement, ReactNode } from 'react';
+import { renderToString } from 'react-dom/server';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ThemeButton from './components/Header/ThemeButton';
@@ -96,5 +97,14 @@ describe('theme', () => {
     expect(THEME_SCRIPT).toMatch(/localStorage\.getItem\('theme'\)/);
     expect(THEME_SCRIPT).not.toMatch(/prefers-color-scheme/);
     expect(THEME_SCRIPT).toMatch(/t === 'light' \? 'light' : 'dark'/);
+  });
+});
+
+describe('ThemeButton server HTML', () => {
+  it('renders both the sun and the moon icon, so CSS can show the right one before hydration', () => {
+    const html = renderToString(<English><ThemeButton /></English>);
+
+    expect(html).toContain('data-theme-icon="sun"');
+    expect(html).toContain('data-theme-icon="moon"');
   });
 });
