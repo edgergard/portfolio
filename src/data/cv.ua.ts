@@ -3,12 +3,25 @@ import { CVS, type CvDoc, type CvVariant } from './cv';
 const LOCATION = 'Київ, Україна (віддалено / гібрид / офіс)';
 
 const EDUCATION: CvDoc['education'] = [
-  { title: 'Національний університет харчових технологій, бакалавр з інженерії програмного забезпечення (навчаюся)', period: '2026 – донині' },
-  { title: 'Mate Academy, курс Fullstack-розробки (сертифікат)', period: '2023' },
-  { title: 'Київський політехнічний інститут імені Ігоря Сікорського, автоматизація та комп’ютерно-інтегровані технології', period: '2019 – 2022' },
+  {
+    institution: 'Національний університет харчових технологій',
+    programme: 'Бакалавр з інженерії програмного забезпечення (навчаюся)',
+    kind: 'university',
+    period: '2026 – донині',
+  },
+  { institution: 'Mate Academy', programme: 'Курс Fullstack-розробки (сертифікат)', kind: 'course', period: '2023' },
+  {
+    institution: 'Київський політехнічний інститут імені Ігоря Сікорського',
+    programme: 'Автоматизація та комп’ютерно-інтегровані технології',
+    kind: 'university',
+    period: '2019 – 2022',
+  },
 ];
 
-const LANGUAGES = ['Українська: рідна', 'Англійська: C1 (Advanced)'];
+const LANGUAGES: CvDoc['languages'] = [
+  { name: 'Українська', level: 'Рідна' },
+  { name: 'Англійська', level: 'C1', note: 'Просунутий · EF SET C2' },
+];
 
 const PERIOD_PECODE = 'жов. 2025 – жов. 2026';
 const PERIOD_HYS = 'квіт. 2024 – жов. 2025';

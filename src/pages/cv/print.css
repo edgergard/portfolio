@@ -28,6 +28,41 @@
     padding: 0 !important;
   }
 
+  /* No shader or dark surfaces on paper: drop the Wine layer, the wine-flow blobs and shadows. */
+  .cv-print-root [data-testid='wine-surface'],
+  .cv-print-root .bg-wine-flow::before,
+  .cv-print-root .bg-wine-flow::after {
+    display: none !important;
+  }
+
+  .cv-print-root * {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    filter: none !important;
+  }
+
+  .cv-print-root .skills-band {
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  /* .wine-edge paints its 1px frame as the wrapper background; swap it for a plain border. */
+  .cv-print-root .wine-edge {
+    padding: 0 !important;
+    border: 1px solid #999 !important;
+  }
+
+  .cv-print-root .wine-edge > *,
+  .cv-print-root .wine-edge::before,
+  .cv-print-root .wine-edge::after {
+    background: transparent !important;
+  }
+
+  .cv-print-root [data-testid='edu-card'],
+  .cv-print-root [data-testid='lang-card'] {
+    break-inside: avoid;
+  }
+
   .cv-print-root a {
     text-decoration: none;
   }
