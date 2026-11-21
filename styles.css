@@ -106,6 +106,16 @@ body {
     transition: filter 200ms ease;
   }
 
+  /* Light theme: the same marbling, lifted (matches the shader's brighter light palette). */
+  :root[data-theme='light'] .bg-wine-flow {
+    background-color: #8B1426;
+  }
+
+  :root[data-theme='light'] .bg-wine-flow::before,
+  :root[data-theme='light'] .bg-wine-flow::after {
+    filter: brightness(1.45) saturate(1.1);
+  }
+
   /* Each layer is twice the element in both directions, so drifting never shows an edge. */
   .bg-wine-flow::before,
   .bg-wine-flow::after {

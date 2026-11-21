@@ -8,7 +8,8 @@ import {
   WebGLRenderer,
 } from 'three';
 import { whenProgramsReady } from '../../Hero/warmup';
-import { createWineUniforms, fragmentShader, vertexShader, WINE } from '../../Hero/wineShader';
+import { currentTheme } from '../../../theme';
+import { applyWineTheme, createWineUniforms, fragmentShader, vertexShader, WINE, type WineTheme } from '../../Hero/wineShader';
 import type { WineBufferRenderer } from './loop';
 
 // Lazy chunk: imported only by wineButtons.load, so three.js stays out of the main bundle.
@@ -85,6 +86,7 @@ export const createWineBufferRenderer = async (
   scene.add(new Mesh(geometry, material));
 
   let alive = true;
+  let palette: WineTheme = 'dark';
   const canvas = gl.domElement;
   const onContextLost = (event: Event) => {
     event.preventDefault();
@@ -119,6 +121,14 @@ export const createWineBufferRenderer = async (
     width: BUFFER_WIDTH,
     height: BUFFER_HEIGHT,
     render: (time) => {
+      // Follow the page theme (a cheap attribute read; the uniforms change only on a switch).
+      const theme = currentTheme();
+
+      if (theme !== palette) {
+        palette = theme;
+        applyWineTheme(uniforms, theme);
+      }
+
       uniforms.uTime.value = time * WINE.speed;
       gl.render(scene, camera);
     },

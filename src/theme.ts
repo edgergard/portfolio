@@ -28,7 +28,8 @@ export const applyTheme = (theme: Theme) => {
 /** What the page should show now: a saved choice, otherwise dark. */
 export const resolveTheme = (): Theme => storedTheme() ?? DEFAULT_THEME;
 
-const currentTheme = (): Theme => {
+/** The theme on <html> right now (for code outside React, e.g. the shared wine renderer). */
+export const currentTheme = (): Theme => {
   const value = document.documentElement.dataset.theme;
 
   return isTheme(value) ? value : resolveTheme();

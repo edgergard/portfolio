@@ -8,12 +8,14 @@ import { useIdleWebGL, usePrefersReducedMotion } from './sceneSupport';
 // Lazy so three.js stays out of the main bundle and the text paints first.
 const HeroScene = lazy(() => import('./HeroScene'));
 
-/** CSS stand-in for the Wine shader (same palette), shown while loading or without WebGL. */
-const WINE_GRADIENT
-  = 'radial-gradient(circle at 50% 50%, #B8233F 0%, #8B1426 28%, #3E0712 58%, #0A0A0B 88%)';
+/** CSS stand-in for the Wine shader (same palette per theme), shown while loading or without WebGL. */
+const WINE_GRADIENT = {
+  dark: 'radial-gradient(circle at 50% 50%, #B8233F 0%, #8B1426 28%, #3E0712 58%, #0A0A0B 88%)',
+  light: 'radial-gradient(circle at 50% 50%, #EC5874 0%, #CC2E4D 28%, #A51C36 58%, #7A1328 88%)',
+};
 
 const WineFallback = (props: { 'data-testid'?: string }) => (
-  <div aria-hidden className="absolute inset-0" style={{ background: WINE_GRADIENT }} {...props} />
+  <div aria-hidden className="absolute inset-0" style={{ background: WINE_GRADIENT[useCurrentTheme()] }} {...props} />
 );
 
 /**
