@@ -25,6 +25,8 @@ describe('proxy matcher', () => {
 
   it.each([
     '/_next/static/x.js',
+    '/_vercel/speed-insights/vitals',
+    '/_vercel/insights/view',
     '/api/x',
     '/fonts/geist-latin.woff2',
     '/videos/pokemon.mp4',
@@ -50,6 +52,24 @@ describe('proxy()', () => {
     const res = proxy(req('/cv/frontend?view=pdf', 'lang=uk'));
 
     expect(res.headers.get('location')).toBe('http://localhost/uk/cv/frontend?view=pdf');
+  });
+
+  it('persists English when redirecting /en/... (the no-JS language switch)', () => {
+    const res = proxy(req('/en/projects?a=1', 'lang=uk'));
+
+    expect(res.headers.get('location')).toBe('http://localhost/projects?a=1');
+    const cookie = res.headers.get('set-cookie') ?? '';
+
+    expect(cookie).toContain('lang=en');
+    expect(cookie).toContain('Path=/');
+    expect(cookie).toContain('Max-Age=31536000');
+    expect(cookie).toMatch(/SameSite=lax/i);
+  });
+
+  it('does not set the cookie on other responses', () => {
+    expect(proxy(req('/uk/projects')).headers.get('set-cookie')).toBeNull();
+    expect(proxy(req('/projects', 'lang=uk')).headers.get('set-cookie')).toBeNull();
+    expect(proxy(req('/projects')).headers.get('set-cookie')).toBeNull();
   });
 
   it('passes /uk paths through', () => {

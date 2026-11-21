@@ -3,7 +3,7 @@ import { LANG_COOKIE, resolveLocale } from '@/lib/locale';
 
 export function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
-  const { action, url } = resolveLocale(pathname, req.cookies.get(LANG_COOKIE)?.value);
+  const { action, url, persist } = resolveLocale(pathname, req.cookies.get(LANG_COOKIE)?.value);
 
   if (action === 'next') {
     return NextResponse.next();
@@ -14,12 +14,22 @@ export function proxy(req: NextRequest) {
   target.pathname = url;
   target.search = search;
 
-  return action === 'rewrite' ? NextResponse.rewrite(target) : NextResponse.redirect(target);
+  if (action === 'rewrite') {
+    return NextResponse.rewrite(target);
+  }
+
+  const res = NextResponse.redirect(target);
+
+  if (persist) {
+    res.cookies.set(LANG_COOKIE, persist, { path: '/', maxAge: 31536000, sameSite: 'lax' });
+  }
+
+  return res;
 }
 
 export const config = {
-  // Skip Next internals, API routes, static files and anything with a file extension.
+  // Skip Next and Vercel internals (Speed Insights beacons), API routes, static files and anything with a file extension.
   matcher: [
-    '/((?!_next|api/|fonts/|videos/|.*\\..*).*)',
+    '/((?!_next|_vercel|api/|fonts/|videos/|.*\\..*).*)',
   ],
 };
