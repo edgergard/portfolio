@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { mediaQuery, useClientValue } from '../../utils/clientValue';
 import { dragScrollTop, thumbMetrics, type ScrollDims } from './scrollbarMetrics';
 
 const FINE_POINTER = '(pointer: fine)';
@@ -17,20 +18,9 @@ const dimsOf = (el: HTMLElement): ScrollDims => ({
 });
 
 /** True on devices with a mouse or trackpad; tracks changes (a tablet docking a mouse). */
-const useFinePointer = () => {
-  const [fine, setFine] = useState(() => window.matchMedia(FINE_POINTER).matches);
+const finePointer = mediaQuery(FINE_POINTER);
 
-  useEffect(() => {
-    const query = window.matchMedia(FINE_POINTER);
-    const onChange = () => setFine(query.matches);
-
-    query.addEventListener?.('change', onChange);
-
-    return () => query.removeEventListener?.('change', onChange);
-  }, []);
-
-  return fine;
-};
+const useFinePointer = () => useClientValue(finePointer.subscribe, finePointer.getSnapshot, false);
 
 /**
  * The page's scrollbar on fine-pointer devices: a floating wine pill (styles.css .wine-thumb)

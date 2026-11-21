@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/portfolio/",
+    "build": "tsc && vite build --base=/portfolio/ && vite build --ssr src/entry-server.tsx --outDir dist-ssr --base=/portfolio/ && node scripts/prerender.mjs",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -33,6 +33,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.13",
@@ -53,6 +55,7 @@
     "gh-pages": "^6.1.1",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.33",
+    "sharp": "^0.33.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",

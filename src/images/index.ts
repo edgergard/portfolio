@@ -1,9 +1,9 @@
-import GadgetLuxe from './GadgetLuxe.png';
-import RickAndMorty from './RickAndMorty.png';
-import PokeAPI from './pokeAPI.png';
+import GadgetLuxe from './GadgetLuxe.webp';
+import RickAndMorty from './RickAndMorty.webp';
+import PokeAPI from './pokeAPI.webp';
 import BAndQ from './B&Q.webp';
-import Todo from './Todo.png';
-import VueWeatherApp from './VueWeatherApp.png';
+import Todo from './Todo.webp';
+import VueWeatherApp from './VueWeatherApp.webp';
 
 export {
   GadgetLuxe,

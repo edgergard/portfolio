@@ -1,22 +1,21 @@
 import { useEffect, useState, type RefObject } from 'react';
+import { mediaQuery, useClientValue } from '../../utils/clientValue';
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
-/** Tracks prefers-reduced-motion, live. */
-export const usePrefersReducedMotion = () => {
-  const [reduced, setReduced] = useState(() => window.matchMedia(REDUCED_MOTION).matches);
+const reducedMotion = mediaQuery(REDUCED_MOTION);
 
-  useEffect(() => {
-    const query = window.matchMedia(REDUCED_MOTION);
-    const onChange = () => setReduced(query.matches);
+/** Tracks prefers-reduced-motion, live (false while prerendering and hydrating). */
+export const usePrefersReducedMotion = () =>
+  useClientValue(reducedMotion.subscribe, reducedMotion.getSnapshot, false);
 
-    query.addEventListener('change', onChange);
+const subscribeVisibility = (onChange: () => void) => {
+  document.addEventListener('visibilitychange', onChange);
 
-    return () => query.removeEventListener('change', onChange);
-  }, []);
-
-  return reduced;
+  return () => document.removeEventListener('visibilitychange', onChange);
 };
+
+const isPageVisible = () => !document.hidden;
 
 /**
  * Flips to true once the page has loaded and the main thread is idle, so a 3D chunk
@@ -96,7 +95,7 @@ export const useIdleWebGL = () => {
 /** True while the element intersects the viewport and the tab is visible. */
 export const useOnScreen = (ref: RefObject<HTMLElement>) => {
   const [intersecting, setIntersecting] = useState(true);
-  const [pageVisible, setPageVisible] = useState(() => !document.hidden);
+  const pageVisible = useClientValue(subscribeVisibility, isPageVisible, true);
 
   useEffect(() => {
     const el = ref.current;
@@ -111,14 +110,6 @@ export const useOnScreen = (ref: RefObject<HTMLElement>) => {
 
     return () => observer.disconnect();
   }, [ref]);
-
-  useEffect(() => {
-    const onChange = () => setPageVisible(!document.hidden);
-
-    document.addEventListener('visibilitychange', onChange);
-
-    return () => document.removeEventListener('visibilitychange', onChange);
-  }, []);
 
   return intersecting && pageVisible;
 };

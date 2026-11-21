@@ -176,7 +176,7 @@ const ArchivePage = () => {
           ) : (
             <table className="w-full border-collapse max-[899px]:block">
               <thead className="max-[899px]:hidden">
-                <tr className="border-b border-line">
+                <tr data-testid="archive-head" className="border-b border-line">
                   <th className={TH}><span className="sr-only">{t('archive_col_project')}</span></th>
                   <th scope="col" className={TH}>{t('archive_col_year')}</th>
                   <th scope="col" className={TH}>{t('archive_col_project')}</th>

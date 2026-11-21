@@ -1,12 +1,64 @@
-import type { ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { EMAIL, PHONE, SOCIALS, type Social } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section, { GLASS } from '../layout/Section';
-import ContactForm from './ContactForm';
+import ChunkBoundary from '../ui/ChunkBoundary';
 import CopyButton from './CopyButton';
 import { ArrowDownIcon, ArrowUpRightIcon, BrandIcon, DocumentIcon, PhoneIcon, type Brand } from './icons';
+
+// The form (react-hook-form, zod, emailjs, toastify) loads once the section nears the viewport.
+const ContactForm = lazy(() => import('./ContactForm'));
+
+/** Holds the form's place, same glass and height, until its code arrives. */
+const FormPlaceholder = () => <div aria-hidden className={`${GLASS} min-h-[478px]`} />;
+
+/** True once the element comes within `margin` of the viewport (true at once without IntersectionObserver). */
+const useNearViewport = (margin: string) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setNear(true);
+
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) {
+        setNear(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: margin });
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [margin]);
+
+  return [ref, near] as const;
+};
+
+const LazyForm = () => {
+  const [ref, near] = useNearViewport('800px 0px');
+
+  return (
+    <div ref={ref}>
+      {near ? (
+        // If the form's code is gone (a redeploy), keep the glass box; the rows offer Telegram/email.
+        <ChunkBoundary fallback={<FormPlaceholder />}>
+          <Suspense fallback={<FormPlaceholder />}>
+            <ContactForm />
+          </Suspense>
+        </ChunkBoundary>
+      ) : <FormPlaceholder />}
+    </div>
+  );
+};
 
 const CV_BASE = `${import.meta.env.BASE_URL}cv/`;
 
@@ -144,7 +196,7 @@ const Contact = () => {
               </li>
             </Group>
           </div>
-          <ContactForm />
+          <LazyForm />
         </div>
       </Reveal>
     </Section>

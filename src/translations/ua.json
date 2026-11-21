@@ -8,9 +8,9 @@
   "message_success": "Повідомлення було успішно відправлено.",
   "message_error": "Виникла неочікувана помилка.",
   "project_desc_gadget": "Онлайн магазин гаджетів, Fullstack проєкт.",
-  "project_desc_weather": "Weather App з пошуком та обраними локаціями.",
-  "project_desc_rick": "Імплементація Rick and Morty API.",
-  "project_desc_pokeapi": "Імплементація PokeAPI.",
+  "project_desc_weather": "Прогнози з пошуком міст, збереженими місцями, °C/°F та інтерактивним глобусом.",
+  "project_desc_rick": "Пошук і фільтри серед 800+ персонажів, сторінки з історією епізодів та експорт у CSV.",
+  "project_desc_pokeapi": "Реєстрація тренера з валідацією, живий пошук серед 1000+ покемонів та анімована арена боїв.",
   "project_desc_bandq": "HTML лендінг інтернет магазину.",
   "project_desc_todo": "Простий застосунок для управління завданнями з API.",
   "form_error_submit": "Некоректна адреса пошти.",
@@ -175,5 +175,7 @@
   "archive_col_project": "Проєкт",
   "archive_col_type": "Тип",
   "archive_col_stack": "Стек",
-  "archive_col_links": "Посилання"
+  "archive_col_links": "Посилання",
+  "chunk_failed": "Сторінка не завантажилась — мабуть, щойно вийшла нова версія сайту.",
+  "chunk_reload": "Перезавантажити"
 }

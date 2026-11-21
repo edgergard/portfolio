@@ -6,6 +6,7 @@ import i18n from '../../i18n';
 import en from '../../translations/en.json';
 import ua from '../../translations/ua.json';
 import { featuredProjects, PROJECT_LIST } from '../../data/projects';
+import css from '../../../styles.css?raw';
 import type { Project } from '../../types/Project';
 import Projects from './Projects';
 import ProjectRow from './ProjectRow';
@@ -119,6 +120,7 @@ describe('Projects section', () => {
     const rows = screen.getAllByTestId('project-row');
 
     expect(rows).toHaveLength(3);
+    expect(featuredProjects().map(p => p.name)).toEqual(['Pokemon Trainer', 'Vue Weather App', 'Rick and Morty API app']);
     expect(rows.map(r => within(r).getByRole('heading', { level: 3 }).textContent)).toEqual(
       featuredProjects().map(p => p.name),
     );
@@ -156,7 +158,7 @@ describe('Projects section', () => {
     renderSection();
     const [first] = screen.getAllByTestId('project-row');
 
-    expect(within(first).getByText('01 — Web · 2023')).toBeInTheDocument();
+    expect(within(first).getByText('01 — Web · 2024')).toBeInTheDocument();
   });
 
   it('renders Live and Code links from the data', () => {
@@ -173,23 +175,36 @@ describe('Projects section', () => {
     });
   });
 
-  it('plays the recorded demo loops in the Weather and Rick and Morty rows', () => {
+  it('plays a recorded demo loop in every featured row', () => {
     renderSection();
     const rows = screen.getAllByTestId('project-row');
     const sourcesOf = (row: HTMLElement) => [...row.querySelectorAll('video source')].map(s => s.getAttribute('src'));
     const base = import.meta.env.BASE_URL;
 
+    expect(sourcesOf(rows[0])).toEqual([`${base}videos/pokemon.webm`, `${base}videos/pokemon.mp4`]);
     expect(sourcesOf(rows[1])).toEqual([`${base}videos/weather.webm`, `${base}videos/weather.mp4`]);
     expect(sourcesOf(rows[2])).toEqual([`${base}videos/rick-and-morty.webm`, `${base}videos/rick-and-morty.mp4`]);
     expect(rows[1].querySelector('video')).toHaveAttribute('poster', `${base}videos/weather.jpg`);
   });
 
-  it('keeps the poster for Gadget Luxe until its demo can be recorded', () => {
+  it('gives the media the same column width in every row, whichever side it sits on', () => {
     renderSection();
-    const [gadget] = screen.getAllByTestId('project-row');
+    const rows = screen.getAllByTestId('project-row');
 
-    expect(gadget.querySelector('video')).toBeNull();
-    expect(gadget.querySelector('img')).toHaveAttribute('src', featuredProjects()[0].poster);
+    // The media column is the wide one (1.35fr) on both sides, so the frames match in size.
+    expect(rows[0].className).toContain('min-[900px]:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]');
+    expect(rows[1].className).toContain('min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]');
+  });
+
+  it('keeps the browser frame bar light in the light theme (dark stays as it was)', () => {
+    renderSection();
+    const bar = screen.getAllByTestId('frame-bar')[0];
+
+    // Dark look stays on the element itself.
+    expect(bar).toHaveClass('frame-bar', 'bg-[#161618]', 'border-[#232327]');
+    // Light theme: a light bar, and no unscoped rule touches the dark frame.
+    expect(css).toMatch(/:root\[data-theme='light'\] \.frame-bar \{[^}]*background-color: #F4F1EF/);
+    expect(css).not.toMatch(/^\.frame(-bar|-dot|-host)?\b[^{]*\{/m);
   });
 
   it('links to the archive with the total count', () => {
@@ -214,7 +229,7 @@ describe('Projects section', () => {
     renderSection();
 
     expect(screen.getByRole('link', { name: `Усі проєкти · Архів (${PROJECT_LIST.length})` })).toBeInTheDocument();
-    expect(screen.getByText('01 — Веб · 2023')).toBeInTheDocument();
+    expect(screen.getByText('01 — Веб · 2024')).toBeInTheDocument();
   });
 });
 

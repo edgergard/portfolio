@@ -33,6 +33,9 @@ const Screen = ({ project }: Props) => {
       <video
         ref={video}
         muted
+        // React compares the muted property during hydration and always reports a mismatch for
+        // prerendered <video muted>; useInViewVideo sets the property, so the warning is noise.
+        suppressHydrationWarning
         loop
         playsInline
         preload="none"
@@ -81,13 +84,18 @@ const ProjectMedia = ({ project }: Props) => {
     <div
       data-testid="project-media"
       data-frame="browser"
-      className="overflow-hidden rounded-[14px] border border-line bg-[#111]"
+      className="frame overflow-hidden rounded-[14px] border border-line bg-[#111]"
     >
-      <div aria-hidden className="flex h-[30px] items-center gap-1.5 border-b border-[#232327] bg-[#161618] px-3">
-        <s className="block h-[9px] w-[9px] rounded-full bg-[#2E2E33]" />
-        <s className="block h-[9px] w-[9px] rounded-full bg-[#2E2E33]" />
-        <s className="block h-[9px] w-[9px] rounded-full bg-[#2E2E33]" />
-        {host && <span className="ml-3 truncate font-mono text-[11px] text-muted">{host}</span>}
+      {/* Dark bar in the dark theme; styles.css (.frame-bar) gives it a light browser look in light. */}
+      <div
+        aria-hidden
+        data-testid="frame-bar"
+        className="frame-bar flex h-[30px] items-center gap-1.5 border-b border-[#232327] bg-[#161618] px-3"
+      >
+        <s className="frame-dot block h-[9px] w-[9px] rounded-full bg-[#2E2E33]" />
+        <s className="frame-dot block h-[9px] w-[9px] rounded-full bg-[#2E2E33]" />
+        <s className="frame-dot block h-[9px] w-[9px] rounded-full bg-[#2E2E33]" />
+        {host && <span className="frame-host ml-3 truncate font-mono text-[11px] text-muted">{host}</span>}
       </div>
       <div className="relative aspect-[16/10] overflow-hidden">
         <Screen project={project} />
