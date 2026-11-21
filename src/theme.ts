@@ -5,13 +5,10 @@ export type Theme = 'light' | 'dark';
 /** localStorage key for an explicit choice; index.html reads the same key before first paint. */
 export const THEME_KEY = 'theme';
 
-const LIGHT_QUERY = '(prefers-color-scheme: light)';
+/** The site opens dark unless the visitor picked light earlier (the system setting is ignored). */
+export const DEFAULT_THEME: Theme = 'dark';
 
 const isTheme = (value: unknown): value is Theme => value === 'light' || value === 'dark';
-
-/** The system's colour scheme; dark when it can't be read. */
-export const systemTheme = (): Theme =>
-  typeof window.matchMedia === 'function' && window.matchMedia(LIGHT_QUERY).matches ? 'light' : 'dark';
 
 /** The visitor's explicit choice, or null when they never picked one (or storage is blocked). */
 export const storedTheme = (): Theme | null => {
@@ -28,40 +25,40 @@ export const applyTheme = (theme: Theme) => {
   document.documentElement.dataset.theme = theme;
 };
 
-/** What the page should show now: a saved choice wins, otherwise the system setting. */
-export const resolveTheme = (): Theme => storedTheme() ?? systemTheme();
+/** What the page should show now: a saved choice, otherwise dark. */
+export const resolveTheme = (): Theme => storedTheme() ?? DEFAULT_THEME;
+
+const currentTheme = (): Theme => {
+  const value = document.documentElement.dataset.theme;
+
+  return isTheme(value) ? value : resolveTheme();
+};
 
 /**
- * The current theme and a toggle. Without a saved choice the site follows the system setting,
- * live; once the visitor toggles, their choice is saved and wins from then on.
+ * The theme on <html>, kept in sync when it changes (for parts that can't read CSS variables,
+ * like the hero's 3D material). Read-only: use useTheme() to switch.
  */
-export const useTheme = () => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const current = document.documentElement.dataset.theme;
+export const useCurrentTheme = () => {
+  const [theme, setTheme] = useState<Theme>(currentTheme);
 
-    return isTheme(current) ? current : resolveTheme();
-  });
+  useEffect(() => {
+    const observer = new MutationObserver(() => setTheme(currentTheme()));
+
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return theme;
+};
+
+/** The current theme and a toggle; the visitor's choice is saved. */
+export const useTheme = () => {
+  const [theme, setTheme] = useState<Theme>(currentTheme);
 
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
-
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') {
-      return undefined;
-    }
-
-    const query = window.matchMedia(LIGHT_QUERY);
-    const onChange = () => {
-      if (storedTheme() === null) {
-        setTheme(systemTheme());
-      }
-    };
-
-    query.addEventListener?.('change', onChange);
-
-    return () => query.removeEventListener?.('change', onChange);
-  }, []);
 
   const toggle = useCallback(() => {
     setTheme((prev) => {

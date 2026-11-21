@@ -5,7 +5,7 @@
 /*
  * Theme colours (RGB channels for Tailwind's /alpha). Dark is the default; the light theme
  * applies with [data-theme="light"] on <html>, set before first paint (index.html) from the
- * visitor's saved choice or, without one, the system's prefers-color-scheme.
+ * visitor's saved choice; without one the site is dark.
  * The Wine bands, buttons and the hero's 3D panel keep their dark wine look in both themes.
  */
 :root {

@@ -1,10 +1,10 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import html from '../index.html?raw';
 import './i18n';
 import ThemeButton from './components/Header/ThemeButton';
-import { resolveTheme, THEME_KEY } from './theme';
+import { resolveTheme, THEME_KEY, useCurrentTheme } from './theme';
 
 let systemLight = false;
 let listeners: Array<() => void> = [];
@@ -32,17 +32,14 @@ describe('theme', () => {
     vi.unstubAllGlobals();
   });
 
-  it('defaults to the system theme when the visitor never chose one', () => {
+  it('defaults to dark, even when the system prefers light', () => {
     systemLight = true;
-    expect(resolveTheme()).toBe('light');
-    systemLight = false;
     expect(resolveTheme()).toBe('dark');
   });
 
-  it('prefers a saved choice over the system theme', () => {
-    systemLight = true;
-    localStorage.setItem(THEME_KEY, 'dark');
-    expect(resolveTheme()).toBe('dark');
+  it('uses a saved choice', () => {
+    localStorage.setItem(THEME_KEY, 'light');
+    expect(resolveTheme()).toBe('light');
   });
 
   it('toggles the theme on <html> and saves the choice', async () => {
@@ -55,18 +52,20 @@ describe('theme', () => {
     expect(screen.getByTestId('theme-toggle')).toHaveAccessibleName('Switch to dark theme');
   });
 
-  it('follows live system changes until the visitor picks a theme', () => {
-    render(<ThemeButton />);
-    systemLight = true;
-    act(() => listeners.forEach((l) => l()));
-    expect(document.documentElement.dataset.theme).toBe('light');
+  it('reports theme changes to readers like the 3D knot', async () => {
+    const Reader = () => <span data-testid="reader">{useCurrentTheme()}</span>;
+
+    render(<><ThemeButton /><Reader /></>);
+    expect(screen.getByTestId('reader')).toHaveTextContent('dark');
+    await userEvent.click(screen.getByTestId('theme-toggle'));
+    expect(await screen.findByText('light')).toBeInTheDocument();
   });
 
-  it('sets the theme before first paint from the saved choice or the system setting', () => {
+  it('sets the theme before first paint from the saved choice, dark otherwise', () => {
     const head = html.slice(0, html.indexOf('</head>'));
 
     expect(head).toMatch(/localStorage\.getItem\('theme'\)/);
-    expect(head).toMatch(/prefers-color-scheme: light/);
-    expect(head).toMatch(/dataset\.theme/);
+    expect(head).not.toMatch(/prefers-color-scheme/);
+    expect(head).toMatch(/t === 'light' \? 'light' : 'dark'/);
   });
 });

@@ -30,16 +30,6 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
 }
 
-/** Registration mark centred on a corner of the panel's hairline. */
-const Cross = ({ className }: { className: string }) => (
-  <span
-    aria-hidden
-    className={`pointer-events-none absolute hidden h-[11px] w-[11px] min-[900px]:block
-      before:absolute before:left-[5px] before:top-0 before:h-[11px] before:w-px before:bg-ink before:content-['']
-      after:absolute after:left-0 after:top-[5px] after:h-px after:w-[11px] after:bg-ink after:content-[''] ${className}`}
-  />
-);
-
 /** Green "available" dot with a soft ring. */
 export const OpenDot = () => (
   <i
@@ -174,9 +164,6 @@ const Hero = () => {
           ) : (
             <WineFallback />
           )}
-
-          <Cross className="-left-1.5 -top-1.5 z-[51]" />
-          <Cross className="-bottom-1.5 -left-1.5 z-[2]" />
 
           <p className="pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-white/50 min-[900px]:flex">
             <span>{t('hero_caption_figure')}</span>
