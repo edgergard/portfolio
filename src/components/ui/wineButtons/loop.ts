@@ -35,6 +35,7 @@ type Status = 'idle' | 'loading' | 'ready' | 'failed';
 
 const MAX_DPR = 2;
 const GOLDEN = 0.618034;
+
 /** Spread of the per-element time offsets (seconds of animation): far enough apart that no two look alike. */
 export const PHASE_SPREAD = 90;
 

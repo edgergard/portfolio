@@ -34,7 +34,9 @@ export const BAND
 /** Dark glass panel that keeps text readable over a Wine band. */
 export const GLASS = 'rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] backdrop-blur-[14px]';
 
-const Heading = ({ id, index, label, onWine }: { id: string; index: number; label: string; onWine: boolean }) => (
+type HeadingProps = { id: string; index: number; label: string; onWine: boolean };
+
+const Heading = ({ id, index, label, onWine }: HeadingProps) => (
   <h2
     id={`${id}-heading`}
     data-on-wine={onWine || undefined}

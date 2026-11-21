@@ -164,7 +164,8 @@ describe('wine button loop', () => {
     expect(times).toHaveLength(3);
     expect(new Set(times.map((t) => t.toFixed(3))).size).toBe(3);
     // Spread well apart: at least a few seconds of animation between any two.
-    times.forEach((a, i) => times.slice(i + 1).forEach((b) => expect(Math.abs(a - b)).toBeGreaterThan(5)));
+    times.forEach((a, i) => times.slice(i + 1)
+      .forEach((b) => expect(Math.abs(a - b)).toBeGreaterThan(5)));
   });
 
   it('sizes each button canvas to its box at device pixels (capped at 2x)', async () => {
