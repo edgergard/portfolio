@@ -9,6 +9,8 @@ type Props = {
   /**
    * Full-bleed content rendered after the centred column, spanning the section edge to edge.
    * Content inside it should line up with the column on its own (see COLUMN).
+   * The band closes the section: no bottom padding follows it, so it ends flush with the
+   * next section's top border (the band keeps its own inner padding).
    */
   bleed?: ReactNode;
 };
@@ -34,7 +36,7 @@ const Section = ({ id, index, labelKey, children, bleed }: Props) => {
         </h2>
         <div>{children}</div>
       </div>
-      {bleed && <div className={BOTTOM}>{bleed}</div>}
+      {bleed}
     </section>
   );
 };
