@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useT } from '@/lib/i18n-client';
 
 type Props = {
   /** The text put on the clipboard. */
@@ -15,7 +17,7 @@ const COPIED_MS = 1800;
  * A polite live region announces the result for screen readers.
  */
 const CopyButton = ({ value, labelKey }: Props) => {
-  const { t } = useTranslation();
+  const t = useT();
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {

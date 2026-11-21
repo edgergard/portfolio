@@ -73,13 +73,18 @@ vi.mock('next/font/local', () => ({
 type Loaded<P> = ComponentType<P> | { default: ComponentType<P> };
 
 vi.mock('next/dynamic', () => ({
-  default: <P extends object>(loader: () => Promise<Loaded<P>>) => {
+  default: <P extends object>(
+    loader: () => Promise<Loaded<P>>,
+    options?: { loading?: ComponentType },
+  ) => {
     const Lazy = lazy(async () => {
       const mod = await loader();
 
       return { default: 'default' in mod ? mod.default : mod };
     });
 
-    return (props: P) => createElement(Suspense, { fallback: null }, createElement(Lazy, props));
+    const fallback = options?.loading ? createElement(options.loading) : null;
+
+    return (props: P) => createElement(Suspense, { fallback }, createElement(Lazy, props));
   },
 }));

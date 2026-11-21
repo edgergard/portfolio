@@ -1,28 +1,26 @@
+'use client';
+
 import emailjs from '@emailjs/browser';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+// Ships with this lazy chunk: toasts only appear after a send, so the form is always loaded first.
 import 'react-toastify/dist/ReactToastify.css';
 import { Slide } from 'react-toastify';
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslation } from 'react-i18next';
+import { useT } from '@/lib/i18n-client';
 import Button from '../ui/Button';
 import { GLASS } from '../layout/Section';
 import { TELEGRAM_URL } from '../../data/content';
 import { ArrowUpRightIcon } from './icons';
 
-const {
-  VITE_EMAILJS_SERVICE_ID,
-  VITE_EMAILJS_TEMPLATE_ID,
-  VITE_EMAILJS_KEY,
-} = import.meta.env;
-
-const API = {
-  SERVICE_ID: VITE_EMAILJS_SERVICE_ID,
-  TEMPLATE_ID: VITE_EMAILJS_TEMPLATE_ID,
-  USER_PUBLIC_KEY: VITE_EMAILJS_KEY,
-};
+// Next inlines NEXT_PUBLIC_* at build time; read at send time so tests can stub them.
+const emailjsConfig = () => ({
+  SERVICE_ID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? '',
+  TEMPLATE_ID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? '',
+  USER_PUBLIC_KEY: process.env.NEXT_PUBLIC_EMAILJS_KEY,
+});
 
 const TOAST_CLASS = '!rounded-xl !border !border-line !bg-surface !font-sans !text-ink';
 
@@ -42,7 +40,7 @@ const FormSchema = z.object({
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 const ContactForm = () => {
-  const { t } = useTranslation();
+  const t = useT();
   const { 
     handleSubmit, 
     register, 
@@ -77,6 +75,8 @@ const ContactForm = () => {
     if (form.current) {
       setIsLoading(true);
       try {
+        const API = emailjsConfig();
+
         await emailjs.sendForm(
           API.SERVICE_ID,
           API.TEMPLATE_ID,

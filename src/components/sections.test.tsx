@@ -1,21 +1,14 @@
-import { fireEvent, render as rtlRender, screen, waitFor, within } from '@testing-library/react';
-import type { ReactElement } from 'react';
-import { HashRouter } from 'react-router-dom';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import emailjs from '@emailjs/browser';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { intersectEverything } from '../test/intersect';
-import '../i18n';
 import About from './About';
 import Experience from './Experience';
 import Certifications from './Certifications';
 import Contact from './Contact';
 import { SKILLS } from '../data/content';
-import I18nextBridge from '../I18nextBridge';
+import type { Lang } from '../lib/locale';
 import { renderWithI18n } from '../test/renderWithI18n';
-
-// Contact still reads i18next; the bridge feeds the Next.js I18nProvider from it for its migrated
-// children. About, Experience and Certifications render inside the I18nProvider alone.
-const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 vi.mock('@emailjs/browser', () => ({
   default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
@@ -195,17 +188,16 @@ describe('Contact', () => {
   });
 
   // The form loads on demand; wait for it so every test sees the whole section.
-  const renderContact = async () => {
+  const renderContact = async (lang: Lang = 'en') => {
     intersectEverything();
-    render(
-      <HashRouter>
-        <Contact />
-      </HashRouter>,
-    );
-    await screen.findByRole('button', { name: /Send message/ }, { timeout: 8000 });
+    renderWithI18n(<Contact />, lang);
+    await screen.findByRole('button', { name: lang === 'uk' ? /Відправити повідомлення/ : /Send message/ }, { timeout: 8000 });
   };
 
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
 
   it('renders the headline, the lead line and the email link', async () => {
     await renderContact();
@@ -307,7 +299,22 @@ describe('Contact', () => {
 
     expect(fe).toHaveAttribute('href', '/cv/oleksandr-bryksin-frontend-cv.pdf');
     expect(fe).toHaveAttribute('download');
-    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
+    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '/cv/react-native');
+  });
+
+  it('links View CV to the Ukrainian cv page under /uk', async () => {
+    await renderContact('uk');
+    expect(screen.getByRole('link', { name: 'Переглянути CV' })).toHaveAttribute('href', '/uk/cv/react-native');
+    expect(screen.getByRole('link', { name: /CV · React Native/ })).toHaveAttribute(
+      'href',
+      '/cv/oleksandr-bryksin-react-native-cv.pdf',
+    );
+  });
+
+  it('shows the form placeholder until the section nears the viewport', () => {
+    renderWithI18n(<Contact />);
+    expect(screen.queryByRole('button', { name: /Send message/ })).not.toBeInTheDocument();
+    expect(document.querySelector('[aria-hidden].min-h-\\[478px\\]')).not.toBeNull();
   });
 
   it('titles the form, shows the status line and the Telegram hint', async () => {
@@ -362,5 +369,24 @@ describe('Contact', () => {
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  it('sends with the NEXT_PUBLIC_EMAILJS_* service, template and key', async () => {
+    vi.stubEnv('NEXT_PUBLIC_EMAILJS_SERVICE_ID', 'service_test');
+    vi.stubEnv('NEXT_PUBLIC_EMAILJS_TEMPLATE_ID', 'template_test');
+    vi.stubEnv('NEXT_PUBLIC_EMAILJS_KEY', 'key_test');
+    await renderContact();
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
+    expect(emailjs.sendForm).toHaveBeenCalledWith(
+      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+      process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+      expect.any(HTMLFormElement),
+      process.env.NEXT_PUBLIC_EMAILJS_KEY,
+    );
+    expect(emailjs.sendForm).toHaveBeenCalledWith('service_test', 'template_test', expect.any(HTMLFormElement), 'key_test');
   });
 });

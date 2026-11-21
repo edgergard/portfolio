@@ -1,71 +1,13 @@
-import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import type { ReactNode } from 'react';
+import { T } from '@/lib/i18n-client';
 import { EMAIL, PHONE, SOCIALS, type Social } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section, { GLASS } from '../layout/Section';
-import ChunkBoundary from '../ui/ChunkBoundary';
 import CopyButton from './CopyButton';
-import { ArrowDownIcon, ArrowUpRightIcon, BrandIcon, DocumentIcon, PhoneIcon, type Brand } from './icons';
-
-// The form (react-hook-form, zod, emailjs, toastify) loads once the section nears the viewport.
-const ContactForm = lazy(() => import('./ContactForm'));
-
-/** Holds the form's place, same glass and height, until its code arrives. */
-const FormPlaceholder = () => <div aria-hidden className={`${GLASS} min-h-[478px]`} />;
-
-/** True once the element comes within `margin` of the viewport (true at once without IntersectionObserver). */
-const useNearViewport = (margin: string) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [near, setNear] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setNear(true);
-
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(entries => {
-      if (entries.some(e => e.isIntersecting)) {
-        setNear(true);
-        observer.disconnect();
-      }
-    }, { rootMargin: margin });
-
-    observer.observe(el);
-
-    return () => observer.disconnect();
-  }, [margin]);
-
-  return [ref, near] as const;
-};
-
-const LazyForm = () => {
-  const [ref, near] = useNearViewport('800px 0px');
-
-  return (
-    <div ref={ref}>
-      {near ? (
-        // If the form's code is gone (a redeploy), keep the glass box; the rows offer Telegram/email.
-        <ChunkBoundary fallback={<FormPlaceholder />}>
-          <Suspense fallback={<FormPlaceholder />}>
-            <ContactForm />
-          </Suspense>
-        </ChunkBoundary>
-      ) : <FormPlaceholder />}
-    </div>
-  );
-};
-
-const CV_BASE = `${import.meta.env.BASE_URL}cv/`;
-
-const CVS = [
-  { key: 'contact_cv_rn', shortKey: 'contact_cv_rn_short', file: 'oleksandr-bryksin-react-native-cv.pdf' },
-  { key: 'contact_cv_fe', shortKey: 'contact_cv_fe_short', file: 'oleksandr-bryksin-frontend-cv.pdf' },
-];
+import CvRow from './CvRow';
+import { ArrowUpRightIcon, BrandIcon, PhoneIcon, type Brand } from './icons';
+import LazyForm from './LazyForm';
+import { CIRCLE, FOCUS, MAIN, ROW, Tile } from './rows';
 
 const BRAND: Record<Social['id'], Brand> = {
   telegram: 'telegram',
@@ -77,23 +19,7 @@ const BRAND: Record<Social['id'], Brand> = {
 
 const social = (id: Social['id']) => SOCIALS.find(s => s.id === id)!;
 
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
-// Every row's bottom hairline has the same rounded ends, whether the row is a link or a list item.
-const ROW = 'group flex items-center gap-3 sm:gap-3.5 rounded-lg border-b border-white/10 py-3';
-const MAIN = `flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5 rounded-lg ${FOCUS}`;
-
-/** Round action on the right of a row; brightens with a wine border when the row is hovered. */
-const CIRCLE
-  = 'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white/90 '
-  + 'transition-colors duration-200 group-hover:border-white group-hover:bg-white/10 group-hover:text-white';
-
-const Tile = ({ children }: { children: ReactNode }) => (
-  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] border border-white/10 bg-white/[.06] text-white">
-    {children}
-  </span>
-);
-
-const Text = ({ name, handle }: { name: string; handle: string }) => (
+const Text = ({ name, handle }: { name: ReactNode; handle: string }) => (
   <span className="grid min-w-0">
     <span className="text-[17px] leading-snug text-white">{name}</span>
     <span className="font-mono text-[11px] text-white/60 [overflow-wrap:anywhere] min-[420px]:text-[13px]">{handle}</span>
@@ -115,7 +41,7 @@ const ProfileRow = ({ id }: { id: Social['id'] }) => {
   );
 };
 
-const Group = ({ id, title, children }: { id: string; title: string; children: ReactNode }) => (
+const Group = ({ id, title, children }: { id: string; title: ReactNode; children: ReactNode }) => (
   <div className={`${GLASS} mt-6 px-5 pb-2 pt-5 min-[900px]:px-7`}>
     <h3 id={id} className="mb-1.5 font-mono text-[13px] font-normal uppercase tracking-[.07em] text-white/70">
       {title}
@@ -126,81 +52,47 @@ const Group = ({ id, title, children }: { id: string; title: string; children: R
   </div>
 );
 
-const Contact = () => {
-  const { t } = useTranslation();
+/** The Contact section. Server Component: text comes from <T>; copy buttons, the CV row and the form are client. */
+const Contact = () => (
+  <Section id="contact" index={5} labelKey="section_contact" band>
+    <Reveal>
+      <div className="grid grid-cols-1 gap-14 min-[900px]:grid-cols-2">
+        <div>
+          <p className="text-[clamp(40px,5vw,72px)] font-medium leading-none tracking-[-0.045em] text-white [text-shadow:0_2px_24px_rgba(10,10,11,0.35)]">
+            <T k="contact_headline" />
+          </p>
+          <p className="contact-lead mt-[18px] max-w-[40ch] text-[17px] leading-relaxed text-white/85"><T k="contact_lead" /></p>
 
-  return (
-    <Section id="contact" index={5} labelKey="section_contact" band>
-      <Reveal>
-        <div className="grid grid-cols-1 gap-14 min-[900px]:grid-cols-2">
-          <div>
-            <p className="text-[clamp(40px,5vw,72px)] font-medium leading-none tracking-[-0.045em] text-white [text-shadow:0_2px_24px_rgba(10,10,11,0.35)]">
-              {t('contact_headline')}
-            </p>
-            <p className="contact-lead mt-[18px] max-w-[40ch] text-[17px] leading-relaxed text-white/85">{t('contact_lead')}</p>
+          <Group id="contact-direct" title={<T k="contact_group_direct" />}>
+            <li className={ROW}>
+              <a href={`mailto:${EMAIL}`} className={MAIN}>
+                <Tile><BrandIcon brand="gmail" /></Tile>
+                <Text name={<T k="contact_email_name" />} handle={EMAIL} />
+              </a>
+              <CopyButton value={EMAIL} labelKey="contact_copy_email" />
+            </li>
+            <li className={ROW}>
+              <a href={PHONE.href} className={MAIN}>
+                <Tile><PhoneIcon /></Tile>
+                <Text name={<T k="contact_phone_name" />} handle={PHONE.display} />
+              </a>
+              <CopyButton value={PHONE.e164} labelKey="contact_copy_phone" />
+            </li>
+            <ProfileRow id="telegram" />
+            <ProfileRow id="whatsapp" />
+          </Group>
 
-            <Group id="contact-direct" title={t('contact_group_direct')}>
-              <li className={ROW}>
-                <a href={`mailto:${EMAIL}`} className={MAIN}>
-                  <Tile><BrandIcon brand="gmail" /></Tile>
-                  <Text name={t('contact_email_name')} handle={EMAIL} />
-                </a>
-                <CopyButton value={EMAIL} labelKey="contact_copy_email" />
-              </li>
-              <li className={ROW}>
-                <a href={PHONE.href} className={MAIN}>
-                  <Tile><PhoneIcon /></Tile>
-                  <Text name={t('contact_phone_name')} handle={PHONE.display} />
-                </a>
-                <CopyButton value={PHONE.e164} labelKey="contact_copy_phone" />
-              </li>
-              <ProfileRow id="telegram" />
-              <ProfileRow id="whatsapp" />
-            </Group>
-
-            <Group id="contact-profiles" title={t('contact_group_profiles')}>
-              <ProfileRow id="linkedin" />
-              <ProfileRow id="github" />
-              <ProfileRow id="github-alt" />
-              {/* Not one link (two downloads and the page link), so no row-wide hover on the arrow. */}
-              <li className={ROW.replace('group ', '')}>
-                <Tile><DocumentIcon /></Tile>
-                <span className="grid min-w-0 flex-1 gap-1.5">
-                  <span className="text-[17px] leading-snug text-white">{t('contact_cv_name')}</span>
-                  <span className="flex flex-wrap gap-2">
-                    {CVS.map(cv => (
-                      <a
-                        key={cv.key}
-                        href={CV_BASE + cv.file}
-                        download
-                        aria-label={`${t(cv.key)}, ${t('contact_cv_pdf')}`}
-                        className={
-                          'inline-flex items-center gap-1.5 rounded-full border border-white/25 px-3 py-1 font-mono '
-                          + `text-[13px] text-white/90 transition-colors hover:border-white hover:bg-white/10 hover:text-white ${FOCUS}`
-                        }
-                      >
-                        <ArrowDownIcon />
-                        {t(cv.shortKey)}
-                        <span className="text-white/60">{t('contact_cv_pdf')}</span>
-                      </a>
-                    ))}
-                  </span>
-                </span>
-                <Link
-                  to="/cv"
-                  aria-label={t('btn_view_cv')}
-                  className={`${CIRCLE} ${FOCUS} hover:border-white hover:bg-white/10`}
-                >
-                  <ArrowUpRightIcon />
-                </Link>
-              </li>
-            </Group>
-          </div>
-          <LazyForm />
+          <Group id="contact-profiles" title={<T k="contact_group_profiles" />}>
+            <ProfileRow id="linkedin" />
+            <ProfileRow id="github" />
+            <ProfileRow id="github-alt" />
+            <CvRow />
+          </Group>
         </div>
-      </Reveal>
-    </Section>
-  );
-};
+        <LazyForm />
+      </div>
+    </Reveal>
+  </Section>
+);
 
 export default Contact;

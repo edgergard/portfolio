@@ -1,21 +1,13 @@
-import { render as rtlRender, screen, within } from '@testing-library/react';
-import type { ReactElement } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { intersectEverything } from '../test/intersect';
 import css from '../../styles.css?raw';
-import '../i18n';
 import SkillsList from './About/SkillsList';
 import { GROW, lensScale, rowShifts, SHRINK } from './About/useMagnify';
 import Certifications from './Certifications';
 import Contact from './Contact';
 import ArchiveCta from './Projects/ArchiveCta';
-import I18nextBridge from '../I18nextBridge';
 import { renderWithI18n } from '../test/renderWithI18n';
-
-// Contact still reads i18next; the bridge feeds the Next.js I18nProvider from it.
-// SkillsList, Certifications and ArchiveCta render inside the I18nProvider alone.
-const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 const finePointer = () =>
   vi.stubGlobal('matchMedia', (query: string) => ({
@@ -129,7 +121,7 @@ describe('round 6 fixes', () => {
 
   it('styles Send message like View experience (the live wine fill)', async () => {
     intersectEverything();
-    render(<MemoryRouter><Contact /></MemoryRouter>);
+    renderWithI18n(<Contact />);
     const send = await screen.findByRole('button', { name: /Send message/ }, { timeout: 8000 });
 
     vi.unstubAllGlobals();
@@ -140,7 +132,7 @@ describe('round 6 fixes', () => {
   });
 
   it('does not light the CV arrow when the rest of the CV row is hovered', () => {
-    render(<MemoryRouter><Contact /></MemoryRouter>);
+    renderWithI18n(<Contact />);
     const cvLink = screen.getByRole('link', { name: 'View CV' });
     const row = cvLink.closest('li')!;
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import config from '../../vite.config.ts?raw';
 import root from '../Root.tsx?raw';
-import contact from '../components/Contact/Contact.tsx?raw';
+import lazyForm from '../components/Contact/LazyForm.tsx?raw';
 
 describe('code splitting', () => {
   it('puts the shared libraries in a long-lived vendor chunk', () => {
@@ -16,6 +16,6 @@ describe('code splitting', () => {
   });
 
   it('loads the contact form on demand', () => {
-    expect(contact).toMatch(/lazy\(\(\) => import\('\.\/ContactForm'\)\)/);
+    expect(lazyForm).toMatch(/dynamic\(\(\) => import\('\.\/ContactForm'\), \{ ssr: false, loading: FormPlaceholder \}\)/);
   });
 });
