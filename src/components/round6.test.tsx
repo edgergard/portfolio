@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { intersectEverything } from '../test/intersect';
 import css from '../../styles.css?raw';
 import '../i18n';
 import SkillsList from './About/SkillsList';
@@ -117,9 +118,12 @@ describe('round 6 fixes', () => {
     });
   });
 
-  it('styles Send message like View experience (the live wine fill)', () => {
+  it('styles Send message like View experience (the live wine fill)', async () => {
+    intersectEverything();
     render(<MemoryRouter><Contact /></MemoryRouter>);
-    const send = screen.getByRole('button', { name: /Send message/ });
+    const send = await screen.findByRole('button', { name: /Send message/ }, { timeout: 8000 });
+
+    vi.unstubAllGlobals();
 
     // The primary button, like View experience in the hero: the live wine fill.
     expect(send).toHaveClass('bg-wine-flow');

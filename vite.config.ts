@@ -2,9 +2,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const VENDOR = /[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|@remix-run|i18next|react-i18next|framer-motion)[\\/]/;
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Libraries change far less often than the app: a separate chunk stays cached across deploys.
+        manualChunks: (id) => (VENDOR.test(id) ? 'vendor' : undefined),
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],

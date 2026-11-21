@@ -1,7 +1,8 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { HashRouter } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { intersectEverything } from '../test/intersect';
 import '../i18n';
 import About from './About';
 import Experience from './Experience';
@@ -155,15 +156,21 @@ describe('Contact', () => {
     vi.mocked(emailjs.sendForm).mockResolvedValue({ status: 200, text: 'OK' });
   });
 
-  const renderContact = () =>
+  // The form loads on demand; wait for it so every test sees the whole section.
+  const renderContact = async () => {
+    intersectEverything();
     render(
       <HashRouter>
         <Contact />
       </HashRouter>,
     );
+    await screen.findByRole('button', { name: /Send message/ }, { timeout: 8000 });
+  };
 
-  it('renders the headline, the lead line and the email link', () => {
-    renderContact();
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('renders the headline, the lead line and the email link', async () => {
+    await renderContact();
     expect(screen.getByText(/Let.s build something precise\./)).toBeInTheDocument();
     expect(screen.getByText(/The fastest way to reach me is Telegram or email\./)).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /Contact/ })).toBeInTheDocument();
@@ -173,8 +180,8 @@ describe('Contact', () => {
     );
   });
 
-  it('groups the rows into Direct and Profiles & documents', () => {
-    renderContact();
+  it('groups the rows into Direct and Profiles & documents', async () => {
+    await renderContact();
     const direct = screen.getByRole('list', { name: 'Direct' });
     const profiles = screen.getByRole('list', { name: 'Profiles & documents' });
 
@@ -188,8 +195,8 @@ describe('Contact', () => {
     expect(within(profiles).getByText('CV')).toBeInTheDocument();
   });
 
-  it('links Telegram, WhatsApp, LinkedIn and both GitHub profiles in a new tab', () => {
-    renderContact();
+  it('links Telegram, WhatsApp, LinkedIn and both GitHub profiles in a new tab', async () => {
+    await renderContact();
     const expected: [RegExp, string][] = [
       [/Telegram @oleksandrbryksin/, 'https://t.me/oleksandrbryksin'],
       [/WhatsApp @oleksandrbryksin/, 'https://wa.me/380635383049'],
@@ -207,8 +214,8 @@ describe('Contact', () => {
     }
   });
 
-  it('shows the phone number as a tel: link with a copy action', () => {
-    renderContact();
+  it('shows the phone number as a tel: link with a copy action', async () => {
+    await renderContact();
     const direct = screen.getByRole('list', { name: 'Direct' });
     const row = within(direct).getByText('Phone').closest('li')!;
     const link = within(row).getByRole('link', { name: /Phone \+380 63 538 3049/ });
@@ -218,8 +225,8 @@ describe('Contact', () => {
     expect(within(row).getByRole('button', { name: 'Copy phone number' })).toBeInTheDocument();
   });
 
-  it('opens the WhatsApp chat on wa.me in a new tab, with no copy action', () => {
-    renderContact();
+  it('opens the WhatsApp chat on wa.me in a new tab, with no copy action', async () => {
+    await renderContact();
     const direct = screen.getByRole('list', { name: 'Direct' });
     const row = within(direct).getByText('WhatsApp').closest('li')!;
 
@@ -231,7 +238,7 @@ describe('Contact', () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
 
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
-    renderContact();
+    await renderContact();
     const copy = screen.getByRole('button', { name: 'Copy email address' });
 
     expect(copy.tagName).toBe('BUTTON');
@@ -246,14 +253,14 @@ describe('Contact', () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
 
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
-    renderContact();
+    await renderContact();
     fireEvent.click(screen.getByRole('button', { name: 'Copy phone number' }));
     expect(writeText).toHaveBeenCalledWith('+380635383049');
     expect(await screen.findByText('Copied')).toBeInTheDocument();
   });
 
-  it('offers both CV downloads and links View CV to the cv page', () => {
-    renderContact();
+  it('offers both CV downloads and links View CV to the cv page', async () => {
+    await renderContact();
     const rn = screen.getByRole('link', { name: /CV · React Native/ });
 
     expect(rn).toHaveAttribute('href', '/cv/oleksandr-bryksin-react-native-cv.pdf');
@@ -265,8 +272,8 @@ describe('Contact', () => {
     expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
   });
 
-  it('titles the form, shows the status line and the Telegram hint', () => {
-    renderContact();
+  it('titles the form, shows the status line and the Telegram hint', async () => {
+    await renderContact();
     expect(screen.getByRole('heading', { level: 3, name: 'Write a message' })).toBeInTheDocument();
     expect(screen.getByText(/Open to work · replies within 24h/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Or write on Telegram/ })).toHaveAttribute(
@@ -276,7 +283,7 @@ describe('Contact', () => {
   });
 
   it('shows validation errors and does not send an empty form', async () => {
-    renderContact();
+    await renderContact();
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     expect(await screen.findByText('Subject is required.')).toBeInTheDocument();
     expect(screen.getByText('Message is required.')).toBeInTheDocument();
@@ -284,7 +291,7 @@ describe('Contact', () => {
   });
 
   it('shows the translated message for an invalid email format', async () => {
-    renderContact();
+    await renderContact();
     fireEvent.change(screen.getByPlaceholderText('you@company.com'), { target: { value: 'not-an-email' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     expect(await screen.findByText('Email is invalid')).toBeInTheDocument();
@@ -296,7 +303,7 @@ describe('Contact', () => {
     vi.mocked(emailjs.sendForm).mockReturnValueOnce(new Promise<never>((r) => {
       resolve = () => r(undefined as never);
     }));
-    renderContact();
+    await renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
@@ -310,7 +317,7 @@ describe('Contact', () => {
   });
 
   it('sends a valid form through EmailJS', async () => {
-    renderContact();
+    await renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });

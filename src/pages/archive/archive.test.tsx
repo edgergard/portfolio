@@ -131,10 +131,12 @@ describe('ArchivePage', () => {
 });
 
 describe('route', () => {
-  it('Root registers /projects', () => {
+  it('Root registers /projects (a lazy route)', async () => {
     window.location.hash = '#/projects';
     render(<Root />);
-    expect(screen.getByRole('heading', { level: 1, name: 'All projects' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'All projects' }, { timeout: 8000 }),
+    ).toBeInTheDocument();
     window.location.hash = '';
   });
 
