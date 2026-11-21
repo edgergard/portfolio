@@ -6,7 +6,7 @@ const label = 'font-mono text-xs uppercase tracking-[.06em]';
 
 const Block = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="mt-14">
-    <h2 className={`${label} mb-5 text-muted`}>{title}</h2>
+    <h2 className={`${label} mb-5 flex items-center gap-2.5 text-muted before:h-px before:w-4 before:bg-wine-3 before:content-['']`}>{title}</h2>
     {children}
   </section>
 );
@@ -14,7 +14,7 @@ const Block = ({ title, children }: { title: string; children: ReactNode }) => (
 const Bullets = ({ items, className }: { items: string[]; className: string }) => (
   <ul className={`${className} grid max-w-[64ch] list-none gap-2 text-base leading-[1.55] text-ink-2`}>
     {items.map(b => (
-      <li key={b} className="relative pl-5 before:absolute before:left-0 before:text-[#5A5A60] before:content-['—']">
+      <li key={b} className="relative pl-5 before:absolute before:left-0 before:text-wine-3 before:content-['—']">
         {b}
       </li>
     ))}
@@ -30,7 +30,7 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
       <ul className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-muted-2">
         {doc.contacts.map(c => (
           <li key={c.href}>
-            <a href={c.href} className="transition-colors hover:text-wine-3">
+            <a href={c.href} className="border-b border-wine-3/70 pb-px transition-colors hover:text-wine-3">
               {c.label}
             </a>
           </li>
@@ -47,12 +47,12 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
               <div className={`${label} pt-2 text-muted-2`}>{job.period}</div>
               <div>
                 <h3 className="text-[26px] font-medium tracking-[-0.025em]">
-                  {job.role} <span className="font-normal text-muted-2">· {job.company}</span>
+                  {job.role} <span className="font-normal text-[#FF8A9B]">· {job.company}</span>
                 </h3>
                 <Bullets items={job.bullets} className="mt-4" />
                 {job.projects?.map(p => (
                   <div key={p.title} data-testid="cv-project" className="mt-7">
-                    <h4 className="text-lg font-medium tracking-[-0.01em]">
+                    <h4 className="text-lg font-medium tracking-[-0.01em] text-[#FFC2CC]">
                       {p.title}
                       {p.stack && <span className="ml-3 font-mono text-[11px] font-normal tracking-[.04em] text-muted">{p.stack}</span>}
                     </h4>

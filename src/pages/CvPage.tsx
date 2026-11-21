@@ -10,7 +10,7 @@ import './cv/print.css';
 
 const pillClass = (on: boolean) =>
   `rounded-full border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[.06em] transition-colors ${
-    on ? 'border-wine text-ink' : 'border-chip text-muted-2 hover:text-ink'
+    on ? 'border-wine-3 bg-wine/25 text-ink' : 'border-chip text-muted-2 hover:text-ink'
   }`;
 
 type Option<T> = { value: T; label: string };
