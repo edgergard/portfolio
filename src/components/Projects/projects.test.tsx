@@ -170,13 +170,13 @@ describe('Projects section', () => {
     renderSection();
     const rows = screen.getAllByTestId('project-row');
     const sourcesOf = (row: HTMLElement) => [...row.querySelectorAll('video source')].map(s => s.getAttribute('src'));
-    // Served from public/videos at the site root; the video poster stays a plain URL.
+    // Served from public/videos at the site root; the poster frame stays a plain URL.
     const base = '/';
 
     expect(sourcesOf(rows[0])).toEqual([`${base}videos/pokemon.webm`, `${base}videos/pokemon.mp4`]);
     expect(sourcesOf(rows[1])).toEqual([`${base}videos/weather.webm`, `${base}videos/weather.mp4`]);
     expect(sourcesOf(rows[2])).toEqual([`${base}videos/rick-and-morty.webm`, `${base}videos/rick-and-morty.mp4`]);
-    expect(rows[1].querySelector('video')).toHaveAttribute('poster', `${base}videos/weather.jpg`);
+    expect(rows[1].querySelector('img')).toHaveAttribute('src', `${base}videos/weather.jpg`);
   });
 
   it('gives the media the same column width in every row, whichever side it sits on', () => {
@@ -303,12 +303,24 @@ describe('ProjectMedia', () => {
     expect(video).toHaveAttribute('loop');
     expect(video).toHaveAttribute('playsinline');
     expect(video).toHaveAttribute('preload', 'none');
-    expect(video).toHaveAttribute('poster', withVideo.poster);
+    expect(video).not.toHaveAttribute('poster');
     expect(video).not.toHaveAttribute('autoplay');
     expect([...video.querySelectorAll('source')].map(s => [s.getAttribute('src'), s.getAttribute('type')])).toEqual([
       ['/v/demo.webm', 'video/webm'],
       ['/v/demo.mp4', 'video/mp4'],
     ]);
+  });
+
+  // A video poster attribute is fetched at full size during page load; the lazy image is not.
+  it('shows the poster frame as a lazy image under the video', () => {
+    const { container } = render(<ProjectMedia project={withVideo} />);
+    const img = container.querySelector('img')!;
+
+    expect(img).toHaveAttribute('src', withVideo.poster);
+    expect(img).toHaveAttribute('loading', 'lazy');
+    expect(img).toHaveAttribute('sizes', POSTER_SIZES);
+    expect(img.nextElementSibling).toBe(container.querySelector('video'));
+    expect(container.querySelector('video')).toHaveClass('relative');
   });
 
   it('plays while at least a quarter is in view and pauses otherwise', () => {

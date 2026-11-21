@@ -36,23 +36,27 @@ const Screen = ({ project }: Props) => {
 
   if (sources) {
     return (
-      <video
-        ref={video}
-        muted
-        // React compares the muted property during hydration and always reports a mismatch for
-        // prerendered <video muted>; useInViewVideo sets the property, so the warning is noise.
-        suppressHydrationWarning
-        loop
-        playsInline
-        preload="none"
-        // Recorded loops keep a plain /videos URL as their poster frame.
-        poster={typeof poster === 'string' ? poster : poster.src}
-        aria-hidden
-        className="block h-full w-full object-cover"
-      >
-        {sources.webm && <source src={sources.webm} type="video/webm" />}
-        {sources.mp4 && <source src={sources.mp4} type="video/mp4" />}
-      </video>
+      <>
+        {/* The poster frame as a lazy, resized image under the video (not the video's poster
+            attribute, which the browser fetches at full size during page load). The video is
+            transparent until it plays, then covers it. */}
+        <Image src={poster} alt="" fill sizes={POSTER_SIZES} loading="lazy" className="block h-full w-full object-cover" />
+        <video
+          ref={video}
+          muted
+          // React compares the muted property during hydration and always reports a mismatch for
+          // prerendered <video muted>; useInViewVideo sets the property, so the warning is noise.
+          suppressHydrationWarning
+          loop
+          playsInline
+          preload="none"
+          aria-hidden
+          className="relative block h-full w-full object-cover"
+        >
+          {sources.webm && <source src={sources.webm} type="video/webm" />}
+          {sources.mp4 && <source src={sources.mp4} type="video/mp4" />}
+        </video>
+      </>
     );
   }
 
