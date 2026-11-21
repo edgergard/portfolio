@@ -21,7 +21,13 @@ const app = (
   </React.StrictMode>
 );
 
-if (shouldHydrate({ hash: window.location.hash, locale: readLocale(), hasMarkup: container.firstElementChild !== null })) {
+const hydrate = shouldHydrate({
+  hash: window.location.hash,
+  locale: readLocale(),
+  hasMarkup: container.firstElementChild !== null,
+});
+
+if (hydrate) {
   ReactDOM.hydrateRoot(container, app);
 } else {
   // Drop the prerendered English home page (or the dev placeholder comment) and render as before.
