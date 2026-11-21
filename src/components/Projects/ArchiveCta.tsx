@@ -58,6 +58,7 @@ const ArchiveCta = () => {
             alt=""
             width={64}
             height={40}
+            quality={90}
             loading="lazy"
             className="-ml-3.5 h-10 w-16 rounded-lg border-2 border-[#1a0a0e] object-cover object-top"
           />

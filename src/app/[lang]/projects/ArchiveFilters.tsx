@@ -45,7 +45,7 @@ const Row = ({ project }: { project: Project }) => {
     >
       <td className={`${CELL} w-[76px] max-[899px]:row-span-4`}>
         <div className="h-10 w-[60px] overflow-hidden rounded-lg border border-chip">
-          <Image src={poster} alt="" width={60} height={40} loading="lazy" className="h-full w-full object-cover" />
+          <Image src={poster} alt="" width={60} height={40} quality={90} loading="lazy" className="h-full w-full object-cover" />
         </div>
       </td>
       <td className={`${CELL} w-20 font-mono text-[13px] text-muted-2 max-[899px]:order-2 max-[899px]:col-start-2`}>
