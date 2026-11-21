@@ -8,7 +8,7 @@ const Certifications = () => {
   const { t } = useTranslation();
 
   return (
-    <Section id="certifications" index={3} labelKey="section_certifications">
+    <Section id="certifications" index={4} labelKey="section_certifications">
       <div className="grid grid-cols-1 gap-6 min-[900px]:grid-cols-2">
         {CERTIFICATES.map(cert => (
           <Reveal key={cert.id} testId="cert-card" className="wine-edge flex">

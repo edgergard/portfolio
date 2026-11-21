@@ -13,6 +13,7 @@ module.exports = {
         wine: '#8B1426',
         'wine-2': '#B3122E',
         'wine-3': '#D0213F',
+        rule: '#3A3A40',
       },
       fontFamily: {
         sans: ['Geist', 'system-ui', 'sans-serif'],

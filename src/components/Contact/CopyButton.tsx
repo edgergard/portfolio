@@ -38,8 +38,8 @@ const CopyButton = ({ value, labelKey }: Props) => {
   };
 
   const state = copied
-    ? 'border-wine-2 text-ink'
-    : 'border-[#3A3A40] text-[#E6E6EA] hover:border-wine-2 hover:text-ink group-hover:border-wine-2 group-hover:text-ink';
+    ? 'border-white bg-white/10 text-white'
+    : 'border-white/25 text-white/90 hover:border-white hover:text-white group-hover:border-white/60';
 
   return (
     <>
@@ -51,7 +51,7 @@ const CopyButton = ({ value, labelKey }: Props) => {
         className={
           'inline-flex h-9 shrink-0 items-center rounded-full border px-3 sm:px-3.5 font-mono text-[13px] tracking-[.02em] '
           + 'transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 '
-          + `focus-visible:outline-ink ${state}`
+          + `focus-visible:outline-white ${state}`
         }
       >
         {copied ? t('contact_copied') : t('contact_copy')}

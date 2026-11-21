@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import WineSurface from '../Wine/WineSurface';
 
 type Props = {
   id: string;
@@ -13,27 +14,62 @@ type Props = {
    * next section's top border (the band keeps its own inner padding).
    */
   bleed?: ReactNode;
+  /**
+   * Puts the whole section (label and content) on a full-bleed band of the live Wine shader.
+   * The label turns light to read on the wine; content should bring its own glass panels.
+   */
+  band?: boolean;
 };
 
 /** The centred content column every section shares (width and side gutters). */
 export const COLUMN = 'mx-auto max-w-[1120px] px-6 min-[900px]:px-10';
 
+const TOP = 'pt-20 min-[900px]:pt-[112px]';
 const BOTTOM = 'pb-20 min-[900px]:pb-[112px]';
 
-const Section = ({ id, index, labelKey, children, bleed }: Props) => {
+/** The chrome of every full-bleed Wine band: CSS wine-flow fill, hairlines, soft wine glow. */
+export const BAND
+  = 'bg-wine-flow border-y border-white/10 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none';
+
+/** Dark glass panel that keeps text readable over a Wine band. */
+export const GLASS = 'rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] backdrop-blur-[14px]';
+
+const Heading = ({ id, index, label, onWine }: { id: string; index: number; label: string; onWine: boolean }) => (
+  <h2
+    id={`${id}-heading`}
+    data-on-wine={onWine || undefined}
+    className={
+      'mb-10 flex items-center justify-center gap-3 text-center font-mono text-[13px] font-normal uppercase tracking-[.08em] min-[900px]:mb-14 '
+      + (onWine ? 'text-white [text-shadow:0_1px_12px_rgba(10,10,11,0.45)]' : 'text-ink-2')
+    }
+  >
+    <b className={`font-medium ${onWine ? 'text-white' : 'text-wine-2'}`}>{String(index).padStart(2, '0')}</b>
+    <i aria-hidden className={`inline-block h-px w-6 ${onWine ? 'bg-white/60' : 'bg-rule'}`} />
+    <span>{label}</span>
+  </h2>
+);
+
+const Section = ({ id, index, labelKey, children, bleed, band = false }: Props) => {
   const { t } = useTranslation();
+
+  if (band) {
+    return (
+      <section id={id} aria-labelledby={`${id}-heading`} className="bg-bg text-white">
+        <div data-testid={`${id}-band`} className={`${BAND} ${TOP} ${BOTTOM}`}>
+          <WineSurface />
+          <div className={`relative ${COLUMN}`}>
+            <Heading id={id} index={index} label={t(labelKey)} onWine />
+            <div>{children}</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-line bg-bg text-ink">
-      <div className={`${COLUMN} pt-20 min-[900px]:pt-[112px] ${bleed ? '' : BOTTOM}`}>
-        <h2
-          id={`${id}-heading`}
-          className="mb-10 flex items-center justify-center gap-3 text-center font-mono text-[13px] font-normal uppercase tracking-[.08em] text-ink-2 min-[900px]:mb-14"
-        >
-          <b className="font-medium text-wine-2">{String(index).padStart(2, '0')}</b>
-          <i aria-hidden className="inline-block h-px w-6 bg-[#3A3A40]" />
-          <span>{t(labelKey)}</span>
-        </h2>
+      <div className={`${COLUMN} ${TOP} ${bleed ? '' : BOTTOM}`}>
+        <Heading id={id} index={index} label={t(labelKey)} onWine={false} />
         <div>{children}</div>
       </div>
       {bleed}
