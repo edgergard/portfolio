@@ -1,6 +1,7 @@
 import { Component, lazy, Suspense, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
+import { useCurrentTheme } from '../../theme';
 import { useIdleWebGL, usePrefersReducedMotion } from './sceneSupport';
 
 // Lazy so three.js stays out of the main bundle and the text paints first.
@@ -106,6 +107,7 @@ const DocIcon = () => (
 const Hero = () => {
   const { t } = useTranslation();
   const reducedMotion = usePrefersReducedMotion();
+  const theme = useCurrentTheme();
   const [fps, setFps] = useState<number | null>(null);
   // Probed once, when idle (the gradient shows meanwhile).
   const webGL = useIdleWebGL();
@@ -168,7 +170,7 @@ const Hero = () => {
           <p className="pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-white/50 min-[900px]:flex">
             <span>{t('hero_caption_figure')}</span>
             <span aria-hidden>·</span>
-            <span>{t('hero_caption_material')}</span>
+            <span>{t(theme === 'light' ? 'hero_caption_material_light' : 'hero_caption_material')}</span>
             <span aria-hidden>·</span>
             <span>
               <b className="font-medium text-white">{fps === null ? '—' : fps}</b> {t('hero_caption_fps')}

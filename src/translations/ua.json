@@ -116,6 +116,7 @@
   "hero_open": "Відкритий до роботи",
   "hero_caption_figure": "Рис. 01 — Тороїдальний вузол (2,3)",
   "hero_caption_material": "Обсидіан",
+  "hero_caption_material_light": "Порцеляна",
   "hero_caption_fps": "fps",
   "cv_switch_rn": "React Native",
   "cv_switch_fe": "Frontend",

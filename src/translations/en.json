@@ -116,6 +116,7 @@
   "hero_open": "Open to work",
   "hero_caption_figure": "Fig. 01 — Torus knot (2,3)",
   "hero_caption_material": "Obsidian",
+  "hero_caption_material_light": "Porcelain",
   "hero_caption_fps": "fps",
   "cv_switch_rn": "React Native",
   "cv_switch_fe": "Frontend",
