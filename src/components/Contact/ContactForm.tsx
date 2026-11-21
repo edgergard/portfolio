@@ -177,7 +177,7 @@ const ContactForm = () => {
             {t('contact_form_telegram')}
             <ArrowUpRightIcon size={14} />
           </a>
-          <Button type="submit" variant="edge" size="sm" disabled={isLoading} aria-busy={isLoading}>
+          <Button type="submit" variant="ring" size="sm" disabled={isLoading} aria-busy={isLoading}>
             {isLoading ? t('send_sending') : `${t('send_message')} →`}
           </Button>
         </div>

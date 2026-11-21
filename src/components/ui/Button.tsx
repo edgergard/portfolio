@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import WineCanvas from './WineCanvas';
 
-export type ButtonVariant = 'primary' | 'outline' | 'edge';
+export type ButtonVariant = 'primary' | 'outline' | 'edge' | 'ring';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 type Style = { variant?: ButtonVariant; size?: ButtonSize; className?: string };
@@ -29,6 +29,9 @@ const VARIANTS: Record<ButtonVariant, string> = {
   edge:
     'wine-edge wine-edge--bright relative isolate rounded-full hover:brightness-[1.2] '
     + "before:pointer-events-none before:absolute before:inset-px before:-z-[1] before:rounded-full before:bg-surface before:content-['']",
+  // The same animated wine frame as `edge`, drawn as a 1px ring (.wine-ring) over a transparent
+  // inside, so whatever is behind the button shows through.
+  ring: 'wine-ring rounded-full hover:brightness-[1.2]',
 };
 
 /** Class list for a button-looking element; use it when you can't render <Button>. */

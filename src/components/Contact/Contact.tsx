@@ -54,7 +54,7 @@ const ProfileRow = ({ id }: { id: Social['id'] }) => {
 
   return (
     <li>
-      <a href={s.href} target="_blank" rel="noopener noreferrer" className={`${ROW} ${FOCUS}`}>
+      <a href={s.href} target="_blank" rel="noopener noreferrer" data-row className={`${ROW} ${FOCUS}`}>
         <Tile><BrandIcon brand={BRAND[id]} /></Tile>
         <Text name={s.label} handle={s.handle} />
         <span className={`ml-auto ${CIRCLE}`}><ArrowUpRightIcon /></span>
@@ -68,7 +68,7 @@ const Group = ({ id, title, children }: { id: string; title: string; children: R
     <h3 id={id} className="mb-1.5 font-mono text-[13px] font-normal uppercase tracking-[.07em] text-white/70">
       {title}
     </h3>
-    <ul aria-labelledby={id} className="[&>li:last-child>a]:border-b-0 [&>li:last-child]:border-b-0">
+    <ul aria-labelledby={id} className="[&>li:last-child>[data-row]]:border-b-0 [&>li:last-child]:border-b-0">
       {children}
     </ul>
   </div>

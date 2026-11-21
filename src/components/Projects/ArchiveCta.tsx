@@ -31,7 +31,7 @@ const ArchiveCta = () => {
       data-testid="archive-cta"
       className={
         `${GLASS} group flex w-full items-center gap-5 py-5 pl-6 pr-5 text-white transition-colors duration-200 `
-        + 'hover:border-white/30 hover:bg-[rgba(10,10,11,0.65)] focus-visible:outline focus-visible:outline-2 '
+        + 'hover:border-wine-3/80 hover:bg-[rgba(10,10,11,0.65)] focus-visible:outline focus-visible:outline-2 '
         + 'focus-visible:outline-offset-4 focus-visible:outline-white min-[900px]:gap-6 min-[900px]:pl-8'
       }
     >

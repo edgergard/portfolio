@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import css from '../../styles.css?raw';
 import '../i18n';
 import SkillsList from './About/SkillsList';
-import { magnifyAt, MAGNIFY_RADIUS } from './About/useMagnify';
+import { GROW, lensScale, rowShifts, SHRINK } from './About/useMagnify';
 import Certifications from './Certifications';
 import Contact from './Contact';
 import ArchiveCta from './Projects/ArchiveCta';
@@ -29,44 +29,63 @@ describe('Core stack lens', () => {
 
   afterEach(() => vi.unstubAllGlobals());
 
-  it('falls off smoothly from 1 under the pointer to 0 at the radius', () => {
-    expect(magnifyAt(0, 0)).toBe(1);
-    expect(magnifyAt(MAGNIFY_RADIUS / 2, 0)).toBeGreaterThan(0.3);
-    expect(magnifyAt(MAGNIFY_RADIUS / 2, 0)).toBeLessThan(0.7);
-    expect(magnifyAt(MAGNIFY_RADIUS, 0)).toBe(0);
+  it('grows the chip at the pointer, shrinks its neighbours, leaves far chips alone', () => {
+    expect(lensScale(0)).toBeCloseTo(1 + GROW, 3);
+    expect(lensScale(80)).toBeLessThan(1);
+    expect(lensScale(80)).toBeGreaterThan(1 - SHRINK - 0.01);
+    expect(lensScale(400)).toBeCloseTo(1, 3);
+    expect(lensScale(0, 0)).toBe(1);
   });
 
-  it('grows the chip under the pointer more than its neighbour, and resets on leave', () => {
-    const rows = [{ group: 'Web', items: ['A', 'B', 'C'] }];
+  it('moves neighbours aside so scaled chips never overlap', () => {
+    const row = [0, 1, 2, 3, 4].map(i => ({ left: i * 86, width: 80 }));
+    const scales = row.map(c => lensScale(2 * 86 + 40 - (c.left + 40)));
+    const shifts = rowShifts(row, scales, 2);
+    const box = (i: number) => {
+      const cx = row[i].left + 40 + shifts[i];
+
+      return [cx - 40 * scales[i], cx + 40 * scales[i]];
+    };
+
+    expect(shifts[2]).toBe(0);
+    for (let i = 0; i < 4; i++) {
+      expect(box(i)[1]).toBeLessThanOrEqual(box(i + 1)[0] + 0.001);
+    }
+  });
+
+  it('reacts only in the row under the pointer, and settles on leave', () => {
+    const rows = [{ group: 'Web', items: ['A', 'B', 'C'] }, { group: 'Mobile', items: ['D', 'E'] }];
 
     render(<SkillsList rows={rows} magnify itemTestId="chip" data-testid="list" />);
     const chips = screen.getAllByTestId('chip');
 
     chips.forEach((chip, i) => {
-      const rect = { left: i * 80, top: 0, width: 60, height: 24 } as DOMRect;
+      const row = i < 3 ? 0 : 1;
+      const rect = { left: (i % 3) * 80, top: row * 40, width: 60, height: 24 } as DOMRect;
 
       chip.getBoundingClientRect = () => rect;
     });
 
     const list = screen.getByTestId('list');
-
     // jsdom has no PointerEvent; a MouseEvent with the pointer type carries clientX/Y.
-    const pointer = (type: string) => new MouseEvent(type, { clientX: 30, clientY: 12 });
+    const pointer = (type: string) => new MouseEvent(type, { clientX: 110, clientY: 12 });
+    const num = (el: HTMLElement, v: string) => parseFloat(el.style.getPropertyValue(v));
 
     list.dispatchEvent(pointer('pointerenter'));
     list.dispatchEvent(pointer('pointermove'));
     flushFrames();
-    const m = chips.map(c => Number(c.style.getPropertyValue('--m')));
 
-    expect(m[0]).toBeCloseTo(1, 2);
-    expect(m[1]).toBeGreaterThan(0);
-    expect(m[1]).toBeLessThan(m[0]);
-    expect(m[2]).toBe(0);
-    expect(chips[0]).toHaveClass('glass-chip');
+    expect(num(chips[1], '--s')).toBeGreaterThan(1.2);
+    expect(num(chips[0], '--s')).toBeLessThan(1);
+    expect(num(chips[2], '--s')).toBeLessThan(1);
+    expect(num(chips[0], '--tx')).toBeLessThan(0);
+    expect(num(chips[2], '--tx')).toBeGreaterThan(0);
+    expect(num(chips[3], '--s')).toBe(1);
+    expect(num(chips[4], '--s')).toBe(1);
 
     list.dispatchEvent(new MouseEvent('pointerleave'));
     flushFrames();
-    chips.forEach(c => expect(c.style.getPropertyValue('--m')).toBe('0.000'));
+    chips.forEach(c => expect(num(c, '--s')).toBe(1));
   });
 
   it('leaves the CV list without the lens', () => {
@@ -75,10 +94,11 @@ describe('Core stack lens', () => {
     expect(screen.getByTestId('chip')).not.toHaveAttribute('data-chip');
   });
 
-  it('scales and brightens chips from --m in the stylesheet', () => {
-    const block = css.slice(css.indexOf('.glass-chip {'));
+  it('scales, shifts and brightens chips from the lens variables, without will-change', () => {
+    const block = css.slice(css.indexOf('.glass-chip {'), css.indexOf('}', css.indexOf('.glass-chip {')));
 
-    expect(block).toMatch(/transform: scale\(calc\(1 \+ var\(--m\)/);
+    expect(block).toMatch(/transform: translateX\(var\(--tx\)\) scale\(var\(--s\)\)/);
+    expect(block).not.toMatch(/will-change/);
     expect(block).toMatch(/backdrop-filter: blur\(calc\(/);
     expect(block).toMatch(/transition:/);
   });
@@ -97,12 +117,14 @@ describe('round 6 fixes', () => {
     });
   });
 
-  it('styles Send message like View CV (edge), not the wine fill', () => {
+  it('styles Send message with the View CV frame over a transparent inside', () => {
     render(<MemoryRouter><Contact /></MemoryRouter>);
     const send = screen.getByRole('button', { name: /Send message/ });
 
-    expect(send).toHaveClass('wine-edge');
+    // The View CV frame as a ring over a transparent inside.
+    expect(send).toHaveClass('wine-ring');
     expect(send).not.toHaveClass('bg-wine-flow');
+    expect(send.className).not.toMatch(/before:bg-/);
   });
 
   it('does not light the CV arrow when the rest of the CV row is hovered', () => {
@@ -111,6 +133,8 @@ describe('round 6 fixes', () => {
     const row = cvLink.closest('li')!;
 
     expect(row).not.toHaveClass('group');
+    // The last-row rule drops only row hairlines ([data-row]), never the arrow circle's border.
+    expect(cvLink).not.toHaveAttribute('data-row');
     expect(within(row).getAllByRole('link').length).toBeGreaterThan(1);
   });
 
@@ -121,6 +145,11 @@ describe('round 6 fixes', () => {
     expect(arrow).toHaveClass('bg-wine-flow', 'text-white');
     expect(arrow).not.toHaveClass('bg-white');
     expect(arrow.querySelector('canvas')).not.toBeNull();
+  });
+
+  it('fills the header name with the animated wine', () => {
+    expect(css).toMatch(/\.wine-text \{[^}]*background-clip: text/);
+    expect(css).toMatch(/\.wine-text \{[^}]*animation: wine-text/);
   });
 
   it('keeps the dark palette inside wine bands in the light theme', () => {

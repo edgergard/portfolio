@@ -317,16 +317,19 @@ body {
 }
 
 /*
- * .glass-chip: the Core stack lens (useMagnify sets --m, 0..1, by distance to the pointer).
- * Near the pointer a chip grows and turns into brighter "liquid glass": stronger blur and
- * saturation of the wine behind it, a lighter rim and a top highlight, a soft drop shadow.
- * Transitions smooth the motion between pointer frames.
+ * .glass-chip: the Core stack lens (useMagnify sets --s scale, --tx shift and --m glass, 0..1).
+ * The chip at the pointer grows into brighter "liquid glass" (stronger blur and saturation of the
+ * wine behind it, a lighter rim, a top highlight, a soft shadow); its neighbours shrink and slide
+ * aside. No will-change: a promoted layer would keep the text rasterised at its old size and look
+ * blurry when scaled; without it the browser re-rasterises the text sharp at the new scale.
  */
 @layer components {
   .glass-chip {
+    --s: 1;
+    --tx: 0px;
     --m: 0;
     position: relative;
-    transform: scale(calc(1 + var(--m) * 0.42));
+    transform: translateX(var(--tx)) scale(var(--s));
     border-color: rgba(255, 255, 255, calc(0.2 + var(--m) * 0.45));
     background-color: rgba(10, 10, 11, calc(0.4 - var(--m) * 0.22));
     backdrop-filter: blur(calc(2px + var(--m) * 10px)) saturate(calc(100% + var(--m) * 90%));
@@ -334,12 +337,86 @@ body {
       inset 0 1px 0 rgba(255, 255, 255, calc(0.06 + var(--m) * 0.45)),
       inset 0 -6px 12px rgba(255, 255, 255, calc(var(--m) * 0.08)),
       0 10px 26px -12px rgba(10, 10, 11, calc(var(--m) * 0.75));
+    -webkit-font-smoothing: antialiased;
     transition:
-      transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      border-color 220ms ease,
-      background-color 220ms ease,
-      box-shadow 220ms ease,
-      backdrop-filter 220ms ease;
-    will-change: transform;
+      transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 240ms ease,
+      background-color 240ms ease,
+      box-shadow 240ms ease,
+      backdrop-filter 240ms ease;
+  }
+}
+
+/*
+ * .wine-ring: the .wine-edge--bright frame as a 1px ring only (masked to the border box minus
+ * the content box), so the element's inside stays transparent. Used by the ring button.
+ */
+@layer components {
+  .wine-ring {
+    position: relative;
+    isolation: isolate;
+    background: transparent;
+  }
+
+  .wine-ring::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      140deg,
+      rgba(208, 33, 63, 1),
+      rgba(139, 20, 38, 0.45) 40%,
+      rgba(184, 35, 63, 0.95) 75%,
+      rgba(208, 33, 63, 0.45)
+    );
+    background-size: 220% 220%;
+    animation: wine-edge calc(6s * var(--wine-slow)) ease-in-out infinite alternate;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+/*
+ * .wine-text: text filled with a drifting wine gradient (the header name). Brighter stops in
+ * the dark theme so it reads on black; deeper ones in the light theme.
+ */
+@layer components {
+  .wine-text {
+    background-image: linear-gradient(
+      100deg,
+      #D0213F 0%,
+      #FF6B81 18%,
+      #B8233F 36%,
+      #FF4D63 54%,
+      #E0405C 72%,
+      #D0213F 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: wine-text calc(8s * var(--wine-slow)) ease-in-out infinite alternate;
+  }
+
+  :root[data-theme='light'] .wine-text {
+    background-image: linear-gradient(
+      100deg,
+      #8B1426 0%,
+      #D0213F 18%,
+      #5E0D1D 36%,
+      #B3122E 54%,
+      #3E0712 72%,
+      #8B1426 100%
+    );
+  }
+
+  @keyframes wine-text {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
   }
 }
