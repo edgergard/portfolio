@@ -10,7 +10,7 @@ import { GLASS } from '../components/layout/Section';
 type Filter = 'all' | 'mobile' | 'web' | 'commercial';
 
 const MONO = 'font-mono uppercase';
-const TH = `${MONO} pb-3 text-left text-[11px] font-normal tracking-[.08em] text-muted`;
+const TH = `archive-th ${MONO} pb-3 text-left text-[11px] font-normal tracking-[.08em] text-muted`;
 const CELL = 'min-[900px]:py-[18px] min-[900px]:align-middle';
 
 const filterClass = (on: boolean) =>

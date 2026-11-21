@@ -36,7 +36,7 @@
   --c-ink-2: 68 68 75;
   --c-muted: 84 84 92;
   --c-muted-2: 76 76 83;
-  --c-line: 231 224 220;
+  --c-line: 219 210 205;
   --c-chip: 222 214 209;
   --c-rule: 200 191 186;
   --c-surface: 255 255 255;
@@ -45,7 +45,7 @@
   --c-soft-2: 50 50 55;
   --c-soft-3: 74 74 81;
   --c-rose: 179 18 46;
-  --c-open: 21 128 61;
+  --c-open: 22 101 52;
 }
 
 /* Wine bands keep the dark palette in the light theme too (see BAND in Section.tsx). */
@@ -357,4 +357,184 @@ body {
       box-shadow 240ms ease,
       backdrop-filter 240ms ease;
   }
+}
+
+/*
+ * Light theme polish (from a page-by-page colour and contrast audit). Every rule is scoped to
+ * :root[data-theme='light'], so the dark theme is untouched. Wine areas got a brighter shader in
+ * the light theme; these rules retint what sits on it (glass, small text, rings) to match.
+ */
+:root[data-theme='light'] .glass {
+  /* Wine-tinted glass instead of neutral black, which turned muddy brown on the brighter wine. */
+  background-color: rgba(60, 6, 18, 0.48);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme='light'] [data-testid='archive-cta']:hover {
+  background-color: rgba(60, 6, 18, 0.6);
+  border-color: rgba(255, 154, 171, 0.8);
+}
+
+:root[data-theme='light'] [data-testid='archive-cta'] img {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Small wine-3 text and hover rings on wine glass: a light rose that holds contrast there. */
+:root[data-theme='light'] [data-testid='project-row'] .text-wine-3 {
+  color: #FF9AAB;
+}
+
+:root[data-theme='light'] [data-testid='project-row'] a:hover {
+  border-color: #FF9AAB;
+}
+
+/* Softer, cleaner lift under Wine bands (the dark-tuned shadow read as a grey smudge on cream). */
+:root[data-theme='light'] .on-wine.bg-wine-flow {
+  box-shadow: 0 18px 48px -30px rgba(204, 46, 77, 0.35);
+}
+
+/* Small white text that sits directly on the brighter wine. */
+:root[data-theme='light'] .hero-caption {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 8px rgba(90, 8, 24, 0.45);
+}
+
+:root[data-theme='light'] .contact-lead {
+  color: #fff;
+  text-shadow: 0 1px 14px rgba(60, 6, 18, 0.45);
+}
+
+:root[data-theme='light'] .skills-band dt {
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(60, 6, 18, 0.5);
+}
+
+:root[data-theme='light'] [data-testid='xp-metric'] span {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(62, 7, 18, 0.55);
+}
+
+:root[data-theme='light'] [data-testid='xp-metric'] b,
+:root[data-theme='light'] .wine-badge {
+  text-shadow: 0 1px 2px rgba(62, 7, 18, 0.55);
+}
+
+/* Core stack chips: wine-tinted glass, a rim that reads. */
+:root[data-theme='light'] .skills-band dd > span {
+  background-color: rgba(90, 8, 24, 0.3);
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+:root[data-theme='light'] .glass-chip {
+  background-color: rgba(90, 8, 24, calc(0.3 - var(--m) * 0.16));
+  border-color: rgba(255, 255, 255, calc(0.34 + var(--m) * 0.4));
+}
+
+/* Form placeholders on the wine glass. */
+:root[data-theme='light'] .on-wine input::placeholder,
+:root[data-theme='light'] .on-wine textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Card frames: the faint stops of the animated frame vanished on the light page. */
+:root[data-theme='light'] .wine-edge:not(.wine-edge--bright) {
+  background-image: linear-gradient(
+    140deg,
+    rgba(184, 35, 63, 0.9),
+    rgba(184, 35, 63, 0.35) 40%,
+    rgba(150, 24, 44, 0.75) 75%,
+    rgba(184, 35, 63, 0.35)
+  );
+}
+
+/* Education cards: white to page, like the job cards (surface-2 is darker than bg in light). */
+:root[data-theme='light'] [data-testid='edu-card'] > div {
+  background-image: linear-gradient(200deg, #fff 0%, rgb(var(--c-bg)) 75%);
+}
+
+:root[data-theme='light'] [data-testid='xp-monogram'] {
+  background-image: linear-gradient(140deg, #CC2E4D, #7A1328);
+}
+
+/* Certificate: on-brand bar fill (not neon), visible track and divider. */
+:root[data-theme='light'] .cert-fill {
+  filter: brightness(1.05) saturate(1.05);
+  box-shadow: 0 0 10px rgba(165, 28, 54, 0.35);
+}
+
+:root[data-theme='light'] [data-testid='cert-bar'] {
+  background-color: rgb(var(--c-rule) / 0.55);
+}
+
+:root[data-theme='light'] #certifications .border-line {
+  border-color: rgb(var(--c-rule));
+}
+
+/* Toasts are light in the light theme; their dark-theme close button and bar were white/grey. */
+:root[data-theme='light'] .Toastify__close-button {
+  color: rgb(var(--c-ink));
+  opacity: 0.55;
+}
+
+:root[data-theme='light'] .Toastify__close-button:hover {
+  opacity: 0.9;
+}
+
+:root[data-theme='light'] .Toastify__progress-bar-theme--dark {
+  background: #A51C36;
+}
+
+/* Archive on the wine: white filter pills and link rings, readable column heads, row hover. */
+:root[data-theme='light'] [data-testid='archive-page'] [role='group'] button[aria-pressed='false'] {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] [role='group'] button[aria-pressed='false']:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] [role='group'] button[aria-pressed='true'] {
+  background-color: rgba(10, 10, 11, 0.32);
+  border-color: #fff;
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] tbody a {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+:root[data-theme='light'] [data-testid='archive-page'] tbody a:hover {
+  border-color: #fff;
+}
+
+:root[data-theme='light'] .archive-th {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-theme='light'] [data-testid='archive-glass'] {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme='light'] [data-testid='archive-row']:hover {
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.07), transparent 70%);
+}
+
+/* CV page: brighter active toggle, contact cards with a visible edge. */
+:root[data-theme='light'] [data-testid='toggle-highlight'] {
+  background-color: rgba(204, 46, 77, 0.12);
+  border-color: #CC2E4D;
+}
+
+:root[data-theme='light'] [role='radiogroup'] [aria-checked='true'] {
+  color: #7A1328;
+}
+
+:root[data-theme='light'] .cv-contact {
+  border-color: rgb(var(--c-rule));
+  box-shadow: 0 1px 2px rgba(20, 20, 22, 0.05), 0 4px 14px -8px rgba(122, 19, 40, 0.18);
+}
+
+:root[data-theme='light'] .cv-contact:hover {
+  border-color: #8B1426;
 }

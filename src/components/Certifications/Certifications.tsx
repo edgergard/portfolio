@@ -43,7 +43,7 @@ const Certifications = () => {
                       <span
                         data-testid="cert-bar-fill"
                         style={{ width: `${(part.value / cert.max) * 100}%` } as CSSProperties}
-                        className="bg-wine-flow absolute inset-y-0 left-0 block rounded-full shadow-[0_0_12px_rgba(208,33,63,.45)] brightness-[1.7] saturate-[1.2] hover:filter-none"
+                        className="cert-fill bg-wine-flow absolute inset-y-0 left-0 block rounded-full shadow-[0_0_12px_rgba(208,33,63,.45)] brightness-[1.7] saturate-[1.2] hover:filter-none"
                       >
                         <WineCanvas />
                       </span>

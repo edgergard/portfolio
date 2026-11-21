@@ -85,7 +85,7 @@ const Contact = () => {
             <p className="text-[clamp(40px,5vw,72px)] font-medium leading-none tracking-[-0.045em] text-white [text-shadow:0_2px_24px_rgba(10,10,11,0.35)]">
               {t('contact_headline')}
             </p>
-            <p className="mt-[18px] max-w-[40ch] text-[17px] leading-relaxed text-white/85">{t('contact_lead')}</p>
+            <p className="contact-lead mt-[18px] max-w-[40ch] text-[17px] leading-relaxed text-white/85">{t('contact_lead')}</p>
 
             <Group id="contact-direct" title={t('contact_group_direct')}>
               <li className={ROW}>

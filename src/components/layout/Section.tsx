@@ -36,7 +36,7 @@ export const BAND
   = 'on-wine bg-wine-flow border-y border-white/10 shadow-[0_24px_80px_-32px_rgba(139,20,38,0.55)] hover:filter-none';
 
 /** Dark glass panel that keeps text readable over a Wine band. */
-export const GLASS = 'rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] backdrop-blur-[14px]';
+export const GLASS = 'glass rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] backdrop-blur-[14px]';
 
 type HeadingProps = { id: string; index: number; label: string; onWine: boolean };
 

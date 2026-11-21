@@ -72,7 +72,7 @@ const CvWeb = ({ doc }: { doc: CvDoc }) => {
                 <a
                   href={c.href}
                   aria-label={`${name}: ${value}`}
-                  className="inline-flex items-center gap-3 rounded-[14px] border border-line bg-surface py-2 pl-2 pr-[18px] transition-colors hover:border-wine focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                  className="cv-contact inline-flex items-center gap-3 rounded-[14px] border border-line bg-surface py-2 pl-2 pr-[18px] transition-colors hover:border-wine focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                 >
                   <ContactTile brand={brand} />
                   <span className="flex flex-col">

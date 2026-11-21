@@ -15,7 +15,7 @@ type Props = {
 const WineBadge = ({ children, as: Tag = 'span', ...rest }: Props) => (
   <Tag
     className={
-      'bg-wine-flow rounded-full border border-white/[.18] px-2.5 py-[5px] font-mono text-[11px] uppercase '
+      'wine-badge bg-wine-flow rounded-full border border-white/[.18] px-2.5 py-[5px] font-mono text-[11px] uppercase '
       + 'leading-[normal] tracking-[.04em] text-white hover:filter-none'
     }
     {...rest}

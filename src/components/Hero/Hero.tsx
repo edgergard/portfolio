@@ -171,7 +171,7 @@ const Hero = () => {
             <WineFallback />
           )}
 
-          <p className="pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-white/50 min-[900px]:flex">
+          <p className="hero-caption pointer-events-none absolute bottom-5 left-6 z-[2] hidden gap-3 font-mono text-[11px] uppercase tracking-[.06em] text-white/50 min-[900px]:flex">
             <span>{t('hero_caption_figure')}</span>
             <span aria-hidden>·</span>
             <span>{t(theme === 'light' ? 'hero_caption_material_light' : 'hero_caption_material')}</span>

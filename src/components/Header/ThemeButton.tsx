@@ -17,6 +17,8 @@ const ThemeButton = () => {
       data-testid="theme-toggle"
       className={
         'grid h-8 w-8 place-items-center rounded-full border border-rule text-ink-2 transition-colors '
+        // A firmer ring on the light page (rule alone is under 3:1 there).
+        + '[:root[data-theme=light]_&]:border-ink/40 '
         + 'hover:border-ink hover:text-ink focus-visible:outline focus-visible:outline-2 '
         + 'focus-visible:outline-offset-2 focus-visible:outline-ink'
       }

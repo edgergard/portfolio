@@ -49,3 +49,17 @@ describe('grey text contrast', () => {
     });
   }
 });
+
+describe('light theme polish', () => {
+  it('scopes every polish rule to the light theme, so the dark theme stays as it was', () => {
+    const section = css.slice(css.indexOf('Light theme polish'));
+    const body = section.slice(section.indexOf('*/') + 2).replace(/\/\*[\s\S]*?\*\//g, '');
+    const selectors = [...body.matchAll(/([^{}]+)\{[^{}]*\}/g)]
+      .flatMap(m => m[1].split(','))
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    expect(selectors.length).toBeGreaterThan(20);
+    selectors.forEach(sel => expect(sel).toMatch(/^:root\[data-theme='light'\] /));
+  });
+});
