@@ -78,5 +78,15 @@ describe('hydration of the server render', () => {
     expect(hydrationErrors).toEqual([]);
     expect(recoverable).toEqual([]);
     expect(container.textContent).not.toBe('');
+
+    // The server rendered the dark theme; once hydrated, the toggle must follow the real
+    // <html data-theme> (a light visitor is offered the way back to dark).
+    const toggles = container.querySelectorAll('[data-testid="theme-toggle"]');
+    const dict = dictFor(lang);
+
+    expect(toggles.length).toBeGreaterThan(0);
+    toggles.forEach(toggle =>
+      expect(toggle).toHaveAccessibleName(theme === 'light' ? dict.theme_to_dark : dict.theme_to_light),
+    );
   });
 });
