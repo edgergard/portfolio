@@ -98,7 +98,7 @@ next.config.ts, vitest.config.ts, vercel.json, eslint.config.mjs
   - do not remove the Vite or router packages yet (Task 12).
 
   Then write the files:
-  - **`vercel.json`:** `ignoreCommand` set to `git show HEAD:package.json | grep -q '"next"' && exit 1 || exit 0`. This skips Vercel builds of any commit whose package.json has no Next.js, so `main` stays skipped until cut-over.
+  - **`vercel.json`:** `ignoreCommand` set to `git show HEAD:package.json | grep -q '"next"' && exit 1 || exit 0`. This skips Vercel builds of any commit whose package.json has no Next.js, It does not skip `main`: `main` has no `vercel.json`, and Vercel reads the file from the commit being built. Skipping `main` is done in the Vercel project settings (Task 13 Step 1).
   - **`.env.example`:** the three `NEXT_PUBLIC_EMAILJS_*` names and `NEXT_PUBLIC_SITE_URL=https://<project>.vercel.app`.
 - [ ] **Step 5:** Run `npx vitest run src/test/scaffold.test.ts`, then `npm run build`. Expected: PASS, and the build succeeds with the placeholder page.
 - [ ] **Step 6:** Run `npm test`. Expected: the old suite still passes, because old files are untouched and the Vite tests run under the new `vitest.config.ts`. Fix the config, not the tests, until it does.
@@ -371,7 +371,8 @@ next.config.ts, vitest.config.ts, vercel.json, eslint.config.mjs
   - create the Vercel project from the GitHub repo;
   - set Production Branch to `feat/nextjs` for the migration period (the `vercel.app` domain is new, so no live traffic is affected);
   - add env vars `NEXT_PUBLIC_EMAILJS_SERVICE_ID`, `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID`, `NEXT_PUBLIC_EMAILJS_KEY` (the values from the local `.env` used for `VITE_EMAILJS_*`) and `NEXT_PUBLIC_SITE_URL=https://<project>.vercel.app`;
-  - enable Speed Insights; leave Web Analytics off.
+  - enable Speed Insights; leave Web Analytics off;
+  - in Settings → Git → Ignored Build Step, use `[ "$VERCEL_GIT_COMMIT_REF" = "main" ] && exit 0 || exit 1` until cut-over, so the Vite `main` is not built (`vercel.json` cannot do this: `main` has no such file).
 - [ ] **Step 2:** Push `feat/nextjs`. Expected: the Vercel build succeeds. Record the URL in the ledger and in README.
 - [ ] **Step 3:** Smoke-check the deployed URL:
   - `/`, `/uk`, `/projects`, `/uk/projects`, `/cv/react-native`, `/uk/cv/frontend`, `/cv` (redirect), `/de` (404), `/sitemap.xml` and `/robots.txt` all give the expected status;

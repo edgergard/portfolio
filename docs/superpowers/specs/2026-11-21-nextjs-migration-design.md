@@ -157,7 +157,7 @@ The CV page renders the web view by default (owner decision 3); `?view=pdf` swit
 
 - **Before cut-over:** a Vercel project linked to the repo. Every push to `feat/nextjs` gets a preview URL, so the owner can review on real URLs while the old site keeps running.
   - The owner links the Vercel project and adds the EmailJS ids as `NEXT_PUBLIC_EMAILJS_*` env vars. Claude cannot create accounts or enter keys; until then the preview's contact form cannot send.
-  - Production builds of `main` (still the Vite app) are skipped until cut-over with an ignored-build-step rule. *Builder's call.*
+  - Production builds of `main` (still the Vite app) are skipped until cut-over with an Ignored Build Step set in the Vercel project settings (not `vercel.json`, which `main` does not carry). *Builder's call.*
 - **Cut-over:**
   1. merge `feat/nextjs` into `main`, on the owner's "Merge and deploy";
   2. Vercel deploys production;

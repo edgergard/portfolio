@@ -39,7 +39,8 @@ cp .env.example .env.local   # then fill in the values
 
 The site is hosted on Vercel. Import the repository as a Next.js project, set the variables
 above in the project's environment settings, and every push builds and deploys
-(`vercel.json` skips commits without Next.js).
+(`vercel.json` only skips builds of commits without Next.js; it cannot skip `main`, which has no
+`vercel.json`. Until cut-over, set Ignored Build Step in the Vercel project settings, see the migration plan).
 
 ## Notes
 
