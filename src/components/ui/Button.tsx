@@ -1,7 +1,7 @@
-import { useEffect, useRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
-import { wineButtons } from './wineButtons/loop';
+import WineCanvas from './WineCanvas';
 
 export type ButtonVariant = 'primary' | 'outline' | 'edge';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -42,28 +42,9 @@ type AsRoute = Style & { to: string; href?: undefined; children?: ReactNode; 'ar
 
 export type ButtonProps = AsButton | AsAnchor | AsRoute;
 
-/**
- * The hero's live Wine shader behind a primary button's label: a 2D canvas the shared
- * renderer (wineButtons) copies into every frame. It stays transparent until it holds a
- * frame, so the CSS fill shows while loading, without WebGL, or after an error.
- */
-const WineLayer = () => {
-  const canvas = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => wineButtons.register(canvas.current!), []);
-
-  return (
-    <canvas
-      ref={canvas}
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-[1] h-full w-full opacity-0 transition-opacity duration-300"
-    />
-  );
-};
-
 const withLayer = (variant: ButtonVariant | undefined, children: ReactNode) => (
   <>
-    {(variant ?? 'primary') === 'primary' && <WineLayer />}
+    {(variant ?? 'primary') === 'primary' && <WineCanvas />}
     {children}
   </>
 );

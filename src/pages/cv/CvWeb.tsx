@@ -1,9 +1,9 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import SkillsBand from '../../components/About/SkillsBand';
 import EducationCard, { EDU_CARD_FRAME } from '../../components/Experience/EducationCard';
 import { BrandIcon, type Brand } from '../../components/Contact/icons';
-import { wineButtons } from '../../components/ui/wineButtons/loop';
+import WineCanvas from '../../components/ui/WineCanvas';
 import type { CvDoc } from '../../data/cv';
 
 /** The CV page's content column (width and side gutters); the skills band spans past it. */
@@ -49,18 +49,12 @@ const platform = (href: string): { key: 'email' | 'telegram' | 'linkedin' | 'git
 };
 
 /** Icon tile with the live Wine shader (registered like a primary button; .bg-wine-flow is the fallback). */
-const ContactTile = ({ brand }: { brand: Brand }) => {
-  const canvas = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => wineButtons.register(canvas.current!), []);
-
-  return (
-    <span aria-hidden className="bg-wine-flow relative isolate grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-[10px] text-white">
-      <canvas ref={canvas} className="pointer-events-none absolute inset-0 -z-[1] h-full w-full opacity-0 transition-opacity duration-300" />
-      <BrandIcon brand={brand} size={16} />
-    </span>
-  );
-};
+const ContactTile = ({ brand }: { brand: Brand }) => (
+  <span aria-hidden className="bg-wine-flow relative isolate grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-[10px] text-white">
+    <WineCanvas />
+    <BrandIcon brand={brand} size={16} />
+  </span>
+);
 
 const CvWeb = ({ doc }: { doc: CvDoc }) => {
   const { t } = useTranslation();

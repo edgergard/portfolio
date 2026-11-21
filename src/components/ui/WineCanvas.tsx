@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import { wineButtons } from './wineButtons/loop';
 
 /**
- * The hero's live Wine shader for a small element (tile, badge): a 2D canvas the shared
- * renderer (wineButtons) copies into every frame, so it costs no extra WebGL context.
+ * The hero's live Wine shader for a small element (primary button, tile, badge): a 2D canvas
+ * the shared renderer (wineButtons) copies into every frame, so it costs no extra WebGL context.
  * Put it inside a `.bg-wine-flow` element: it stays transparent until it holds a frame,
  * so the CSS fill shows while loading, without WebGL, or after an error.
  */

@@ -113,6 +113,17 @@ describe('CvPage', () => {
     }
   });
 
+  it('each contact tile holds a hidden live Wine canvas over its wine-flow fill', () => {
+    renderAt('?view=web');
+    const link = screen.getByRole('link', { name: /^GitHub: edgergard/ });
+    const tile = link.querySelector('.bg-wine-flow')!;
+    const canvas = tile.querySelector('canvas')!;
+
+    expect(tile).toHaveAttribute('aria-hidden', 'true');
+    expect(canvas).toHaveClass('absolute', 'inset-0', '-z-[1]', 'opacity-0');
+    expect(canvas.dataset.state).toBeDefined();
+  });
+
   it('clicking Web writes view=web and shows the web CV', () => {
     renderAt();
     fireEvent.click(radio('Web'));
