@@ -3,9 +3,10 @@ import { EDUCATION, JOBS, type Job } from '../../data/content';
 import Reveal from '../layout/Reveal';
 import Section from '../layout/Section';
 import WineCanvas from '../ui/WineCanvas';
+import WineBadge from '../ui/WineBadge';
 import EducationCard, { EDU_CARD_FRAME } from './EducationCard';
 
-/** Metric tile / stack badge surface: the live Wine shader over the CSS wine-flow fill (no hover lift: not interactive). */
+/** Metric tile surface: the live Wine shader over the CSS wine-flow fill (no hover lift: not interactive). */
 const WINE_FILL = 'bg-wine-flow hover:filter-none border';
 
 /**
@@ -66,14 +67,7 @@ const JobCard = ({ job, open }: { job: Job; open: boolean }) => {
 
       <div className="mt-5 flex flex-wrap gap-1.5 border-t border-line pt-[18px]">
         {job.stack.map(tag => (
-          <span
-            key={tag}
-            data-testid="xp-badge"
-            className={`${WINE_FILL} rounded-full border-white/[.18] px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-white`}
-          >
-            <WineCanvas />
-            {tag}
-          </span>
+          <WineBadge key={tag} data-testid="xp-badge">{tag}</WineBadge>
         ))}
       </div>
     </div>

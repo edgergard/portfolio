@@ -2,6 +2,7 @@ import { GLASS } from '../layout/Section';
 import { useTranslation } from 'react-i18next';
 import { Project } from '../../types/Project';
 import ProjectMedia from './ProjectMedia';
+import WineBadge from '../ui/WineBadge';
 
 type Props = {
   project: Project;
@@ -46,12 +47,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
 
         <ul className="flex flex-wrap gap-1.5">
           {stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-full border border-white/25 bg-[rgba(10,10,11,0.25)] px-2.5 py-[5px] font-mono text-[11px] uppercase leading-[normal] tracking-[.04em] text-white"
-            >
-              {tech}
-            </li>
+            <WineBadge key={tech} as="li" data-testid="project-badge">{tech}</WineBadge>
           ))}
         </ul>
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PROJECT_LIST } from '../data/projects';
 import type { Project } from '../types/Project';
+import WineBadge from '../components/ui/WineBadge';
 
 type Filter = 'all' | 'mobile' | 'web' | 'commercial';
 
@@ -63,12 +64,7 @@ const Row = ({ project }: { project: Project }) => {
       <td className={`${CELL} max-[899px]:order-4 max-[899px]:col-start-2`}>
         <ul className="flex flex-wrap gap-1.5">
           {stack.map(tech => (
-            <li
-              key={tech}
-              className={`${MONO} rounded-full border border-chip px-2.5 py-[5px] text-[11px] leading-[normal] tracking-[.04em] text-soft-2`}
-            >
-              {tech}
-            </li>
+            <WineBadge key={tech} as="li" data-testid="archive-badge">{tech}</WineBadge>
           ))}
         </ul>
       </td>

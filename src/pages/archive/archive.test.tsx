@@ -81,6 +81,17 @@ describe('ArchivePage', () => {
     });
   });
 
+  it('shows stack badges on the live wine fill, like the Experience badges', () => {
+    renderPage();
+    const badges = screen.getAllByTestId('archive-badge');
+
+    expect(badges.length).toBeGreaterThan(6);
+    badges.forEach(b => {
+      expect(b).toHaveClass('bg-wine-flow');
+      expect(b.querySelector('canvas')).not.toBeNull();
+    });
+  });
+
   it('scrolls to top on mount', () => {
     renderPage();
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);

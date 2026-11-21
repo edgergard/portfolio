@@ -134,6 +134,17 @@ describe('Projects section', () => {
     expect(within(band).getByTestId('wine-surface')).toBeInTheDocument();
   });
 
+  it('shows stack badges on the live wine fill, like the Experience badges', () => {
+    renderSection();
+    const badges = screen.getAllByTestId('project-badge');
+
+    expect(badges.length).toBeGreaterThan(3);
+    badges.forEach(b => {
+      expect(b).toHaveClass('bg-wine-flow');
+      expect(b.querySelector('canvas')).not.toBeNull();
+    });
+  });
+
   it('alternates the media side', () => {
     renderSection();
     const rows = screen.getAllByTestId('project-row');
