@@ -153,6 +153,8 @@
   "contact_form_title": "Напишіть повідомлення",
   "contact_form_status": "Відкритий до роботи · відповідаю протягом 24 год",
   "contact_form_telegram": "Або напишіть у Telegram",
+  "projects_archive_kicker": "Архів · {{from}} — {{to}}",
+  "projects_archive_title": "Усі {{count}} проєктів",
   "projects_archive_link": "Усі проєкти · Архів ({{count}})",
   "project_type_web": "Веб",
   "project_type_mobile": "Мобільний",

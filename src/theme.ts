@@ -52,26 +52,23 @@ export const useCurrentTheme = () => {
   return theme;
 };
 
-/** The current theme and a toggle; the visitor's choice is saved. */
+/**
+ * The current theme and a toggle; the visitor's choice is saved. Every instance reads the theme
+ * from <html> (the header has one toggle for desktop and one for mobile), so they never disagree.
+ */
 export const useTheme = () => {
-  const [theme, setTheme] = useState<Theme>(currentTheme);
-
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+  const theme = useCurrentTheme();
 
   const toggle = useCallback(() => {
-    setTheme((prev) => {
-      const next: Theme = prev === 'dark' ? 'light' : 'dark';
+    const next: Theme = currentTheme() === 'dark' ? 'light' : 'dark';
 
-      try {
-        window.localStorage.setItem(THEME_KEY, next);
-      } catch {
-        // Storage blocked: the choice lasts for this page view only.
-      }
+    applyTheme(next);
 
-      return next;
-    });
+    try {
+      window.localStorage.setItem(THEME_KEY, next);
+    } catch {
+      // Storage blocked: the choice lasts for this page view only.
+    }
   }, []);
 
   return { theme, toggle };

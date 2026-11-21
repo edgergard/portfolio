@@ -3,6 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { REDUCED_SPEED } from '../Hero/motion';
 import WineSurface from './WineSurface';
 
+/** The canvas is a lazy chunk mounted when idle; a loaded full-suite run can exceed findBy's 1s default. */
+const CANVAS_WAIT = { timeout: 8000 };
+
 const scene = vi.hoisted(() => ({ fail: false }));
 
 vi.mock('@react-three/fiber', () => ({
@@ -70,13 +73,13 @@ describe('WineSurface', () => {
     expect(surface()).toHaveAttribute('data-state', 'loading');
     expect(screen.queryByTestId('wine-canvas')).not.toBeInTheDocument();
     expect(HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled();
-    expect(await screen.findByTestId('wine-canvas')).toBeInTheDocument();
+    expect(await screen.findByTestId('wine-canvas', {}, CANVAS_WAIT)).toBeInTheDocument();
     expect(surface()).toHaveAttribute('data-state', 'live');
   });
 
   it('renders at dpr 1-2 and animates while on screen', async () => {
     renderSurface();
-    const canvas = await screen.findByTestId('wine-canvas');
+    const canvas = await screen.findByTestId('wine-canvas', {}, CANVAS_WAIT);
 
     expect(canvas).toHaveAttribute('data-dpr', '1,2');
     expect(canvas).toHaveAttribute('data-frameloop', 'always');
@@ -84,14 +87,14 @@ describe('WineSurface', () => {
 
   it('runs at the full hero pace by default', async () => {
     renderSurface();
-    await screen.findByTestId('wine-canvas');
+    await screen.findByTestId('wine-canvas', {}, CANVAS_WAIT);
     expect(screen.getByTestId('wine-canvas-host')).toHaveAttribute('data-speed', '1');
   });
 
   it('keeps animating at the hero reduced-motion pace when reduced motion is preferred', async () => {
     stubReducedMotion(true);
     renderSurface();
-    expect(await screen.findByTestId('wine-canvas')).toHaveAttribute('data-frameloop', 'always');
+    expect(await screen.findByTestId('wine-canvas', {}, CANVAS_WAIT)).toHaveAttribute('data-frameloop', 'always');
     expect(screen.getByTestId('wine-canvas-host')).toHaveAttribute('data-speed', String(REDUCED_SPEED));
   });
 

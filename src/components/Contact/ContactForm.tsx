@@ -24,7 +24,7 @@ const API = {
   USER_PUBLIC_KEY: VITE_EMAILJS_KEY,
 };
 
-const TOAST_CLASS = '!rounded-xl !border !border-line !bg-[#111113] !font-sans !text-ink';
+const TOAST_CLASS = '!rounded-xl !border !border-line !bg-surface !font-sans !text-ink';
 
 const FormSchema = z.object({
   email: z

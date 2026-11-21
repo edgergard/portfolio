@@ -44,12 +44,12 @@ describe('theme', () => {
 
   it('toggles the theme on <html> and saves the choice', async () => {
     render(<ThemeButton />);
-    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect(screen.getByTestId('theme-toggle')).toHaveAccessibleName('Switch to light theme');
 
     await userEvent.click(screen.getByTestId('theme-toggle'));
     expect(document.documentElement.dataset.theme).toBe('light');
     expect(localStorage.getItem(THEME_KEY)).toBe('light');
-    expect(screen.getByTestId('theme-toggle')).toHaveAccessibleName('Switch to dark theme');
+    expect(await screen.findByRole('button', { name: 'Switch to dark theme' })).toBeInTheDocument();
   });
 
   it('reports theme changes to readers like the 3D knot', async () => {
@@ -59,6 +59,17 @@ describe('theme', () => {
     expect(screen.getByTestId('reader')).toHaveTextContent('dark');
     await userEvent.click(screen.getByTestId('theme-toggle'));
     expect(await screen.findByText('light')).toBeInTheDocument();
+  });
+
+  it('keeps both header toggles in sync (one shows on desktop, one on mobile)', async () => {
+    render(<><ThemeButton /><ThemeButton /></>);
+    const [desktop, mobile] = screen.getAllByTestId('theme-toggle');
+
+    await userEvent.click(mobile);
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(await screen.findAllByRole('button', { name: 'Switch to dark theme' })).toHaveLength(2);
+    await userEvent.click(desktop);
+    expect(document.documentElement.dataset.theme).toBe('dark');
   });
 
   it('sets the theme before first paint from the saved choice, dark otherwise', () => {
