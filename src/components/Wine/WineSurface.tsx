@@ -1,3 +1,5 @@
+'use client';
+
 import { Component, lazy, Suspense, useState, type ReactNode } from 'react';
 import { useIdleWebGL, usePrefersReducedMotion } from '../Hero/sceneSupport';
 

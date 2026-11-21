@@ -1,7 +1,12 @@
-import { render, screen, within } from '@testing-library/react';
+import { render as rtlRender, screen, within } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import i18n from '../../i18n';
 import Experience from './Experience';
+import I18nextBridge from '../../I18nextBridge';
+
+// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 const loop = vi.hoisted(() => ({ unregister: vi.fn(), register: vi.fn() }));
 
@@ -9,7 +14,7 @@ vi.mock('../ui/wineButtons/loop', () => ({ wineButtons: { register: loop.registe
 loop.register.mockImplementation(() => loop.unregister);
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
-vi.mock('framer-motion', () => ({
+vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, className, ...rest }: Record<string, unknown>) => (
       <div className={className as string} data-testid={rest['data-testid'] as string}>

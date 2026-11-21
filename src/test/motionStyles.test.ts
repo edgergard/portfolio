@@ -70,3 +70,50 @@ describe('page scrollbar thumb', () => {
     expect(css).toMatch(/@media \(pointer: fine\)\s*{\s*html\s*{\s*scrollbar-width:\s*none;?\s*}\s*html::-webkit-scrollbar\s*{\s*display:\s*none;?\s*}/);
   });
 });
+
+/** Source text of a component, for checking its module directives and imports. */
+const sources = import.meta.glob(
+  [
+    '../components/layout/{Reveal,Section}.tsx',
+    '../components/ui/{Button,WineBadge,WineCanvas,ChunkBoundary}.tsx',
+    '../components/Wine/{WineSurface,WineCanvas}.tsx',
+  ],
+  { query: '?raw', import: 'default', eager: true },
+) as Record<string, string>;
+
+const source = (path: string) => {
+  const text = sources[`../components/${path}`];
+
+  if (text === undefined) {
+    throw new Error(`no source for ${path}`);
+  }
+
+  return text;
+};
+
+const isClient = (text: string) => /^\s*['"]use client['"];?/.test(text);
+
+describe('client islands', () => {
+  it('reveals with motion/react, not framer-motion', () => {
+    expect(source('layout/Reveal.tsx')).toMatch(/from 'motion\/react'/);
+    expect(source('layout/Reveal.tsx')).not.toMatch(/framer-motion/);
+  });
+
+  it('keeps Section and WineBadge as Server Components', () => {
+    expect(source('layout/Section.tsx')).not.toMatch(/['"]use client['"]/);
+    expect(source('ui/WineBadge.tsx')).not.toMatch(/['"]use client['"]/);
+  });
+
+  it('marks the components with hooks, state or browser APIs as client', () => {
+    for (const path of [
+      'layout/Reveal.tsx',
+      'ui/Button.tsx',
+      'ui/WineCanvas.tsx',
+      'ui/ChunkBoundary.tsx',
+      'Wine/WineSurface.tsx',
+      'Wine/WineCanvas.tsx',
+    ]) {
+      expect(isClient(source(path)), path).toBe(true);
+    }
+  });
+});

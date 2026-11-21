@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
+import { T } from '@/lib/i18n-client';
 import WineSurface from '../Wine/WineSurface';
 
 type Props = {
@@ -38,9 +38,9 @@ export const BAND
 /** Dark glass panel that keeps text readable over a Wine band. */
 export const GLASS = 'glass rounded-[28px] border border-white/10 bg-[rgba(10,10,11,0.55)] backdrop-blur-[14px]';
 
-type HeadingProps = { id: string; index: number; label: string; onWine: boolean };
+type HeadingProps = { id: string; index: number; labelKey: string; onWine: boolean };
 
-const Heading = ({ id, index, label, onWine }: HeadingProps) => (
+const Heading = ({ id, index, labelKey, onWine }: HeadingProps) => (
   <h2
     id={`${id}-heading`}
     data-on-wine={onWine || undefined}
@@ -51,20 +51,19 @@ const Heading = ({ id, index, label, onWine }: HeadingProps) => (
   >
     <b className={`font-medium ${onWine ? 'text-white' : 'text-wine-2'}`}>{String(index).padStart(2, '0')}</b>
     <i aria-hidden className={`inline-block h-px w-6 ${onWine ? 'bg-white/60' : 'bg-rule'}`} />
-    <span>{label}</span>
+    <span><T k={labelKey} /></span>
   </h2>
 );
 
+/** A home-page section. Server Component: only the label text and the Wine layer are client. */
 const Section = ({ id, index, labelKey, children, bleed, band = false }: Props) => {
-  const { t } = useTranslation();
-
   if (band) {
     return (
       <section id={id} aria-labelledby={`${id}-heading`} className="bg-bg text-white">
         <div data-testid={`${id}-band`} className={`${BAND} ${TOP} ${BOTTOM}`}>
           <WineSurface />
           <div className={`relative ${COLUMN}`}>
-            <Heading id={id} index={index} label={t(labelKey)} onWine />
+            <Heading id={id} index={index} labelKey={labelKey} onWine />
             <div>{children}</div>
           </div>
         </div>
@@ -75,7 +74,7 @@ const Section = ({ id, index, labelKey, children, bleed, band = false }: Props) 
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-line bg-bg text-ink">
       <div className={`${COLUMN} ${TOP} ${bleed ? '' : BOTTOM}`}>
-        <Heading id={id} index={index} label={t(labelKey)} onWine={false} />
+        <Heading id={id} index={index} labelKey={labelKey} onWine={false} />
         <div>{children}</div>
       </div>
       {bleed}

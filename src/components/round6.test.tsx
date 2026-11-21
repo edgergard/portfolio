@@ -1,4 +1,5 @@
-import { render, screen, within } from '@testing-library/react';
+import { render as rtlRender, screen, within } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { intersectEverything } from '../test/intersect';
@@ -9,6 +10,10 @@ import { GROW, lensScale, rowShifts, SHRINK } from './About/useMagnify';
 import Certifications from './Certifications';
 import Contact from './Contact';
 import ArchiveCta from './Projects/ArchiveCta';
+import I18nextBridge from '../I18nextBridge';
+
+// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 const finePointer = () =>
   vi.stubGlobal('matchMedia', (query: string) => ({

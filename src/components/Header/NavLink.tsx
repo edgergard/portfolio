@@ -30,6 +30,7 @@ export const SectionLink = ({
   onClick?: () => void;
   children: ReactNode;
   'data-testid'?: string;
+  'aria-label'?: string;
 }) => {
   const lang = useLang();
   const pathname = usePathname();

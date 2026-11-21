@@ -56,3 +56,8 @@ export function useLang(): Lang {
   return useI18n().lang;
 }
 
+
+/** A translated string, for Server Components that render text from the dictionary. */
+export function T({ k }: { k: string }) {
+  return useT()(k);
+}

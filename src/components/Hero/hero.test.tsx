@@ -1,8 +1,13 @@
-import { render, screen, within } from '@testing-library/react';
+import { render as rtlRender, screen, within } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { HashRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '../../i18n';
 import Hero from './Hero';
+import I18nextBridge from '../../I18nextBridge';
+
+// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 /**
  * The scene is a lazy chunk mounted when idle; under a loaded full-suite run its import can take
@@ -85,7 +90,7 @@ describe('Hero', () => {
 
   it('links View CV to the CV route', () => {
     renderHero();
-    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '#/cv');
+    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '/cv');
   });
 
   it('renders a live scene by default', async () => {

@@ -1,8 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { renderToString } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import { I18nProvider } from '@/lib/i18n-client';
 import en from '@/translations/en.json';
+import ua from '@/translations/ua.json';
 import i18n from '../../i18n';
 import Header from '../Header';
 import Section from './Section';
@@ -17,6 +19,7 @@ afterEach(async () => {
 const inEnglish = (ui: ReactNode) => <I18nProvider lang="en" dict={en}>{ui}</I18nProvider>;
 
 const renderHeader = () => render(inEnglish(<Header />));
+const renderInEnglish = (ui: ReactNode) => render(inEnglish(ui));
 
 describe('Header', () => {
   it('renders the nav links and CV points at the /cv route', () => {
@@ -45,7 +48,7 @@ describe('Header', () => {
 
 describe('Section', () => {
   it('renders the padded index and translated label', () => {
-    render(
+    renderInEnglish(
       <Section id="experience" index={2} labelKey="section_experience">
         <p>body</p>
       </Section>,
@@ -57,7 +60,7 @@ describe('Section', () => {
   });
 
   it('puts the label above the content instead of in a sticky side column', () => {
-    render(
+    renderInEnglish(
       <Section id="about" index={1} labelKey="section_about">
         <p>body</p>
       </Section>,
@@ -70,7 +73,7 @@ describe('Section', () => {
   });
 
   it('centres the label horizontally above the content', () => {
-    render(
+    renderInEnglish(
       <Section id="about" index={1} labelKey="section_about">
         <p>body</p>
       </Section>,
@@ -81,7 +84,7 @@ describe('Section', () => {
   });
 
   it('renders a bleed slot outside the centred column', () => {
-    render(
+    renderInEnglish(
       <Section id="about" index={1} labelKey="section_about" bleed={<div data-testid="band" />}>
         <p>body</p>
       </Section>,
@@ -94,7 +97,7 @@ describe('Section', () => {
   });
 
   it('ends flush with a bleed band: no bottom padding after it', () => {
-    render(
+    renderInEnglish(
       <Section id="about" index={1} labelKey="section_about" bleed={<div data-testid="band" />}>
         <p>body</p>
       </Section>,
@@ -107,12 +110,19 @@ describe('Section', () => {
   });
 
   it('keeps the bottom padding when there is no bleed band', () => {
-    render(
+    renderInEnglish(
       <Section id="experience" index={2} labelKey="section_experience">
         <p>body</p>
       </Section>,
     );
     expect(screen.getByText('body').closest('[class*="max-w-[1120px]"]')).toHaveClass('pb-20');
+  });
+
+  it('renders the translated label on the server, in the page language', () => {
+    const section = <Section id="experience" index={2} labelKey="section_experience"><p>body</p></Section>;
+
+    expect(renderToString(inEnglish(section))).toMatch(/<span>Experience<\/span>/);
+    expect(renderToString(<I18nProvider lang="uk" dict={ua}>{section}</I18nProvider>)).toMatch(/<span>Досвід<\/span>/);
   });
 });
 

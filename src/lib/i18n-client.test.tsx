@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import en from '@/translations/en.json';
-import { I18nProvider, useLang, useT } from './i18n-client';
+import { I18nProvider, T, useLang, useT } from './i18n-client';
 
 function Probe() {
   const t = useT();
@@ -26,5 +26,14 @@ describe('I18nProvider', () => {
     expect(screen.getByTestId('archive')).toHaveTextContent(en.projects_archive_title.replace('{{count}}', '6'));
     expect(screen.getByTestId('missing')).toHaveTextContent('missing_key');
     expect(screen.getByTestId('lang')).toHaveTextContent('en');
+  });
+
+  it('renders a dictionary string with <T>', () => {
+    render(
+      <I18nProvider lang="en" dict={en}>
+        <p data-testid="label"><T k="section_about" /></p>
+      </I18nProvider>,
+    );
+    expect(screen.getByTestId('label')).toHaveTextContent(en.section_about);
   });
 });

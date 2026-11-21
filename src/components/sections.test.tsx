@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render as rtlRender, screen, waitFor, within } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { HashRouter } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -9,13 +10,17 @@ import Experience from './Experience';
 import Certifications from './Certifications';
 import Contact from './Contact';
 import { SKILLS } from '../data/content';
+import I18nextBridge from '../I18nextBridge';
+
+// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 vi.mock('@emailjs/browser', () => ({
   default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
 }));
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
-vi.mock('framer-motion', () => ({
+vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, className, ...rest }: Record<string, unknown>) => (
       <div className={className as string} data-testid={rest['data-testid'] as string}>

@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { ACESFilmicToneMapping } from 'three';

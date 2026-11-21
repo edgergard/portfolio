@@ -1,6 +1,10 @@
+'use client';
+
+import Link from 'next/link';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { HashLink } from 'react-router-hash-link';
+import { useLang } from '@/lib/i18n-client';
+import { localeHref } from '@/lib/locale';
+import { SectionLink } from '../Header/NavLink';
 import WineCanvas from './WineCanvas';
 
 export type ButtonVariant = 'primary' | 'outline' | 'edge';
@@ -49,25 +53,43 @@ const withLayer = (variant: ButtonVariant | undefined, children: ReactNode) => (
   </>
 );
 
+/** A locale-free route (`/cv`, `/#experience`) as a link in the page language. */
+type RouteLinkProps = { to: string; className: string; children: ReactNode; 'aria-label'?: string };
+
+const RouteLink = ({ to, className, children, ...rest }: RouteLinkProps) => {
+  const lang = useLang();
+  const [path, hash] = to.split('#');
+
+  // A home-page section smooth-scrolls when the home page is already open.
+  if (hash !== undefined && (path === '' || path === '/')) {
+    return (
+      <SectionLink section={hash} className={className} {...rest}>
+        {children}
+      </SectionLink>
+    );
+  }
+
+  return (
+    <Link href={localeHref(lang, path) + (hash === undefined ? '' : `#${hash}`)} className={className} {...rest}>
+      {children}
+    </Link>
+  );
+};
+
 /**
- * The site's button. Renders a router link with `to` (a smooth-scrolling hash link when
- * `to` has a #fragment), an <a> with `href`, otherwise a <button>.
+ * The site's button. Renders a link in the page language with `to` (a locale-free path; a
+ * home-page #section smooth-scrolls), an <a> with `href`, otherwise a <button>.
  * `primary` shows the hero's live Wine shader (CSS wine-flow fill underneath), `outline` a hairline border,
  * `edge` a dark pill inside the animated wine frame of the cards (.wine-edge).
  */
 const Button = (props: ButtonProps) => {
   if (props.to !== undefined) {
     const { to, variant, size, className, children, ...rest } = props;
-    const cls = buttonClass({ variant, size, className });
 
-    return to.includes('#') ? (
-      <HashLink smooth to={to} className={cls} {...rest}>
+    return (
+      <RouteLink to={to} className={buttonClass({ variant, size, className })} {...rest}>
         {withLayer(variant, children)}
-      </HashLink>
-    ) : (
-      <Link to={to} className={cls} {...rest}>
-        {withLayer(variant, children)}
-      </Link>
+      </RouteLink>
     );
   }
 

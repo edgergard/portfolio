@@ -1,4 +1,5 @@
-import { act, cleanup, render, screen, within } from '@testing-library/react';
+import { act, cleanup, render as rtlRender, screen, within } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { HashRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import '../../i18n';
@@ -11,9 +12,13 @@ import type { Project } from '../../types/Project';
 import Projects from './Projects';
 import ProjectRow from './ProjectRow';
 import ProjectMedia from './ProjectMedia';
+import I18nextBridge from '../../I18nextBridge';
+
+// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
+const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
-vi.mock('framer-motion', () => ({
+vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
       <div className={className}>{children}</div>
