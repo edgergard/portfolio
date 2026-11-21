@@ -129,5 +129,10 @@
   "contact_copy_phone": "Копіювати номер телефону",
   "contact_form_title": "Напишіть повідомлення",
   "contact_form_status": "Відкритий до роботи · відповідаю протягом 24 год",
-  "contact_form_telegram": "Або напишіть у Telegram"
+  "contact_form_telegram": "Або напишіть у Telegram",
+  "projects_archive_link": "Усі проєкти · Архів ({{count}})",
+  "project_type_web": "Веб",
+  "project_type_mobile": "Мобільний",
+  "btn_app_store": "App Store",
+  "btn_google_play": "Google Play"
 }

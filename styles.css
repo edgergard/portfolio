@@ -151,3 +151,16 @@ body {
     to { background-position: 100% 100%; }
   }
 }
+
+/* Slow pan over a project poster while it has no video. ProjectMedia drops the class under
+   reduced motion (tracked live), so the stylesheet never switches animations off. */
+@layer components {
+  .poster-pan {
+    animation: poster-pan 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes poster-pan {
+    from { transform: scale(1.02) translateY(0); }
+    to { transform: scale(1.08) translateY(-3%); }
+  }
+}

@@ -129,5 +129,10 @@
   "contact_copy_phone": "Copy phone number",
   "contact_form_title": "Write a message",
   "contact_form_status": "Open to work · replies within 24h",
-  "contact_form_telegram": "Or write on Telegram"
+  "contact_form_telegram": "Or write on Telegram",
+  "projects_archive_link": "All projects · Archive ({{count}})",
+  "project_type_web": "Web",
+  "project_type_mobile": "Mobile",
+  "btn_app_store": "App Store",
+  "btn_google_play": "Google Play"
 }
