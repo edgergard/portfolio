@@ -1,10 +1,13 @@
 import { render as rtlRender, screen, within } from '@testing-library/react';
 import type { ReactElement } from 'react';
+import { renderToString } from 'react-dom/server';
 import { HashRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from '../../i18n';
 import Hero from './Hero';
 import I18nextBridge from '../../I18nextBridge';
+import { I18nProvider } from '../../lib/i18n-client';
+import { EN, UA } from '../../translations';
 
 // Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
 const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
@@ -28,6 +31,9 @@ vi.mock('@react-three/fiber', () => ({
   useFrame: () => {},
   useThree: () => ({}),
 }));
+
+// The primary button's Wine layer has its own tests; here its renderer would only log jsdom's missing WebGL.
+vi.mock('../ui/wineButtons/loop', () => ({ wineButtons: { register: () => () => {} } }));
 
 const stubReducedMotion = (reduce: boolean) =>
   vi.stubGlobal(
@@ -88,9 +94,15 @@ describe('Hero', () => {
     expect(link.getAttribute('href')).toMatch(/#experience$/);
   });
 
-  it('links View CV to the CV route', () => {
+  it('links View CV to the React Native CV route', () => {
     renderHero();
-    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '/cv');
+    expect(screen.getByRole('link', { name: 'View CV' })).toHaveAttribute('href', '/cv/react-native');
+  });
+
+  it('links View CV to the Ukrainian CV route in UA', async () => {
+    await i18n.changeLanguage('ua');
+    renderHero();
+    expect(screen.getByRole('link', { name: 'Переглянути CV' })).toHaveAttribute('href', '/uk/cv/react-native');
   });
 
   it('renders a live scene by default', async () => {
@@ -190,5 +202,33 @@ describe('Hero', () => {
     renderHero();
     expect(await screen.findByTestId('hero-fallback')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+  });
+});
+
+describe('Hero static HTML', () => {
+  const staticHtml = (lang: 'en' | 'uk') => {
+    const html = renderToString(
+      <I18nProvider lang={lang} dict={lang === 'uk' ? UA : EN}>
+        <Hero />
+      </I18nProvider>,
+    );
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    return { html, doc };
+  };
+
+  it.each(['en', 'uk'] as const)('has the gradient, both caption materials and no 3D canvas (%s)', lang => {
+    const { html, doc } = staticHtml(lang);
+    const dict = lang === 'uk' ? UA : EN;
+
+    expect(html).toContain('hero-wine-fallback');
+    expect(html).toContain(`>${dict.hero_caption_material}</span>`);
+    expect(html).toContain(`>${dict.hero_caption_material_light}</span>`);
+    // The scene mounts on the client only; the one <canvas> is the primary button's Wine layer.
+    const canvases = [...doc.querySelectorAll('canvas')];
+
+    expect(canvases).toHaveLength(1);
+    expect(canvases[0].closest('a')?.textContent).toContain(dict.btn_view_experience);
+    expect(doc.querySelector('.hero-caption')?.closest('div')?.querySelector('canvas')).toBeNull();
   });
 });
