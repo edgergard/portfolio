@@ -134,5 +134,21 @@
   "project_type_web": "Web",
   "project_type_mobile": "Mobile",
   "btn_app_store": "App Store",
-  "btn_google_play": "Google Play"
+  "btn_google_play": "Google Play",
+  "archive_breadcrumb_label": "Breadcrumb",
+  "archive_crumb_home": "Home",
+  "archive_crumb_archive": "Archive",
+  "archive_title": "All projects",
+  "archive_summary": "{{count}} projects · {{from}} — {{to}}",
+  "archive_filters_label": "Filter by type",
+  "archive_filter_all": "All · {{count}}",
+  "archive_filter_mobile": "Mobile · {{count}}",
+  "archive_filter_web": "Web · {{count}}",
+  "archive_filter_commercial": "Commercial · {{count}}",
+  "archive_empty": "No projects of this type yet.",
+  "archive_col_year": "Year",
+  "archive_col_project": "Project",
+  "archive_col_type": "Type",
+  "archive_col_stack": "Stack",
+  "archive_col_links": "Links"
 }

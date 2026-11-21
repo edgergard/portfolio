@@ -134,5 +134,21 @@
   "project_type_web": "Веб",
   "project_type_mobile": "Мобільний",
   "btn_app_store": "App Store",
-  "btn_google_play": "Google Play"
+  "btn_google_play": "Google Play",
+  "archive_breadcrumb_label": "Навігаційний ланцюжок",
+  "archive_crumb_home": "Головна",
+  "archive_crumb_archive": "Архів",
+  "archive_title": "Усі проєкти",
+  "archive_summary": "{{count}} проєктів · {{from}} — {{to}}",
+  "archive_filters_label": "Фільтр за типом",
+  "archive_filter_all": "Усі · {{count}}",
+  "archive_filter_mobile": "Мобільні · {{count}}",
+  "archive_filter_web": "Веб · {{count}}",
+  "archive_filter_commercial": "Комерційні · {{count}}",
+  "archive_empty": "Проєктів цього типу поки немає.",
+  "archive_col_year": "Рік",
+  "archive_col_project": "Проєкт",
+  "archive_col_type": "Тип",
+  "archive_col_stack": "Стек",
+  "archive_col_links": "Посилання"
 }
