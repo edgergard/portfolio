@@ -39,11 +39,11 @@ const Certifications = () => {
                     className="grid grid-cols-[90px_1fr_36px] items-center gap-3.5 text-sm leading-[normal] text-ink-2"
                   >
                     <span>{t(part.labelKey)}</span>
-                    <i data-testid="cert-bar" className="relative block h-1.5 overflow-hidden rounded-full bg-line">
+                    <i data-testid="cert-bar" className="relative block h-2 overflow-hidden rounded-full bg-line">
                       <span
                         data-testid="cert-bar-fill"
                         style={{ width: `${(part.value / cert.max) * 100}%` } as CSSProperties}
-                        className="bg-wine-flow absolute inset-y-0 left-0 block rounded-full hover:filter-none"
+                        className="bg-wine-flow absolute inset-y-0 left-0 block rounded-full shadow-[0_0_12px_rgba(208,33,63,.45)] brightness-[1.7] saturate-[1.2] hover:filter-none"
                       >
                         <WineCanvas />
                       </span>
