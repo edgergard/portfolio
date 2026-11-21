@@ -147,7 +147,8 @@ describe('round 6 fixes', () => {
     expect(arrow.querySelector('canvas')).not.toBeNull();
   });
 
-  it('fills the header name with the animated wine', () => {
+  it('fills the header name with the live wine shader (CSS gradient until it is live)', () => {
+    expect(css).toMatch(/\.wine-name:has\(> canvas\[data-state='live'\]\) > \.wine-text/);
     expect(css).toMatch(/\.wine-text \{[^}]*background-clip: text/);
     expect(css).toMatch(/\.wine-text \{[^}]*animation: wine-text/);
   });

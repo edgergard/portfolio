@@ -29,6 +29,20 @@ type Entry = {
   offset: number;
   /** Seconds this element runs ahead of the shared clock, so each one moves on its own. */
   phase: number;
+  /** Runs after each frame is copied in (e.g. clip it to text); w/h are device pixels. */
+  paint?: Paint;
+  fit: 'cover' | 'fill';
+};
+
+export type Paint = (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
+
+export type RegisterOptions = {
+  paint?: Paint;
+  /**
+   * 'cover' (default) crops the buffer to the element's shape; 'fill' squeezes the whole buffer in,
+   * so a small, wide element (text) shows many swirls instead of one flat patch of colour.
+   */
+  fit?: 'cover' | 'fill';
 };
 
 type Status = 'idle' | 'loading' | 'ready' | 'failed';
@@ -218,8 +232,17 @@ export const createWineButtonLoop = ({
     // Each element gets its own frame of the shader (its own moment in the animation),
     // copied out right after it is drawn, so no two tiles move in lockstep.
     renderer.render(time + entry.phase);
-    coverRect(renderer.width, renderer.height, w, h, entry.offset, rect);
+    if (entry.fit === 'fill') {
+      rect.sx = 0;
+      rect.sy = 0;
+      rect.sw = renderer.width;
+      rect.sh = renderer.height;
+    } else {
+      coverRect(renderer.width, renderer.height, w, h, entry.offset, rect);
+    }
+
     entry.ctx!.drawImage(renderer.source, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, w, h);
+    entry.paint?.(entry.ctx!, w, h);
 
     if (canvas.dataset.state !== 'live') {
       setState(canvas, 'live');
@@ -313,7 +336,7 @@ export const createWineButtonLoop = ({
     document.addEventListener('visibilitychange', onVisibility);
   };
 
-  const register = (canvas: HTMLCanvasElement) => {
+  const register = (canvas: HTMLCanvasElement, options: RegisterOptions = {}) => {
     if (status === 'failed' || typeof window.WebGLRenderingContext === 'undefined') {
       setState(canvas, 'fallback');
 
@@ -330,6 +353,8 @@ export const createWineButtonLoop = ({
       onScreen: true,
       offset: (registered * GOLDEN) % 1,
       phase: ((registered++ * GOLDEN) % 1) * PHASE_SPREAD,
+      paint: options.paint,
+      fit: options.fit ?? 'cover',
     };
 
     // No 2D context: nothing to draw into, so this button keeps its CSS fill.
