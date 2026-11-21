@@ -9,7 +9,7 @@ type Props = {
 
 const ProjectRow = ({ project, index, reverse }: Props) => {
   const { t } = useTranslation();
-  const { name, image, description, stack, codelink, demolink, category } = project;
+  const { name, poster, description, stack, codelink, demolink, category } = project;
   const num = String(index + 1).padStart(2, '0');
 
   return (
@@ -24,7 +24,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
         }`}
       >
         <img
-          src={image}
+          src={poster}
           alt=""
           loading="lazy"
           className="block h-full w-full object-cover transition-transform duration-[600ms] ease-[cubic-bezier(.2,.7,.2,1)] group-hover:scale-[1.035]"
@@ -50,7 +50,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
         </ul>
 
         <div className="mt-6 flex gap-5 text-sm font-medium text-ink">
-          <a
+          {demolink && <a
             href={demolink}
             aria-label={`${t('btn_live_demo')} — ${name}`}
             target="_blank"
@@ -58,8 +58,8 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
             className="inline-flex items-center gap-2 border-b border-wine pb-[3px] transition-colors hover:border-ink"
           >
             {t('btn_live_demo')} <span aria-hidden="true">↗</span>
-          </a>
-          <a
+          </a>}
+          {codelink && <a
             href={codelink}
             aria-label={`${t('btn_code')} — ${name}`}
             target="_blank"
@@ -67,7 +67,7 @@ const ProjectRow = ({ project, index, reverse }: Props) => {
             className="inline-flex items-center gap-2 border-b border-[#3A3A40] pb-[3px] transition-colors hover:border-ink"
           >
             {t('btn_code')} <span aria-hidden="true">↗</span>
-          </a>
+          </a>}
         </div>
       </div>
     </article>
