@@ -38,11 +38,36 @@ export function switchLocaleHref(to: Lang, pathname: string, search: string, has
   return `${localeHref(to, stripLocalePrefix(pathname))}${search}${hash}`;
 }
 
-export type LocaleResolution = { action: 'rewrite' | 'redirect' | 'next'; url: string };
+/**
+ * The href the language links render. Like switchLocaleHref, but English points at its explicit
+ * `/en` URL: the proxy redirects that to the prefix-less page and sets the `lang=en` cookie, so
+ * the switch works before hydration, without JS, and in a new tab.
+ */
+export function switchLocaleLinkHref(
+  to: Lang,
+  pathname: string,
+  search: string,
+  hash: string,
+): string {
+  if (to !== DEFAULT_LANG) {
+    return switchLocaleHref(to, pathname, search, hash);
+  }
+
+  const path = stripLocalePrefix(pathname);
+
+  return `/${DEFAULT_LANG}${path === '/' ? '' : path}${search}${hash}`;
+}
+
+export type LocaleResolution = {
+  action: 'rewrite' | 'redirect' | 'next';
+  url: string;
+  /** Set when the response should persist this language in the `lang` cookie. */
+  persist?: Lang;
+};
 
 /**
  * Decides what the proxy does with a request. An explicit `/uk` prefix always wins; `/en` is
- * redirected to its prefix-less canonical URL; prefix-less paths follow the `lang` cookie
+ * redirected to its prefix-less canonical URL, persisting English (it is the no-JS language switch); prefix-less paths follow the `lang` cookie
  * (English when absent): rewritten to `/en/...`, or redirected to `/uk/...`.
  */
 export function resolveLocale(pathname: string, cookie: string | undefined): LocaleResolution {
@@ -55,7 +80,7 @@ export function resolveLocale(pathname: string, cookie: string | undefined): Loc
   if (first === 'en') {
     const rest = pathname.slice('/en'.length);
 
-    return { action: 'redirect', url: rest === '' ? '/' : rest };
+    return { action: 'redirect', url: rest === '' ? '/' : rest, persist: 'en' };
   }
 
   if (cookie === 'uk') {

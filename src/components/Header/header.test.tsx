@@ -61,11 +61,12 @@ describe('Header links', () => {
     expect(toUa).toHaveAttribute('href', '/uk/cv/frontend?view=pdf');
   });
 
-  it('switches back to EN without the /uk prefix', () => {
+  it('switches back to EN: /en link before hydration, prefix-less after the click', () => {
     renderHeader('uk', '/uk/cv/frontend', 'view=pdf');
     const toEn = screen.getByRole('link', { name: 'EN' });
 
-    expect(toEn).toHaveAttribute('href', '/cv/frontend?view=pdf');
+    // Explicit /en URL: the proxy sets the cookie and redirects, so it works before hydration.
+    expect(toEn).toHaveAttribute('href', '/en/cv/frontend?view=pdf');
     fireEvent.click(toEn);
     expect(document.cookie).toContain('lang=en');
     expect(toEn).toHaveAttribute('href', '/cv/frontend?view=pdf');
@@ -74,7 +75,7 @@ describe('Header links', () => {
   it('links to the public URLs while English is prerendered under its internal /en path', () => {
     renderHeader('en', '/en/cv/frontend');
     expect(screen.getByRole('link', { name: 'UA' })).toHaveAttribute('href', '/uk/cv/frontend');
-    expect(screen.getByRole('link', { name: 'EN' })).toHaveAttribute('href', '/cv/frontend');
+    expect(screen.getByRole('link', { name: 'EN' })).toHaveAttribute('href', '/en/cv/frontend');
   });
 
   it('keeps the section the visitor is on when switching', () => {

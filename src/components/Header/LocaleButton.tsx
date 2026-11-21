@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, type MouseEvent } from 'react';
 import { useLang } from '@/lib/i18n-client';
-import { LANG_COOKIE, switchLocaleHref, type Lang } from '@/lib/locale';
+import { LANG_COOKIE, switchLocaleHref, switchLocaleLinkHref, type Lang } from '@/lib/locale';
 
 const OPTIONS: { value: Lang; label: string }[] = [
   { value: 'en', label: 'EN' },
@@ -34,7 +34,7 @@ const LocaleLinks = ({ search }: { search: string }) => {
           {/* aria-pressed marks the active language, as on the Vite site (tests pin it). */}
           {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props */}
           <a
-            href={switchLocaleHref(value, pathname, search, '')}
+            href={switchLocaleLinkHref(value, pathname, search, '')}
             onClick={e => handleClick(e, value)}
             aria-pressed={lang === value}
             // tracking-normal: the Vite site's <button>s did not inherit the nav letter-spacing.

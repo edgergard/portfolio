@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { localeHref, resolveLocale, switchLocaleHref } from './locale';
+import { localeHref, resolveLocale, switchLocaleHref, switchLocaleLinkHref } from './locale';
 
 describe('resolveLocale', () => {
   it('rewrites a prefix-less path to English when there is no cookie', () => {
@@ -18,8 +18,8 @@ describe('resolveLocale', () => {
   });
 
   it('redirects an explicit /en prefix to the prefix-less URL', () => {
-    expect(resolveLocale('/en/projects', undefined)).toEqual({ action: 'redirect', url: '/projects' });
-    expect(resolveLocale('/en', 'uk')).toEqual({ action: 'redirect', url: '/' });
+    expect(resolveLocale('/en/projects', undefined)).toEqual({ action: 'redirect', url: '/projects', persist: 'en' });
+    expect(resolveLocale('/en', 'uk')).toEqual({ action: 'redirect', url: '/', persist: 'en' });
   });
 
   it('does not mistake paths that merely start with uk or en for locales', () => {
@@ -51,5 +51,17 @@ describe('switchLocaleHref', () => {
     expect(switchLocaleHref('uk', '/en/cv/frontend', '', '')).toBe('/uk/cv/frontend');
     expect(switchLocaleHref('en', '/en/projects', '', '')).toBe('/projects');
     expect(switchLocaleHref('uk', '/entries', '', '')).toBe('/uk/entries');
+  });
+});
+
+describe('switchLocaleLinkHref', () => {
+  it('points English at the explicit /en URL, keeping search and hash', () => {
+    expect(switchLocaleLinkHref('en', '/uk/projects', '?a=1', '#x')).toBe('/en/projects?a=1#x');
+    expect(switchLocaleLinkHref('en', '/uk', '', '')).toBe('/en');
+    expect(switchLocaleLinkHref('en', '/projects', '', '')).toBe('/en/projects');
+  });
+
+  it('is the plain switch URL for Ukrainian', () => {
+    expect(switchLocaleLinkHref('uk', '/en/projects', '', '')).toBe('/uk/projects');
   });
 });
