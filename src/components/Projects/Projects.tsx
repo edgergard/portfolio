@@ -7,6 +7,7 @@ import ArchiveCta from './ArchiveCta';
 /**
  * The whole section sits on a full-bleed band of the hero's live Wine shader (CSS wine-flow fill
  * underneath): the label, the featured projects in glass panels, then the link to the archive.
+ * Server Component: the rows and the archive link are the client parts.
  */
 const Projects = () => {
   return (

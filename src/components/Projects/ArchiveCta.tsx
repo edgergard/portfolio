@@ -1,5 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useLang, useT } from '@/lib/i18n-client';
+import { localeHref } from '@/lib/locale';
 import { PROJECT_LIST } from '../../data/projects';
 import { GLASS } from '../layout/Section';
 import WineCanvas from '../ui/WineCanvas';
@@ -18,15 +22,17 @@ const previews = () => {
 /**
  * The link to the archive, as one more glass card under the featured rows: a mono kicker with
  * the year range, a large "See all N projects", a stack of other projects' posters and an arrow
- * disc on the live wine that nudges right on hover.
+ * disc on the live wine that nudges right on hover. A client component: its aria-label is a
+ * translated string and the link follows the page language.
  */
 const ArchiveCta = () => {
-  const { t } = useTranslation();
+  const t = useT();
+  const lang = useLang();
   const count = PROJECT_LIST.length;
 
   return (
     <Link
-      to="/projects"
+      href={localeHref(lang, '/projects')}
       aria-label={t('projects_archive_link', { count })}
       data-testid="archive-cta"
       className={
@@ -45,10 +51,12 @@ const ArchiveCta = () => {
       </span>
       <span aria-hidden className="ml-auto hidden pl-3.5 min-[640px]:flex">
         {previews().map(p => (
-          <img
+          <Image
             key={p.id}
             src={p.poster}
             alt=""
+            width={64}
+            height={40}
             loading="lazy"
             className="-ml-3.5 h-10 w-16 rounded-lg border-2 border-[#1a0a0e] object-cover object-top"
           />

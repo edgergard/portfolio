@@ -58,6 +58,6 @@ export function useLang(): Lang {
 
 
 /** A translated string, for Server Components that render text from the dictionary. */
-export function T({ k }: { k: string }) {
-  return useT()(k);
+export function T({ k, vars }: { k: string; vars?: Record<string, string | number> }) {
+  return useT()(k, vars);
 }

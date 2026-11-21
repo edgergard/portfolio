@@ -39,7 +39,7 @@ describe('Next.js module mocks (vitest.setup.ts)', () => {
 
   it('stubs the next/navigation hooks and throws on redirect / notFound', () => {
     expect(usePathname()).toBe('/');
-    expect(useSearchParams().toString()).toBe('');
+    expect(useSearchParams()?.toString()).toBe('');
     expect(typeof useRouter().push).toBe('function');
     expect(() => redirect('/cv/react-native')).toThrow(/NEXT_REDIRECT/);
     expect(() => notFound()).toThrow(/NEXT_NOT_FOUND/);

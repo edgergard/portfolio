@@ -17,7 +17,8 @@ const OPTIONS: { value: Lang; label: string }[] = [
  */
 const LocaleLinks = ({ search }: { search: string }) => {
   const lang = useLang();
-  const pathname = usePathname();
+  // Typed nullable while src/pages exists (Next's pages-router compat types, until Task 12).
+  const pathname = usePathname() ?? '/';
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>, to: Lang) => {
     // The proxy reads the cookie for prefix-less URLs, so it must be set before navigating.
@@ -49,7 +50,7 @@ const LocaleLinks = ({ search }: { search: string }) => {
 };
 
 const LocaleLinksWithSearch = () => {
-  const params = useSearchParams().toString();
+  const params = useSearchParams()?.toString();
 
   return <LocaleLinks search={params ? `?${params}` : ''} />;
 };

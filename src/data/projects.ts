@@ -5,12 +5,12 @@ import {
   Todo,
 } from '../images';
 
-/** Recorded loops (scripts/record-demo.mjs) live in public/videos, served under the site base. */
+/** Recorded loops (scripts/record-demo.mjs) live in public/videos, served from the site root. */
 const demo = (slug: string) => ({
-  poster: `${import.meta.env.BASE_URL}videos/${slug}.jpg`,
+  poster: `/videos/${slug}.jpg`,
   video: {
-    webm: `${import.meta.env.BASE_URL}videos/${slug}.webm`,
-    mp4: `${import.meta.env.BASE_URL}videos/${slug}.mp4`,
+    webm: `/videos/${slug}.webm`,
+    mp4: `/videos/${slug}.mp4`,
   },
 });
 

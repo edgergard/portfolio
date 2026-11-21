@@ -6,23 +6,26 @@ import i18n from '../../i18n';
 import en from '../../translations/en.json';
 import ua from '../../translations/ua.json';
 import { PROJECT_LIST } from '../../data/projects';
+import type { Lang } from '../../lib/locale';
+import { renderWithI18n } from '../../test/renderWithI18n';
 import { Root } from '../../Root';
-import ArchivePage from '../ArchivePage';
+import ArchivePage, { generateMetadata } from '../../app/[lang]/projects/page';
+import { generateStaticParams } from '../../app/[lang]/layout';
 
 // Header/Footer pull in the shader and router internals; the page is tested on its own.
+// The bridge stands in for the Vite shell's I18nProvider (removed in Task 12).
 vi.mock('../../App', async () => {
   const { Outlet } = await import('react-router');
+  const { default: I18nextBridge } = await import('../../I18nextBridge');
 
-  return { default: () => <Outlet /> };
+  return { default: () => <I18nextBridge><Outlet /></I18nextBridge> };
 });
 vi.mock('../Home', () => ({ default: () => <div>home</div> }));
+// The [lang] layout (imported for its static params) imports the global stylesheet, which jsdom
+// cannot parse; the ?raw import above still reads it as text.
+vi.mock('../../../styles.css', () => ({}));
 
-const renderPage = () =>
-  render(
-    <MemoryRouter initialEntries={['/projects']}>
-      <ArchivePage />
-    </MemoryRouter>,
-  );
+const renderPage = (lang: Lang = 'en') => renderWithI18n(<ArchivePage />, lang);
 
 beforeEach(async () => {
   window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
@@ -38,6 +41,7 @@ describe('ArchivePage', () => {
     const crumbs = screen.getByRole('navigation', { name: /breadcrumb/i });
 
     expect(crumbs).toHaveTextContent('Home / Archive');
+    expect(within(crumbs).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('heading', { level: 1, name: 'All projects' })).toBeInTheDocument();
     expect(within(screen.getByRole('table')).getAllByTestId('archive-row')).toHaveLength(PROJECT_LIST.length);
     expect(PROJECT_LIST).toHaveLength(6);
@@ -71,7 +75,8 @@ describe('ArchivePage', () => {
       const img = rows[i].querySelector('img')!;
 
       expect(img).toHaveAttribute('loading', 'lazy');
-      expect(img).toHaveAttribute('src', p.poster);
+      // next/image (mocked as a plain <img>); static imports are plain URLs under vitest.
+      expect(img).toHaveAttribute('src', typeof p.poster === 'string' ? p.poster : p.poster.src);
       expect(row.getByText(String(p.year))).toBeInTheDocument();
       expect(row.getByText(p.name)).toBeInTheDocument();
       expect(row.getByText((en as Record<string, string>)[p.description])).toBeInTheDocument();
@@ -122,16 +127,19 @@ describe('ArchivePage', () => {
     keys.forEach(k => expect(ua).toHaveProperty(k));
   });
 
-  it('renders in Ukrainian', async () => {
-    await act(async () => {
-      await i18n.changeLanguage('ua');
-    });
-    renderPage();
+  it('renders in Ukrainian', () => {
+    renderPage('uk');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(ua.archive_title);
+    expect(screen.getByRole('link', { name: ua.archive_crumb_home })).toHaveAttribute('href', '/uk');
   });
 });
 
 describe('route', () => {
+  it('is prerendered for en and uk (static params from [lang]) with metadata left to Task 11', async () => {
+    expect(generateStaticParams()).toEqual([{ lang: 'en' }, { lang: 'uk' }]);
+    expect(await generateMetadata()).toEqual({});
+  });
+
   it('Root registers /projects (a lazy route)', async () => {
     window.location.hash = '#/projects';
     render(<Root />);
@@ -142,7 +150,7 @@ describe('route', () => {
   });
 
   it('a MemoryRouter /projects route renders the page', () => {
-    render(
+    renderWithI18n(
       <MemoryRouter initialEntries={['/projects']}>
         <Routes>
           <Route path="/projects" element={<ArchivePage />} />

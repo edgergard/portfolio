@@ -1,9 +1,5 @@
-import { act, cleanup, render as rtlRender, screen, within } from '@testing-library/react';
-import type { ReactElement } from 'react';
-import { HashRouter } from 'react-router-dom';
+import { act, cleanup, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import '../../i18n';
-import i18n from '../../i18n';
 import en from '../../translations/en.json';
 import ua from '../../translations/ua.json';
 import { featuredProjects, PROJECT_LIST } from '../../data/projects';
@@ -11,11 +7,9 @@ import css from '../../../styles.css?raw';
 import type { Project } from '../../types/Project';
 import Projects from './Projects';
 import ProjectRow from './ProjectRow';
-import ProjectMedia from './ProjectMedia';
-import I18nextBridge from '../../I18nextBridge';
-
-// Migrated components read the Next.js I18nProvider; the bridge feeds it from i18next.
-const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
+import ProjectMedia, { POSTER_SIZES } from './ProjectMedia';
+import { renderWithI18n as render } from '../../test/renderWithI18n';
+import type { Lang } from '../../lib/locale';
 
 // jsdom never reports intersections, so render the reveal wrapper as a plain div.
 vi.mock('motion/react', () => ({
@@ -105,19 +99,13 @@ beforeEach(() => {
   vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(pause);
 });
 
-afterEach(async () => {
+afterEach(() => {
   cleanup(); // unmount (pausing videos) while play/pause are still stubbed
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
-  await i18n.changeLanguage('en');
 });
 
-const renderSection = () =>
-  render(
-    <HashRouter>
-      <Projects />
-    </HashRouter>,
-  );
+const renderSection = (lang: Lang = 'en') => render(<Projects />, lang);
 
 describe('Projects section', () => {
   it('renders exactly the 3 featured projects in order', () => {
@@ -184,7 +172,8 @@ describe('Projects section', () => {
     renderSection();
     const rows = screen.getAllByTestId('project-row');
     const sourcesOf = (row: HTMLElement) => [...row.querySelectorAll('video source')].map(s => s.getAttribute('src'));
-    const base = import.meta.env.BASE_URL;
+    // Served from public/videos at the site root; the video poster stays a plain URL.
+    const base = '/';
 
     expect(sourcesOf(rows[0])).toEqual([`${base}videos/pokemon.webm`, `${base}videos/pokemon.mp4`]);
     expect(sourcesOf(rows[1])).toEqual([`${base}videos/weather.webm`, `${base}videos/weather.mp4`]);
@@ -216,7 +205,14 @@ describe('Projects section', () => {
     renderSection();
     const link = screen.getByRole('link', { name: `All projects · Archive (${PROJECT_LIST.length})` });
 
-    expect(link).toHaveAttribute('href', '#/projects');
+    expect(link).toHaveAttribute('href', '/projects');
+  });
+
+  it('links to the Ukrainian archive under /uk', () => {
+    renderSection('uk');
+    const link = screen.getByRole('link', { name: `Усі проєкти · Архів (${PROJECT_LIST.length})` });
+
+    expect(link).toHaveAttribute('href', '/uk/projects');
   });
 
   it('shows the archive as a glass card: year range, "See all N projects", previews, arrow', () => {
@@ -229,9 +225,8 @@ describe('Projects section', () => {
     expect(cta).toHaveClass('backdrop-blur-[14px]');
   });
 
-  it('translates the archive link and type to Ukrainian', async () => {
-    await i18n.changeLanguage('ua');
-    renderSection();
+  it('translates the archive link and type to Ukrainian', () => {
+    renderSection('uk');
 
     expect(screen.getByRole('link', { name: `Усі проєкти · Архів (${PROJECT_LIST.length})` })).toBeInTheDocument();
     expect(screen.getByText('01 — Веб · 2024')).toBeInTheDocument();
@@ -269,6 +264,13 @@ describe('ProjectMedia', () => {
 
     expect(container.querySelector('video')).toBeNull();
     expect(container.querySelector('img')).toHaveAttribute('src', base.poster);
+  });
+
+  it('renders the poster through next/image, sized for the media column', () => {
+    const { container } = render(<ProjectMedia project={base} />);
+
+    expect(POSTER_SIZES).toBe('(min-width: 900px) 560px, 100vw');
+    expect(container.querySelector('img')).toHaveAttribute('sizes', POSTER_SIZES);
   });
 
   it('pans the poster slowly, but not under reduced motion', () => {

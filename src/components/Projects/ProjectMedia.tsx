@@ -1,9 +1,15 @@
+'use client';
+
+import Image from 'next/image';
 import { useRef } from 'react';
 import type { Project } from '../../types/Project';
 import { usePrefersReducedMotion } from '../Hero/sceneSupport';
 import { useInViewVideo } from './useInViewVideo';
 
 type Props = { project: Project };
+
+/** The media column is at most ~560px wide from 900px up, and full width below. */
+export const POSTER_SIZES = '(min-width: 900px) 560px, 100vw';
 
 const hostOf = (url?: string) => {
   if (!url) {
@@ -39,7 +45,8 @@ const Screen = ({ project }: Props) => {
         loop
         playsInline
         preload="none"
-        poster={poster}
+        // Recorded loops keep a plain /videos URL as their poster frame.
+        poster={typeof poster === 'string' ? poster : poster.src}
         aria-hidden
         className="block h-full w-full object-cover"
       >
@@ -49,10 +56,13 @@ const Screen = ({ project }: Props) => {
     );
   }
 
+  // `fill` sizes the image to its frame (the parent is positioned and sized by aspect ratio).
   return (
-    <img
+    <Image
       src={poster}
       alt=""
+      fill
+      sizes={POSTER_SIZES}
       loading="lazy"
       className={`block h-full w-full object-cover ${reducedMotion ? '' : 'poster-pan'}`}
     />

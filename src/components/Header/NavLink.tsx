@@ -33,7 +33,8 @@ export const SectionLink = ({
   'aria-label'?: string;
 }) => {
   const lang = useLang();
-  const pathname = usePathname();
+  // Typed nullable while src/pages exists (Next's pages-router compat types, until Task 12).
+  const pathname = usePathname() ?? '/';
   const home = localeHref(lang, '/');
   const href = `${home}#${section}`;
   // Normalised, since English can report its internal /en path.

@@ -1,6 +1,8 @@
+'use client';
+
+import { useT } from '@/lib/i18n-client';
 import { GLASS } from '../layout/Section';
-import { useTranslation } from 'react-i18next';
-import { Project } from '../../types/Project';
+import type { Project } from '../../types/Project';
 import ProjectMedia from './ProjectMedia';
 import WineBadge from '../ui/WineBadge';
 
@@ -12,9 +14,12 @@ type Props = {
 
 const LINK = 'inline-flex items-center gap-2 border-b border-white pb-[3px] transition-colors hover:border-wine-3';
 
-/** A featured project in a dark glass panel over the wine band: media one side, text the other. */
+/**
+ * A featured project in a dark glass panel over the wine band: media one side, text the other.
+ * A client component: the links' aria-labels are translated strings.
+ */
 const ProjectRow = ({ project, index, reverse }: Props) => {
-  const { t } = useTranslation();
+  const t = useT();
   const { name, description, stack, codelink, demolink, appStore, googlePlay, type, year }
     = project;
   const num = String(index + 1).padStart(2, '0');

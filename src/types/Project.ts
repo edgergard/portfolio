@@ -1,3 +1,5 @@
+import type { StaticImageData } from 'next/image';
+
 export type ProjectType = 'mobile' | 'web';
 
 export type Project = {
@@ -15,6 +17,7 @@ export type Project = {
   featured?: boolean;
   order?: number;
   commercial?: boolean;
-  poster: string;
+  /** A bundled screenshot (static import), or a plain URL for a recorded loop's poster frame. */
+  poster: StaticImageData | string;
   video?: { webm?: string; mp4?: string };
 };

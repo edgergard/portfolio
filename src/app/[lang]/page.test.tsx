@@ -16,8 +16,8 @@ const sectionIds = (lang: Lang) => {
 };
 
 describe('home page', () => {
-  // Projects (Task 8) and Contact (Task 9) join between and after these.
+  // Contact (Task 9) joins after these.
   it.each(['en', 'uk'] as const)('renders the migrated sections in the home order (%s)', lang => {
-    expect(sectionIds(lang)).toEqual(['hero', 'about', 'experience', 'certifications']);
+    expect(sectionIds(lang)).toEqual(['hero', 'about', 'experience', 'projects', 'certifications']);
   });
 });

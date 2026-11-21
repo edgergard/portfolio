@@ -21,4 +21,12 @@ describe('projects data model', () => {
       expect(p.poster).toBeTruthy();
     }
   });
+
+  it('serves recorded loops and their posters from /videos as plain URLs', () => {
+    for (const p of PROJECT_LIST.filter(p => p.video)) {
+      expect(p.poster).toMatch(/^\/videos\/[\w-]+\.jpg$/);
+      expect(p.video?.webm).toMatch(/^\/videos\/[\w-]+\.webm$/);
+      expect(p.video?.mp4).toMatch(/^\/videos\/[\w-]+\.mp4$/);
+    }
+  });
 });

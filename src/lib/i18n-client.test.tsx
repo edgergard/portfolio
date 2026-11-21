@@ -36,4 +36,13 @@ describe('I18nProvider', () => {
     );
     expect(screen.getByTestId('label')).toHaveTextContent(en.section_about);
   });
+
+  it('substitutes placeholders in <T> with vars', () => {
+    render(
+      <I18nProvider lang="en" dict={en}>
+        <p data-testid="summary"><T k="archive_summary" vars={{ count: 6, from: 2023, to: 2024 }} /></p>
+      </I18nProvider>,
+    );
+    expect(screen.getByTestId('summary')).toHaveTextContent('6 projects · 2023 — 2024');
+  });
 });

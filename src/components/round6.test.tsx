@@ -13,8 +13,8 @@ import ArchiveCta from './Projects/ArchiveCta';
 import I18nextBridge from '../I18nextBridge';
 import { renderWithI18n } from '../test/renderWithI18n';
 
-// Contact and ArchiveCta still read i18next; the bridge feeds the Next.js I18nProvider from it.
-// SkillsList and Certifications render inside the I18nProvider alone.
+// Contact still reads i18next; the bridge feeds the Next.js I18nProvider from it.
+// SkillsList, Certifications and ArchiveCta render inside the I18nProvider alone.
 const render = (ui: ReactElement) => rtlRender(ui, { wrapper: I18nextBridge });
 
 const finePointer = () =>
@@ -151,7 +151,7 @@ describe('round 6 fixes', () => {
   });
 
   it('puts the archive arrow on the live wine instead of a white disc', () => {
-    render(<MemoryRouter><ArchiveCta /></MemoryRouter>);
+    renderWithI18n(<ArchiveCta />);
     const arrow = screen.getByTestId('archive-cta-arrow');
 
     expect(arrow).toHaveClass('bg-wine-flow', 'text-white');
