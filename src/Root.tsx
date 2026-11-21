@@ -7,14 +7,19 @@ import Home from './pages/Home';
 const ArchivePage = lazy(() => import('./pages/ArchivePage'));
 const CvPage = lazy(() => import('./pages/CvPage'));
 
+/** The route tree, shared by the browser (HashRouter) and the build-time prerender (MemoryRouter). */
+export const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<App />}>
+      <Route index element={<Home />} />
+      <Route path="projects" element={<Suspense fallback={null}><ArchivePage /></Suspense>} />
+      <Route path="cv" element={<Suspense fallback={null}><CvPage /></Suspense>} />
+    </Route>
+  </Routes>
+);
+
 export const Root = () => (
   <Router>
-    <Routes>
-      <Route path="/" element={<App />}>
-        <Route index element={<Home />} />
-        <Route path="projects" element={<Suspense fallback={null}><ArchivePage /></Suspense>} />
-        <Route path="cv" element={<Suspense fallback={null}><CvPage /></Suspense>} />
-      </Route>
-    </Routes>
+    <AppRoutes />
   </Router>
 );

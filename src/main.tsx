@@ -32,5 +32,6 @@ if (hydrate) {
 } else {
   // Drop the prerendered English home page (or the dev placeholder comment) and render as before.
   container.textContent = '';
+  delete document.documentElement.dataset.skipPrerender;
   ReactDOM.createRoot(container).render(app);
 }
