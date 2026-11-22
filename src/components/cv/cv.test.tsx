@@ -129,13 +129,13 @@ describe('CvViewSwitch', () => {
       .toEqual(['/uk/cv/react-native', '/uk/cv/frontend']);
   });
 
-  it('renders two segmented radiogroups: [React Native | Frontend] and [PDF | Web]', () => {
+  it('renders two segmented radiogroups: [React Native | Frontend] and [Web | PDF]', () => {
     renderCv();
     const version = screen.getByRole('radiogroup', { name: 'CV version' });
     const view = screen.getByRole('radiogroup', { name: 'CV view' });
 
     expect(within(version).getAllByRole('radio').map(r => r.textContent)).toEqual(['React Native', 'Frontend']);
-    expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['PDF', 'Web']);
+    expect(within(view).getAllByRole('radio').map(r => r.textContent)).toEqual(['Web', 'PDF']);
     expect(version).toHaveClass('rounded-full', 'border-chip', 'p-[3px]');
   });
 
@@ -144,7 +144,7 @@ describe('CvViewSwitch', () => {
     const view = screen.getByRole('radiogroup', { name: 'CV view' });
     const hl = within(view).getByTestId('toggle-highlight');
 
-    expect(hl).toHaveClass('border-wine-3', 'bg-wine/25', 'translate-x-full', 'transition-transform', 'motion-reduce:transition-none');
+    expect(hl).toHaveClass('border-wine-3', 'bg-wine/25', 'translate-x-0', 'transition-transform', 'motion-reduce:transition-none');
     expect(radio('Web')).toHaveClass('text-ink');
     expect(radio('PDF')).toHaveClass('text-muted-2');
   });
@@ -172,10 +172,10 @@ describe('CvViewSwitch', () => {
 
     renderCv();
     radio('Web').focus();
-    await user.keyboard('{Home}');
+    await user.keyboard('{End}');
     expect(radio('PDF')).toHaveFocus();
     expect(replace).toHaveBeenLastCalledWith('/cv/react-native?view=pdf', { scroll: false });
-    await user.keyboard('{End}');
+    await user.keyboard('{Home}');
     expect(radio('Web')).toHaveFocus();
     expect(replace).toHaveBeenLastCalledWith('/cv/react-native', { scroll: false });
   });

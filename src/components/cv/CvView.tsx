@@ -42,8 +42,9 @@ const CvView = ({ doc, view, onViewChange }: Props) => {
             <Toggle
               groupLabel={t('cv_aria_view')}
               options={[
-                { value: 'pdf', label: `${t('cv_view_pdf')}${t('cv_pdf_note')}` },
+                // Web first: it is the default view.
                 { value: 'web', label: t('cv_view_web') },
+                { value: 'pdf', label: `${t('cv_view_pdf')}${t('cv_pdf_note')}` },
               ]}
               value={view}
               onChange={onViewChange}
