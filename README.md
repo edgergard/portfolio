@@ -8,7 +8,7 @@ a projects archive at `/projects`, and CV pages at `/cv/react-native` and `/cv/f
 ## Stack
 
 Next.js 16 (App Router, every page prerendered), React 19, TypeScript, Tailwind CSS 3,
-motion, three.js with @react-three/fiber, react-hook-form + zod, EmailJS, Vercel Speed
+motion, three.js with @react-three/fiber, react-hook-form + zod, Resend, Vercel Speed
 Insights. Tests: Vitest and Testing Library on jsdom.
 
 ## Setup
@@ -49,6 +49,7 @@ above in the project's environment settings, and every push builds and deploys
 - The 3D scene is lazy-loaded and mounted once the page is idle; without WebGL a CSS
   gradient is shown instead. With `prefers-reduced-motion` the scene and the wine fills keep
   moving at a gentler pace (pointer tilt still works); nothing freezes.
-- CV PDFs live in `public/cv/`; the contact form sends through EmailJS.
+- CV PDFs live in `public/cv/`; the contact form posts to `src/app/api/contact/route.ts`, which mails
+  `CONTACT_TO_EMAIL` through Resend.
 - Dev tools in `scripts/`: `og-image.mjs` (link-preview image, from a running
   `npm start`), `record-demo.mjs` (project demo videos), `optimize-images.mjs`.

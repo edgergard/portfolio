@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MAX_PER_WINDOW, resetRateLimit } from '@/lib/rateLimit';
 import { POST } from './route';
 
-const VALID = { email: 'visitor@example.com', subject: 'Hello', message: 'Let us talk', company: '' };
+const VALID = { email: 'visitor@example.com', subject: 'Hello', message: 'Let us talk', hp_note: '' };
 const resend = vi.fn();
 
 const post = (body: unknown, headers: Record<string, string> = {}) =>
@@ -58,7 +58,7 @@ describe('POST /api/contact', () => {
   });
 
   it('silently accepts and drops a filled honeypot', async () => {
-    const res = await post({ ...VALID, company: 'ACME' });
+    const res = await post({ ...VALID, hp_note: 'ACME' });
 
     expect(res.status).toBe(200);
     expect(resend).not.toHaveBeenCalled();

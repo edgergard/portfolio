@@ -360,7 +360,7 @@ describe('Contact', () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     expect(fetchMock.mock.calls[0][0]).toBe('/api/contact');
     expect(fetchMock.mock.calls[0][1]).toMatchObject({ method: 'POST', headers: { 'Content-Type': 'application/json' } });
-    expect(sentBody()).toEqual({ email: 'a@b.co', subject: 'Hi', message: 'Hello', company: '' });
+    expect(sentBody()).toEqual({ email: 'a@b.co', subject: 'Hi', message: 'Hello', hp_note: '' });
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
   });
 
@@ -384,6 +384,13 @@ describe('Contact', () => {
     expect(await screen.findByText(en.message_error)).toBeInTheDocument();
   });
 
+  it('caps each field at the server limits, so over-long text can never hit a misleading error', async () => {
+    await renderContact();
+    expect(screen.getByLabelText('Email')).toHaveAttribute('maxlength', '254');
+    expect(screen.getByLabelText('Subject')).toHaveAttribute('maxlength', '200');
+    expect(screen.getByLabelText('Message')).toHaveAttribute('maxlength', '5000');
+  });
+
   it('toasts an error when the network fails', async () => {
     fetchMock.mockRejectedValueOnce(new TypeError('offline'));
     await renderContact();
@@ -396,16 +403,17 @@ describe('Contact', () => {
 
   it('sends whatever a bot typed into the hidden honeypot, so the server can drop it', async () => {
     await renderContact();
-    const trap = document.querySelector<HTMLInputElement>('input[name="company"]')!;
+    const trap = document.querySelector<HTMLInputElement>('input[name="hp_note"]')!;
 
     expect(trap).toHaveAttribute('tabindex', '-1');
     expect(trap).toHaveAttribute('aria-hidden', 'true');
+    expect(trap).toHaveAttribute('autocomplete', 'new-password');
     fireEvent.change(trap, { target: { value: 'ACME' } });
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-    expect(sentBody().company).toBe('ACME');
+    expect(sentBody().hp_note).toBe('ACME');
   });
 });

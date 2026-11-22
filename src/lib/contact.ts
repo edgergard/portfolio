@@ -35,4 +35,6 @@ export type ContactFields = z.infer<typeof ContactSchema>;
  * Honeypot: a field people never see or fill (hidden, out of the tab order); bots that fill
  * every input do. A request with it set is accepted and silently dropped.
  */
-export const HONEYPOT_FIELD = 'company';
+// A name with no autofill meaning (not company/website/url...), so browsers and password
+// managers never fill it for a real visitor and drop their message.
+export const HONEYPOT_FIELD = 'hp_note';

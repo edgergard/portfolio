@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Slide, toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CONTACT_ENDPOINT, ContactSchema, HONEYPOT_FIELD, type ContactFields } from '@/lib/contact';
+import { CONTACT_ENDPOINT, CONTACT_LIMITS, ContactSchema, HONEYPOT_FIELD, type ContactFields } from '@/lib/contact';
 import { useT } from '@/lib/i18n-client';
 import Button from '../ui/Button';
 import { GLASS } from '../layout/Section';
@@ -107,7 +107,10 @@ const ContactForm = () => {
           name={HONEYPOT_FIELD}
           type="text"
           tabIndex={-1}
-          autoComplete="off"
+          autoComplete="new-password"
+          data-1p-ignore
+          data-lpignore="true"
+          data-bwignore
           aria-hidden="true"
           className="absolute -left-[9999px] h-px w-px opacity-0"
         />
@@ -116,6 +119,7 @@ const ContactForm = () => {
           <span className={captionClass}>{t('email')}</span>
           <input
             {...register('email')}
+            maxLength={CONTACT_LIMITS.email}
             type="email"
             placeholder="you@company.com"
             className={fieldClass(!!errors.email)}
@@ -128,6 +132,7 @@ const ContactForm = () => {
           <span className={captionClass}>{t('subject')}</span>
           <input
             {...register('subject')}
+            maxLength={CONTACT_LIMITS.subject}
             type="text"
             placeholder={t('subject_placeholder')}
             autoComplete="off"
@@ -141,6 +146,7 @@ const ContactForm = () => {
           <span className={captionClass}>{t('message')}</span>
           <textarea
             {...register('message')}
+            maxLength={CONTACT_LIMITS.message}
             rows={3}
             placeholder={t('message_placeholder')}
             autoComplete="off"
