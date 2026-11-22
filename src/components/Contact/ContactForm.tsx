@@ -13,8 +13,7 @@ import Button from '../ui/Button';
 import { GLASS } from '../layout/Section';
 import { TELEGRAM_URL } from '../../data/content';
 import { ArrowUpRightIcon } from './icons';
-
-const TOAST_CLASS = '!rounded-xl !border !border-line !bg-surface !font-sans !text-ink';
+import { ContactToast, ContactToastClose } from './ContactToast';
 
 
 const ContactForm = () => {
@@ -31,21 +30,22 @@ const ContactForm = () => {
   const showToast = (success: boolean) => {
     const options = {
       position: 'bottom-right',
-      autoClose: 3000,
+      autoClose: success ? 4000 : 7000,
       hideProgressBar: false,
-      closeOnClick: true,
+      closeOnClick: false,
       pauseOnHover: true,
       draggable: true,
-      progress: undefined,
-      theme: 'dark',
-      className: TOAST_CLASS,
+      icon: false,
+      closeButton: ContactToastClose,
+      className: `contact-toast contact-toast--${success ? 'success' : 'error'}`,
+      progressClassName: 'contact-toast-bar',
       transition: Slide,
     } as const;
 
     if (success) {
-      toast(t('message_success'), options);
+      toast(<ContactToast kind="success" label={t('toast_sent_label')} text={t('toast_sent_text')} />, options);
     } else {
-      toast.error(t('message_error'), options);
+      toast.error(<ContactToast kind="error" label={t('toast_error_label')} text={t('toast_error_text')} />, options);
     }
   };
 

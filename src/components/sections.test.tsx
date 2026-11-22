@@ -371,7 +371,8 @@ describe('Contact', () => {
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
-    expect(await screen.findByText(en.message_success)).toBeInTheDocument();
+    expect(await screen.findByText(en.toast_sent_label)).toBeInTheDocument();
+    expect(screen.getByText(en.toast_sent_text)).toBeInTheDocument();
   });
 
   it('toasts an error when the send fails', async () => {
@@ -381,7 +382,8 @@ describe('Contact', () => {
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
-    expect(await screen.findByText(en.message_error)).toBeInTheDocument();
+    expect(await screen.findByText(en.toast_error_label)).toBeInTheDocument();
+    expect(screen.getByText(en.toast_error_text)).toBeInTheDocument();
   });
 
   it('caps each field at the server limits, so over-long text can never hit a misleading error', async () => {
@@ -398,7 +400,8 @@ describe('Contact', () => {
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
-    expect(await screen.findByText(en.message_error)).toBeInTheDocument();
+    expect(await screen.findByText(en.toast_error_label)).toBeInTheDocument();
+    expect(screen.getByText(en.toast_error_text)).toBeInTheDocument();
   });
 
   it('sends whatever a bot typed into the hidden honeypot, so the server can drop it', async () => {

@@ -465,6 +465,109 @@ html:not([lang='uk']) .nf-uk {
 }
 
 /*
+ * Contact form toast (ContactToast.tsx): the form's glass panel, an icon disc, a mono caps
+ * label and a thin wine timer line. Overrides react-toastify's default toast box.
+ */
+.Toastify__toast.contact-toast {
+  min-height: 0;
+  margin-bottom: 12px;
+  padding: 14px 14px 16px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(18, 18, 20, 0.92);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 50px -20px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-family: var(--font-geist), sans-serif;
+  overflow: hidden;
+}
+
+.Toastify__toast.contact-toast--error {
+  border-color: rgba(255, 138, 155, 0.35);
+}
+
+.contact-toast .Toastify__toast-body {
+  margin: 0;
+  padding: 0;
+  align-items: flex-start;
+}
+
+.contact-toast-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.contact-toast-icon--success {
+  background: rgba(34, 197, 94, 0.16);
+  color: #4ADE80;
+}
+
+.contact-toast-icon--error {
+  background: rgba(208, 33, 63, 0.2);
+  color: #FF8A9B;
+}
+
+.contact-toast-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #9A9AA2;
+}
+
+.contact-toast-label--error {
+  color: #FF8A9B;
+}
+
+.contact-toast-text {
+  margin-top: 3px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.contact-toast-close {
+  align-self: flex-start;
+  margin-left: 8px;
+  padding: 2px;
+  border-radius: 6px;
+  color: #9A9AA2;
+  transition: color 0.15s;
+}
+
+.contact-toast-close:hover {
+  color: #fff;
+}
+
+.contact-toast-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.contact-toast .Toastify__progress-bar--wrp {
+  height: 2px;
+}
+
+/* react-toastify's track behind the bar is a rainbow gradient in its default theme. */
+.contact-toast .Toastify__progress-bar--bg {
+  display: none;
+}
+
+.Toastify__progress-bar.contact-toast-bar {
+  height: 2px;
+  opacity: 1;
+  background: #D0213F;
+}
+
+.contact-toast--error .Toastify__progress-bar.contact-toast-bar {
+  background: #FF8A9B;
+}
+
+/*
  * Light theme polish (from a page-by-page colour and contrast audit). Every rule is scoped to
  * :root[data-theme='light'], so the dark theme is untouched. Wine areas got a brighter shader in
  * the light theme; these rules retint what sits on it (glass, small text, rings) to match.
@@ -575,17 +678,47 @@ html:not([lang='uk']) .nf-uk {
   border-color: rgb(var(--c-rule));
 }
 
-/* Toasts are light in the light theme; their dark-theme close button and bar were white/grey. */
-:root[data-theme='light'] .Toastify__close-button {
+/* Contact toast, light theme: the same panel on the light page (dark rules are below). */
+:root[data-theme='light'] .Toastify__toast.contact-toast {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgb(var(--c-line));
   color: rgb(var(--c-ink));
-  opacity: 0.55;
+  box-shadow: 0 18px 50px -24px rgba(60, 20, 30, 0.35);
 }
 
-:root[data-theme='light'] .Toastify__close-button:hover {
-  opacity: 0.9;
+:root[data-theme='light'] .Toastify__toast.contact-toast--error {
+  border-color: rgba(179, 18, 46, 0.35);
 }
 
-:root[data-theme='light'] .Toastify__progress-bar-theme--dark {
+:root[data-theme='light'] .contact-toast-text {
+  color: rgb(var(--c-ink));
+}
+
+:root[data-theme='light'] .contact-toast-label,
+:root[data-theme='light'] .contact-toast-close {
+  color: rgb(var(--c-muted));
+}
+
+:root[data-theme='light'] .contact-toast-close:hover {
+  color: rgb(var(--c-ink));
+}
+
+:root[data-theme='light'] .contact-toast-icon--success {
+  background: rgba(22, 101, 52, 0.1);
+  color: #166534;
+}
+
+:root[data-theme='light'] .contact-toast-icon--error,
+:root[data-theme='light'] .contact-toast-label--error {
+  color: #B3122E;
+}
+
+:root[data-theme='light'] .contact-toast-icon--error {
+  background: rgba(179, 18, 46, 0.1);
+}
+
+:root[data-theme='light'] .Toastify__progress-bar.contact-toast-bar,
+:root[data-theme='light'] .contact-toast--error .Toastify__progress-bar.contact-toast-bar {
   background: #A51C36;
 }
 
@@ -679,3 +812,4 @@ html:not([lang='uk']) .nf-uk {
 :root[data-theme='light'] [data-testid='archive-head'] {
   border-color: rgba(255, 255, 255, 0.2);
 }
+
