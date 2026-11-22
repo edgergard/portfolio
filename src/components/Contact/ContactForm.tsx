@@ -1,43 +1,21 @@
 'use client';
 
-import emailjs from '@emailjs/browser';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
 // react-toastify ships with this lazy chunk (not the first load): toasts only appear after a send.
 import { Slide, toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CONTACT_ENDPOINT, ContactSchema, HONEYPOT_FIELD, type ContactFields } from '@/lib/contact';
 import { useT } from '@/lib/i18n-client';
 import Button from '../ui/Button';
 import { GLASS } from '../layout/Section';
 import { TELEGRAM_URL } from '../../data/content';
 import { ArrowUpRightIcon } from './icons';
 
-// Next inlines NEXT_PUBLIC_* at build time; read at send time so tests can stub them.
-const emailjsConfig = () => ({
-  SERVICE_ID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? '',
-  TEMPLATE_ID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? '',
-  USER_PUBLIC_KEY: process.env.NEXT_PUBLIC_EMAILJS_KEY,
-});
-
 const TOAST_CLASS = '!rounded-xl !border !border-line !bg-surface !font-sans !text-ink';
 
-const FormSchema = z.object({
-  email: z
-    .string({ required_error: 'form_error_submit' })
-    .min(1, { message: 'form_error_email' })
-    .email({ message: 'form_error_submit' }),
-  subject: z
-    .string()
-    .min(1, { message: 'form_error_subject' }),
-  message: z
-    .string()
-    .min(1, { message: 'form_error_message' }),
-});
-
-type FormSchemaType = z.infer<typeof FormSchema>;
 
 const ContactForm = () => {
   const t = useT();
@@ -46,7 +24,7 @@ const ContactForm = () => {
     register, 
     reset,
     formState: { errors },
-  } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema)});
+  } = useForm<ContactFields>({ resolver: zodResolver(ContactSchema) });
   const form = useRef<HTMLFormElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -71,30 +49,28 @@ const ContactForm = () => {
     }
   };
 
-  const sendEmail = async () => {
-    if (form.current) {
-      setIsLoading(true);
-      try {
-        const API = emailjsConfig();
+  /** Posts to our API route, which mails it via Resend; the honeypot rides along unseen. */
+  const onSubmit = async (fields: ContactFields) => {
+    setIsLoading(true);
+    try {
+      const honeypot = form.current?.elements.namedItem(HONEYPOT_FIELD) as HTMLInputElement | null;
+      const response = await fetch(CONTACT_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...fields, [HONEYPOT_FIELD]: honeypot?.value ?? '' }),
+      });
 
-        await emailjs.sendForm(
-          API.SERVICE_ID,
-          API.TEMPLATE_ID,
-          form.current,
-          API.USER_PUBLIC_KEY,
-        );
-        showToast(true);
-        reset();
-      } catch {
-        showToast(false); 
+      if (!response.ok) {
+        throw new Error(`contact: ${response.status}`);
       }
 
-      setIsLoading(false);
+      showToast(true);
+      reset();
+    } catch {
+      showToast(false);
     }
-  };
-  
-  const onSubmit = () => {
-    sendEmail();
+
+    setIsLoading(false);
   };
 
   // Line-only fields: a bottom hairline that turns wine-3 on focus; keyboard focus also thickens it.
@@ -125,6 +101,16 @@ const ContactForm = () => {
             {t('contact_form_status')}
           </p>
         </div>
+
+        {/* Honeypot (see lib/contact.ts): off-screen, out of the tab order and the a11y tree. */}
+        <input
+          name={HONEYPOT_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="absolute -left-[9999px] h-px w-px opacity-0"
+        />
 
         <label className={labelClass}>
           <span className={captionClass}>{t('email')}</span>

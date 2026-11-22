@@ -21,9 +21,9 @@ cp .env.example .env.local   # then fill in the values
 | Variable                          | Used for                                          |
 | --------------------------------- | ------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`            | Canonical links, hreflang, sitemap, Open Graph    |
-| `NEXT_PUBLIC_EMAILJS_SERVICE_ID`  | Contact form (EmailJS)                            |
-| `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID` | Contact form (EmailJS)                            |
-| `NEXT_PUBLIC_EMAILJS_KEY`         | Contact form (EmailJS public key)                 |
+| `RESEND_API_KEY`                  | Contact form: Resend API key (server only)        |
+| `CONTACT_TO_EMAIL`                | Contact form: where messages go                   |
+| `CONTACT_FROM`                    | Optional sender (default `onboarding@resend.dev`) |
 
 ## Scripts
 

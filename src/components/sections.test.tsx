@@ -1,5 +1,4 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
-import emailjs from '@emailjs/browser';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { intersectEverything } from '../test/intersect';
 import About from './About';
@@ -11,9 +10,9 @@ import type { Lang } from '../lib/locale';
 import { renderWithI18n } from '../test/renderWithI18n';
 import en from '../translations/en.json';
 
-vi.mock('@emailjs/browser', () => ({
-  default: { sendForm: vi.fn().mockResolvedValue({ status: 200 }) },
-}));
+/** The form posts to /api/contact; tests stub fetch and read what was sent. */
+const fetchMock = vi.fn();
+const sentBody = (call = 0) => JSON.parse(fetchMock.mock.calls[call][1].body as string);
 
 describe('About', () => {
   const render = renderWithI18n;
@@ -173,8 +172,9 @@ describe('home sections in Ukrainian', () => {
 
 describe('Contact', () => {
   beforeEach(() => {
-    vi.mocked(emailjs.sendForm).mockReset();
-    vi.mocked(emailjs.sendForm).mockResolvedValue({ status: 200, text: 'OK' });
+    fetchMock.mockReset();
+    fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
   });
 
   // The form loads on demand; wait for it so every test sees the whole section.
@@ -322,7 +322,7 @@ describe('Contact', () => {
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
     expect(await screen.findByText('Subject is required.')).toBeInTheDocument();
     expect(screen.getByText('Message is required.')).toBeInTheDocument();
-    expect(emailjs.sendForm).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('shows the translated message for an invalid email format', async () => {
@@ -335,8 +335,8 @@ describe('Contact', () => {
   it('disables the button and sets aria-busy while sending', async () => {
     let resolve!: () => void;
 
-    vi.mocked(emailjs.sendForm).mockReturnValueOnce(new Promise<never>((r) => {
-      resolve = () => r(undefined as never);
+    fetchMock.mockReturnValueOnce(new Promise<Response>((r) => {
+      resolve = () => r(new Response('{"ok":true}', { status: 200 }));
     }));
     await renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
@@ -351,13 +351,16 @@ describe('Contact', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: /Send message/ })).toBeEnabled());
   });
 
-  it('sends a valid form through EmailJS', async () => {
+  it('posts a valid form to the contact API as JSON, honeypot empty', async () => {
     await renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
-    await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/contact');
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({ method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    expect(sentBody()).toEqual({ email: 'a@b.co', subject: 'Hi', message: 'Hello', company: '' });
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'false');
   });
 
@@ -372,7 +375,7 @@ describe('Contact', () => {
   });
 
   it('toasts an error when the send fails', async () => {
-    vi.mocked(emailjs.sendForm).mockRejectedValueOnce(new Error('down'));
+    fetchMock.mockResolvedValueOnce(new Response('{"ok":false}', { status: 502 }));
     await renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
@@ -381,22 +384,28 @@ describe('Contact', () => {
     expect(await screen.findByText(en.message_error)).toBeInTheDocument();
   });
 
-  it('sends with the NEXT_PUBLIC_EMAILJS_* service, template and key', async () => {
-    vi.stubEnv('NEXT_PUBLIC_EMAILJS_SERVICE_ID', 'service_test');
-    vi.stubEnv('NEXT_PUBLIC_EMAILJS_TEMPLATE_ID', 'template_test');
-    vi.stubEnv('NEXT_PUBLIC_EMAILJS_KEY', 'key_test');
+  it('toasts an error when the network fails', async () => {
+    fetchMock.mockRejectedValueOnce(new TypeError('offline'));
     await renderContact();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
-    await waitFor(() => expect(emailjs.sendForm).toHaveBeenCalledTimes(1));
-    expect(emailjs.sendForm).toHaveBeenCalledWith(
-      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-      process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-      expect.any(HTMLFormElement),
-      process.env.NEXT_PUBLIC_EMAILJS_KEY,
-    );
-    expect(emailjs.sendForm).toHaveBeenCalledWith('service_test', 'template_test', expect.any(HTMLFormElement), 'key_test');
+    expect(await screen.findByText(en.message_error)).toBeInTheDocument();
+  });
+
+  it('sends whatever a bot typed into the hidden honeypot, so the server can drop it', async () => {
+    await renderContact();
+    const trap = document.querySelector<HTMLInputElement>('input[name="company"]')!;
+
+    expect(trap).toHaveAttribute('tabindex', '-1');
+    expect(trap).toHaveAttribute('aria-hidden', 'true');
+    fireEvent.change(trap, { target: { value: 'ACME' } });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'a@b.co' } });
+    fireEvent.change(screen.getByLabelText('Subject'), { target: { value: 'Hi' } });
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: /Send message/ }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(sentBody().company).toBe('ACME');
   });
 });

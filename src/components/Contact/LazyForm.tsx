@@ -8,7 +8,7 @@ import ChunkBoundary from '../ui/ChunkBoundary';
 /** Holds the form's place, same glass and height, until its code arrives. */
 const FormPlaceholder = () => <div aria-hidden className={`${GLASS} min-h-[478px]`} />;
 
-// The form (react-hook-form, zod, emailjs, toastify) loads once the section nears the viewport.
+// The form (react-hook-form, zod, toastify) loads once the section nears the viewport.
 const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false, loading: FormPlaceholder });
 
 /** True once the element comes within `margin` of the viewport (true at once without IntersectionObserver). */
