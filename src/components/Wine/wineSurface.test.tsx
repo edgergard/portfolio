@@ -9,12 +9,12 @@ const CANVAS_WAIT = { timeout: 8000 };
 const scene = vi.hoisted(() => ({ fail: false }));
 
 vi.mock('@react-three/fiber', () => ({
-  Canvas: ({ frameloop, dpr }: { frameloop?: string; dpr?: number[] }) => {
+  Canvas: ({ frameloop, dpr }: { frameloop?: string; dpr?: number }) => {
     if (scene.fail) {
       throw new Error('Error creating WebGL context.');
     }
 
-    return <div data-testid="wine-canvas" data-frameloop={frameloop} data-dpr={dpr?.join(',')} />;
+    return <div data-testid="wine-canvas" data-frameloop={frameloop} data-dpr={dpr} />;
   },
   useFrame: () => {},
   useThree: () => ({}),
@@ -77,11 +77,11 @@ describe('WineSurface', () => {
     expect(surface()).toHaveAttribute('data-state', 'live');
   });
 
-  it('renders at dpr 1-2 and animates while on screen', async () => {
+  it('renders at the budgeted dpr and animates while on screen', async () => {
     renderSurface();
     const canvas = await screen.findByTestId('wine-canvas', {}, CANVAS_WAIT);
 
-    expect(canvas).toHaveAttribute('data-dpr', '1,2');
+    expect(canvas).toHaveAttribute('data-dpr', '1');
     expect(canvas).toHaveAttribute('data-frameloop', 'always');
   });
 

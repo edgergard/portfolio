@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { ACESFilmicToneMapping } from 'three';
 import WineBackdrop from '../Hero/WineBackdrop';
@@ -9,7 +9,38 @@ import { useOnScreen } from '../Hero/sceneSupport';
 import { whenProgramsReady } from '../Hero/warmup';
 import { useCurrentTheme } from '../../theme';
 import { WINE_THEMES } from '../Hero/wineShader';
+import { budgetDpr } from './budgetDpr';
 
+
+/** Keeps the canvas within the device-pixel budget as its host resizes. */
+const useBudgetDpr = (host: RefObject<HTMLDivElement | null>) => {
+  const [dpr, setDpr] = useState(1);
+
+  useEffect(() => {
+    const el = host.current;
+
+    if (!el) {
+      return;
+    }
+
+    const update = () =>
+      setDpr(budgetDpr(el.clientWidth, el.clientHeight, window.devicePixelRatio || 1));
+
+    update();
+
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new ResizeObserver(update);
+
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [host]);
+
+  return dpr;
+};
 
 /** No pointer drift here: the glow stays centred, as in the hero when the pointer is away. */
 const RESTING_POINTER = { current: { x: 0, y: 0, hovering: false } satisfies ScenePointer };
@@ -54,11 +85,12 @@ const WineCanvas = ({ reducedMotion }: Props) => {
   const theme = useCurrentTheme();
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
+  const dpr = useBudgetDpr(host);
 
   return (
     <div ref={host} data-testid="wine-canvas-host" data-speed={speed} className="absolute inset-0">
       <Canvas
-        dpr={[1, 2]}
+        dpr={dpr}
         camera={{ fov: 32, position: [0, 0, 8], near: 0.1, far: 100 }}
         gl={{ toneMapping: ACESFilmicToneMapping }}
         // "demand" with nothing invalidating = paused; R3F still redraws on resize.
