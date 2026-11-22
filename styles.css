@@ -478,6 +478,19 @@ html:not([lang='uk']) .nf-uk {
 }
 
 /*
+ * Phones: the glass panels (project cards, archive list, contact) drop the live backdrop blur.
+ * Re-blurring the animated wine under every card on each frame made the cards flicker on iOS
+ * while scrolling. A denser tint keeps the same dark panel and legibility without it.
+ */
+@media (max-width: 899px) {
+  .glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(12, 10, 11, 0.74);
+  }
+}
+
+/*
  * Contact form toast (ContactToast.tsx): the form's glass panel, an icon disc, a mono caps
  * label and a thin wine timer line. Overrides react-toastify's default toast box.
  */
@@ -826,3 +839,9 @@ html:not([lang='uk']) .nf-uk {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Phones, light theme: the blur-free glass (see above) in the wine-tinted colour, a bit denser. */
+@media (max-width: 899px) {
+  :root[data-theme='light'] .glass {
+    background-color: rgba(60, 6, 18, 0.7);
+  }
+}
