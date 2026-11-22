@@ -48,10 +48,11 @@ const WineBackdrop = ({ pointer, speed }: Props) => {
   return (
     <mesh position-z={PLANE_Z} scale={scale}>
       <planeGeometry args={[PLANE_SIZE, PLANE_SIZE]} />
+      {/* Constructed with our uniforms object (args), not given it as a prop: R3F 9 copies a
+          `uniforms` prop into fresh objects, so the per-frame uTime/uMouse writes and the theme
+          palette above would never reach the material and the wine would freeze. */}
       <shaderMaterial
-        uniforms={uniforms}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
+        args={[{ uniforms, vertexShader, fragmentShader }]}
         toneMapped={false}
       />
     </mesh>
