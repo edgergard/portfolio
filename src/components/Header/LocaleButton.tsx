@@ -2,9 +2,10 @@
 
 import classNames from 'classnames';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Suspense, type MouseEvent } from 'react';
+import { Suspense, useEffect, type MouseEvent } from 'react';
 import { useLang } from '@/lib/i18n-client';
 import { LANG_COOKIE, switchLocaleHref, switchLocaleLinkHref, type Lang } from '@/lib/locale';
+import { restoreReadingPosition, saveReadingPosition } from '@/lib/readingPosition';
 
 const OPTIONS: { value: Lang; label: string }[] = [
   { value: 'en', label: 'EN' },
@@ -22,8 +23,11 @@ const LocaleLinks = ({ search }: { search: string }) => {
   const handleClick = (e: MouseEvent<HTMLAnchorElement>, to: Lang) => {
     // The proxy reads the cookie for prefix-less URLs, so it must be set before navigating.
     document.cookie = `${LANG_COOKIE}=${to}; path=/; max-age=31536000; samesite=lax`;
-    // Keep the section the visitor is on; the hash is only known in the browser.
-    e.currentTarget.href = switchLocaleHref(to, pathname, search, window.location.hash);
+    // No hash: an old #contact from a nav click would jump there. Keep the place instead.
+    const href = switchLocaleHref(to, pathname, search, '');
+
+    e.currentTarget.href = href;
+    saveReadingPosition(new URL(href, window.location.href).pathname);
   };
 
   return (
@@ -61,10 +65,26 @@ const LocaleLinksWithSearch = () => {
  * The query string is only known in the browser; prerendered pages show links without it
  * (the Suspense fallback) until the client fills it in.
  */
+/**
+ * After a language switch, scroll back to where the visitor was (see lib/readingPosition.ts).
+ * The header renders the switch twice (desktop and the mobile menu); the saved entry is read
+ * and removed on the first run, so the second does nothing.
+ */
+const RestorePosition = () => {
+  useEffect(() => {
+    restoreReadingPosition(window.location.pathname);
+  }, []);
+
+  return null;
+};
+
 const LocaleButton = () => (
-  <Suspense fallback={<LocaleLinks search="" />}>
-    <LocaleLinksWithSearch />
-  </Suspense>
+  <>
+    <RestorePosition />
+    <Suspense fallback={<LocaleLinks search="" />}>
+      <LocaleLinksWithSearch />
+    </Suspense>
+  </>
 );
 
 export default LocaleButton;

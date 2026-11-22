@@ -78,13 +78,20 @@ describe('Header links', () => {
     expect(screen.getByRole('link', { name: 'EN' })).toHaveAttribute('href', '/en/cv/frontend');
   });
 
-  it('keeps the section the visitor is on when switching', () => {
+  it('drops a stale #hash so switching never jumps to that section', () => {
     window.location.hash = '#contact';
     renderHeader('en', '/');
     const toUa = screen.getByRole('link', { name: 'UA' });
 
     fireEvent.click(toUa);
-    expect(toUa).toHaveAttribute('href', '/uk#contact');
+    expect(toUa).toHaveAttribute('href', '/uk');
+  });
+
+  it('notes the reading position for the page the switch loads', () => {
+    sessionStorage.clear();
+    renderHeader('en', '/projects');
+    fireEvent.click(screen.getByRole('link', { name: 'UA' }));
+    expect(JSON.parse(sessionStorage.getItem('locale-switch-position')!)).toMatchObject({ path: '/uk/projects' });
   });
 
   it('marks the active language as pressed', () => {
