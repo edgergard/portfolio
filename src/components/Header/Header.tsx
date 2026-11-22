@@ -22,7 +22,10 @@ const Header = () => {
 
   return (
     // pt-safe: under viewport-fit=cover the header's own background fills the phone's status bar.
-    <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg pt-[env(safe-area-inset-top)] font-mono text-xs uppercase tracking-[.06em] text-ink">
+    // before:: in-app browsers (Telegram, iOS 26 Safari views) pin top:0 below their translucent
+    // top bar and let the page scroll visibly under it; a screen-tall strip of the header colour
+    // above the header hides that, so bar and header read as one. Off-screen on desktop.
+    <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg pt-[env(safe-area-inset-top)] before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-screen before:bg-bg before:content-[''] font-mono text-xs uppercase tracking-[.06em] text-ink">
       <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
         <SectionLink section="hero" className="text-ink" data-testid="brand">
           Oleksandr Bryksin
