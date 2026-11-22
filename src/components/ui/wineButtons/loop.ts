@@ -29,6 +29,8 @@ type Entry = {
   offset: number;
   /** Seconds this element runs ahead of the shared clock, so each one moves on its own. */
   phase: number;
+  /** Registration order: staggers the off-screen refreshes across frames. */
+  slot: number;
 };
 
 type Status = 'idle' | 'loading' | 'ready' | 'failed';
@@ -40,11 +42,17 @@ const GOLDEN = 0.618034;
 export const PHASE_SPREAD = 90;
 
 /**
- * How far outside the viewport a badge or button already counts as on screen: it gets its first
- * shader frames (and fades in from the CSS fill) before it scrolls in, so nothing visibly
- * "renders" as it appears. One screen ahead, both directions.
+ * How far outside the viewport a badge or button already counts as on screen (full frame rate).
  */
-export const PRELOAD_MARGIN = '100% 0px';
+export const PRELOAD_MARGIN = '25% 0px';
+
+/**
+ * Off-screen elements still get a fresh frame every this many frames (staggered, a few per
+ * frame), so each one always holds a recent picture: when it scrolls in, even if the
+ * IntersectionObserver reports late (iOS delays it during momentum scrolling), nothing
+ * visibly "renders" or jumps.
+ */
+export const OFFSCREEN_EVERY = 12;
 
 export type Rect = { sx: number; sy: number; sw: number; sh: number };
 
@@ -149,6 +157,7 @@ export const createWineButtonLoop = ({
   let time = 0;
   let last: number | null = null;
   let restarts = 0;
+  let frameNo = 0;
   /** Entries that are on screen and have a 2D context: the only ones a frame can draw into. */
   let drawable = 0;
   // Per-frame scratch, reused so the loop doesn't allocate.
@@ -209,8 +218,12 @@ export const createWineButtonLoop = ({
     entries.forEach((_, canvas) => setState(canvas, 'fallback'));
   };
 
+  /** On screen every frame; off screen in turns (see OFFSCREEN_EVERY). */
+  const dueThisFrame = (entry: Entry) =>
+    entry.onScreen || (frameNo + entry.slot) % OFFSCREEN_EVERY === 0;
+
   const drawEntry = (entry: Entry, canvas: HTMLCanvasElement) => {
-    if (!renderer || !isDrawable(entry)) {
+    if (!renderer || entry.ctx === null || !dueThisFrame(entry)) {
       return;
     }
 
@@ -250,6 +263,7 @@ export const createWineButtonLoop = ({
     try {
       dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
       entries.forEach(drawEntry);
+      frameNo++;
     } catch (error) {
       fail(error);
 
@@ -336,7 +350,8 @@ export const createWineButtonLoop = ({
       // Assume visible until the observer says otherwise (its first report is async).
       onScreen: true,
       offset: (registered * GOLDEN) % 1,
-      phase: ((registered++ * GOLDEN) % 1) * PHASE_SPREAD,
+      phase: ((registered * GOLDEN) % 1) * PHASE_SPREAD,
+      slot: registered++,
     };
 
     // No 2D context: nothing to draw into, so this button keeps its CSS fill.

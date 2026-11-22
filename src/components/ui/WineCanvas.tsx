@@ -18,7 +18,9 @@ const WineCanvas = () => {
     <canvas
       ref={canvas}
       aria-hidden
-      className="pointer-events-none absolute inset-0 -z-[1] h-full w-full opacity-0 transition-opacity duration-300"
+      // No fade: the first frame is drawn while the element is still off screen, and a fade
+      // would show the swap from the CSS fill as a flicker when it scrolls in.
+      className="pointer-events-none absolute inset-0 -z-[1] h-full w-full opacity-0"
     />
   );
 };

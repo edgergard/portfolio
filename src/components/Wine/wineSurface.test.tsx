@@ -128,7 +128,10 @@ describe('WineSurface', () => {
     render(<div className="bg-wine-flow" data-testid="panel"><WineSurface /></div>);
     expect(await screen.findByTestId('wine-canvas-host', {}, CANVAS_WAIT)).toHaveAttribute('data-ready', 'false');
     expect(css.replace(/\s+/g, ' ')).toContain(
-      ".bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::after { display: none;",
+      ".bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::after,",
+    );
+    expect(css.replace(/\s+/g, ' ')).toContain(
+      ".bg-wine-flow:has(> canvas[data-state='live'])::after { display: none;",
     );
   });
 });

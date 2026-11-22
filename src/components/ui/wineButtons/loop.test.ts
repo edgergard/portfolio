@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { REDUCED_SPEED } from '../../Hero/motion';
-import { coverRect, createWineButtonLoop, PRELOAD_MARGIN, type WineBufferRenderer } from './loop';
+import {
+  coverRect, createWineButtonLoop, OFFSCREEN_EVERY, PRELOAD_MARGIN, type WineBufferRenderer,
+} from './loop';
 
 type Observed = {
   callback: IntersectionObserverCallback;
@@ -239,13 +241,34 @@ describe('wine button loop', () => {
     expect(renderer.render).toHaveBeenCalledTimes(calls + 1);
   });
 
-  it('treats a badge a screen away as on screen, so it is already drawn when it scrolls in', async () => {
+  it('counts elements a little outside the viewport as on screen', async () => {
     const { loop } = setup();
 
     loop.register(buttonCanvas().canvas);
     await flush();
     expect(observers[0].options).toEqual({ rootMargin: PRELOAD_MARGIN });
-    expect(PRELOAD_MARGIN).toBe('100% 0px');
+    expect(PRELOAD_MARGIN).toBe('25% 0px');
+  });
+
+  it('keeps refreshing off-screen elements in turns, so none is stale or blank when it scrolls in', async () => {
+    const { clock, loop } = setup();
+    const visible = buttonCanvas();
+    const away = buttonCanvas();
+
+    loop.register(visible.canvas);
+    loop.register(away.canvas);
+    await flush();
+    setOnScreen(away.canvas, false);
+    visible.ctx.drawImage.mockClear();
+    away.ctx.drawImage.mockClear();
+
+    for (let i = 0; i < OFFSCREEN_EVERY * 2; i++) {
+      clock.step();
+    }
+
+    expect(visible.ctx.drawImage).toHaveBeenCalledTimes(OFFSCREEN_EVERY * 2);
+    expect(away.ctx.drawImage).toHaveBeenCalledTimes(2);
+    expect(away.canvas.dataset.state).toBe('live');
   });
 
   it('pauses while the tab is hidden', async () => {

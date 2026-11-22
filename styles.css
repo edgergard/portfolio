@@ -220,12 +220,15 @@ body {
   }
 
   /*
-   * Under a live shader (WineSurface, once its first frame is drawn) the opaque canvas hides the
+   * Under a live shader (a WineSurface once its first frame is drawn, or a badge/button canvas the
+   * shared renderer has filled) the opaque canvas hides the
    * marbling, so drop the two oversized animated layers: on phones they are huge GPU textures
    * that, animating under the WebGL canvas, made the wine flicker.
    */
   .bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::before,
-  .bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::after {
+  .bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::after,
+  .bg-wine-flow:has(> canvas[data-state='live'])::before,
+  .bg-wine-flow:has(> canvas[data-state='live'])::after {
     display: none;
   }
 
