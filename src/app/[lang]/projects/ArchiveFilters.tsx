@@ -41,7 +41,14 @@ const Row = ({ project }: { project: Project }) => {
   return (
     <tr
       data-testid="archive-row"
-      className="border-b border-line transition-[background-color] hover:bg-[linear-gradient(90deg,rgba(139,20,38,.12),transparent_70%)] max-[899px]:grid max-[899px]:grid-cols-[76px_1fr] max-[899px]:gap-x-4 max-[899px]:gap-y-2 max-[899px]:py-5"
+      // Desktop: a wine wash on hover. Phones have no hover (a tap left that square wash stuck to
+      // the row), so there a tap shows a rounded highlight with side room, drawn by ::before.
+      className={
+        'border-b border-line transition-[background-color] [-webkit-tap-highlight-color:transparent] '
+        + 'min-[900px]:hover:bg-[linear-gradient(90deg,rgba(139,20,38,.12),transparent_70%)] '
+        + 'max-[899px]:relative max-[899px]:isolate max-[899px]:grid max-[899px]:grid-cols-[76px_1fr] max-[899px]:gap-x-4 max-[899px]:gap-y-2 max-[899px]:py-5 '
+        + "max-[899px]:before:absolute max-[899px]:before:-inset-x-3 max-[899px]:before:inset-y-1.5 max-[899px]:before:-z-[1] max-[899px]:before:rounded-2xl max-[899px]:before:bg-white/[.07] max-[899px]:before:opacity-0 max-[899px]:before:transition-opacity max-[899px]:before:duration-150 max-[899px]:before:content-[''] max-[899px]:active:before:opacity-100"
+      }
     >
       <td className={`${CELL} w-[76px] max-[899px]:row-span-4`}>
         <div className="h-10 w-[60px] overflow-hidden rounded-lg border border-chip">

@@ -95,6 +95,20 @@ describe('ArchivePage', () => {
     expect(within(screen.getByTestId('archive-glass')).getByRole('table')).toBeInTheDocument();
   });
 
+  it('hovers only on desktop; on phones a tap shows a rounded highlight with side room', () => {
+    renderPage();
+    const row = screen.getAllByTestId('archive-row')[0];
+
+    expect(row.className).toContain('min-[900px]:hover:bg-');
+    expect(row.className).not.toMatch(/(^|s)hover:bg-/);
+    expect(row).toHaveClass(
+      '[-webkit-tap-highlight-color:transparent]',
+      'max-[899px]:before:rounded-2xl',
+      'max-[899px]:before:-inset-x-3',
+      'max-[899px]:active:before:opacity-100',
+    );
+  });
+
   it('shows the type pill in white text with a white border', () => {
     renderPage();
     screen.getAllByTestId('archive-type').forEach(pill => {

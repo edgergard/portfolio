@@ -1,16 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { REDUCED_SPEED } from '../../Hero/motion';
-import { coverRect, createWineButtonLoop, type WineBufferRenderer } from './loop';
+import { coverRect, createWineButtonLoop, PRELOAD_MARGIN, type WineBufferRenderer } from './loop';
 
-type Observed = { callback: IntersectionObserverCallback; targets: Set<Element> };
+type Observed = {
+  callback: IntersectionObserverCallback;
+  targets: Set<Element>;
+  options?: IntersectionObserverInit;
+};
 
 const observers: Observed[] = [];
 
 class FakeIntersectionObserver {
   private record: Observed;
 
-  constructor(callback: IntersectionObserverCallback) {
-    this.record = { callback, targets: new Set() };
+  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+    this.record = { callback, targets: new Set(), options };
     observers.push(this.record);
   }
 
@@ -233,6 +237,15 @@ describe('wine button loop', () => {
     setOnScreen(a.canvas, true);
     clock.step();
     expect(renderer.render).toHaveBeenCalledTimes(calls + 1);
+  });
+
+  it('treats a badge a screen away as on screen, so it is already drawn when it scrolls in', async () => {
+    const { loop } = setup();
+
+    loop.register(buttonCanvas().canvas);
+    await flush();
+    expect(observers[0].options).toEqual({ rootMargin: PRELOAD_MARGIN });
+    expect(PRELOAD_MARGIN).toBe('100% 0px');
   });
 
   it('pauses while the tab is hidden', async () => {

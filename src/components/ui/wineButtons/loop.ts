@@ -39,6 +39,13 @@ const GOLDEN = 0.618034;
 /** Spread of the per-element time offsets (seconds of animation): far enough apart that no two look alike. */
 export const PHASE_SPREAD = 90;
 
+/**
+ * How far outside the viewport a badge or button already counts as on screen: it gets its first
+ * shader frames (and fades in from the CSS fill) before it scrolls in, so nothing visibly
+ * "renders" as it appears. One screen ahead, both directions.
+ */
+export const PRELOAD_MARGIN = '100% 0px';
+
 export type Rect = { sx: number; sy: number; sw: number; sh: number };
 
 /**
@@ -309,7 +316,7 @@ export const createWineButtonLoop = ({
       } else {
         stop();
       }
-    });
+    }, { rootMargin: PRELOAD_MARGIN });
     document.addEventListener('visibilitychange', onVisibility);
   };
 
