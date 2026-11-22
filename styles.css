@@ -135,6 +135,9 @@ body {
   background: rgb(var(--c-bg));
   color: rgb(var(--c-ink));
   font-family: var(--font-geist), sans-serif;
+  /* viewport-fit=cover (layout.tsx): keep content clear of a landscape notch; 0 elsewhere. */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /*

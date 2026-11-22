@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { THEME_COLORS } from './lib/theme-script';
 import { useClientValue } from './utils/clientValue';
 
 export type Theme = 'light' | 'dark';
@@ -22,8 +23,10 @@ export const storedTheme = (): Theme | null => {
   }
 };
 
+/** Sets the theme on <html> and the matching browser UI colour (status bar on phones). */
 export const applyTheme = (theme: Theme) => {
   document.documentElement.dataset.theme = theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme]);
 };
 
 /** What the page should show now: a saved choice, otherwise dark. */

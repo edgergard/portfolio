@@ -21,7 +21,8 @@ const Header = () => {
   ];
 
   return (
-    <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg font-mono text-xs uppercase tracking-[.06em] text-ink">
+    // pt-safe: under viewport-fit=cover the header's own background fills the phone's status bar.
+    <header className="site-chrome sticky top-0 z-50 w-full border-b border-line bg-bg pt-[env(safe-area-inset-top)] font-mono text-xs uppercase tracking-[.06em] text-ink">
       <div className="flex h-[72px] items-center justify-between px-6 min-[900px]:px-10">
         <SectionLink section="hero" className="text-ink" data-testid="brand">
           Oleksandr Bryksin

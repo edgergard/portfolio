@@ -91,3 +91,13 @@ export function pageMetadata(lang: Lang, page: MetaPage, dict: Dictionary): Meta
     twitter: { card: 'summary_large_image', title, description, images: [OG_IMAGE] },
   };
 }
+
+/**
+ * viewportFit cover lets the page run under the phone's status bar / notch; the header pads
+ * itself by the safe-area inset, so the bar and the header read as one strip.
+ */
+export const SITE_VIEWPORT = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+} as const;
