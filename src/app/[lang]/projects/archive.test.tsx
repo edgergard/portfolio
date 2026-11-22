@@ -87,7 +87,9 @@ describe('ArchivePage', () => {
     renderPage();
     const wine = screen.getByTestId('archive-wine');
 
-    expect(wine).toHaveClass('bg-wine-flow', 'fixed', 'inset-0');
+    // Sized by the largest viewport (100lvh), so a phone's sliding browser bars never resize the canvas.
+    expect(wine).toHaveClass('bg-wine-flow', 'fixed', 'inset-x-0', 'top-0', 'h-[100lvh]');
+    expect(wine).not.toHaveClass('inset-0');
     expect(within(wine).getByTestId('wine-surface')).toBeInTheDocument();
     expect(screen.getByTestId('archive-page')).toHaveClass('on-wine', 'isolate');
     expect(within(screen.getByTestId('archive-glass')).getByRole('table')).toBeInTheDocument();

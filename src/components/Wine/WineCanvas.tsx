@@ -88,7 +88,8 @@ const WineCanvas = ({ reducedMotion }: Props) => {
   const dpr = useBudgetDpr(host);
 
   return (
-    <div ref={host} data-testid="wine-canvas-host" data-speed={speed} className="absolute inset-0">
+    // data-ready: once the shader draws (opaque), styles.css switches off the CSS marbling underneath.
+    <div ref={host} data-testid="wine-canvas-host" data-speed={speed} data-ready={ready} className="absolute inset-0">
       <Canvas
         dpr={dpr}
         camera={{ fov: 32, position: [0, 0, 8], near: 0.1, far: 100 }}

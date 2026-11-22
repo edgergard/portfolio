@@ -32,7 +32,9 @@ export default function ProjectsPage() {
     // canvas, however long the list) behind everything in this isolated wrapper. .on-wine keeps
     // the dark palette on the wine in both themes; the list sits in a glass panel to stay legible.
     <div data-testid="archive-page" className="on-wine relative isolate text-ink">
-      <div aria-hidden data-testid="archive-wine" className="bg-wine-flow fixed inset-0 -z-10 hover:filter-none">
+      {/* 100lvh, not inset-0: the largest viewport height stays put while a phone's browser bars
+          slide in and out, so the canvas isn't resized (and redrawn blank) on every scroll. */}
+      <div aria-hidden data-testid="archive-wine" className="bg-wine-flow fixed inset-x-0 top-0 -z-10 h-[100lvh] hover:filter-none">
         <WineSurface />
       </div>
       <div className="mx-auto max-w-[1120px] px-6 pb-20 pt-28 min-[900px]:px-10 min-[900px]:pb-[112px] min-[900px]:pt-[140px]">

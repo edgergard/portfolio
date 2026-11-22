@@ -219,6 +219,16 @@ body {
     will-change: translate, scale, rotate;
   }
 
+  /*
+   * Under a live shader (WineSurface, once its first frame is drawn) the opaque canvas hides the
+   * marbling, so drop the two oversized animated layers: on phones they are huge GPU textures
+   * that, animating under the WebGL canvas, made the wine flicker.
+   */
+  .bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::before,
+  .bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::after {
+    display: none;
+  }
+
   /* Base layer: deep wine with bright and dark pools. */
   .bg-wine-flow::before {
     background:

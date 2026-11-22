@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { REDUCED_SPEED } from '../Hero/motion';
 import WineSurface from './WineSurface';
+import css from '../../../styles.css?raw';
 
 /** The canvas is a lazy chunk mounted when idle; a loaded full-suite run can exceed findBy's 1s default. */
 const CANVAS_WAIT = { timeout: 8000 };
@@ -121,5 +122,13 @@ describe('WineSurface', () => {
     await waitFor(() => expect(surface()).toHaveAttribute('data-state', 'fallback'));
     expect(screen.queryByTestId('wine-canvas')).not.toBeInTheDocument();
     expect(screen.getByTestId('panel')).toHaveClass('bg-wine-flow');
+  });
+
+  it('marks the host not ready until the shader draws, and the CSS marbling yields to a ready one', async () => {
+    render(<div className="bg-wine-flow" data-testid="panel"><WineSurface /></div>);
+    expect(await screen.findByTestId('wine-canvas-host', {}, CANVAS_WAIT)).toHaveAttribute('data-ready', 'false');
+    expect(css.replace(/\s+/g, ' ')).toContain(
+      ".bg-wine-flow:has([data-testid='wine-canvas-host'][data-ready='true'])::after { display: none;",
+    );
   });
 });
